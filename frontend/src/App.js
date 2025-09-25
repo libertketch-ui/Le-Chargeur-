@@ -9,6 +9,7 @@ import { Label } from "./components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
 import { Badge } from "./components/ui/badge";
 import { Progress } from "./components/ui/progress";
+import { Switch } from "./components/ui/switch";
 import { toast } from "sonner";
 import { Toaster } from "./components/ui/sonner";
 import { 
@@ -41,95 +42,186 @@ import {
   Compass,
   Route,
   Star,
-  Leaf
+  Leaf,
+  Shield,
+  Phone,
+  Crown,
+  Heart,
+  Award,
+  Settings,
+  CreditCard,
+  Globe,
+  TrendingUp,
+  TrendingDown,
+  Smartphone,
+  Bell,
+  Zap as Lightning,
+  Target,
+  ArrowRight,
+  DollarSign,
+  Percent
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 function App() {
-  const [activeTab, setActiveTab] = useState("search");
+  const [activeTab, setActiveTab] = useState("home");
   const [cities, setCities] = useState([]);
   const [routes, setRoutes] = useState([]);
+  const [popularRoutes, setPopularRoutes] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [offers, setOffers] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [mobileMoneyProviders, setMobileMoneyProviders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState({ id: "user123", first_name: "Jean", last_name: "Dupont" });
+  const [user, setUser] = useState({ 
+    id: "user123", 
+    first_name: "Jean", 
+    last_name: "Dupont",
+    subscription_type: "standard",
+    loyalty_points: 2500,
+    phone: "+237650123456",
+    email: "jean.dupont@email.com",
+    preferred_payment: "mobile_money"
+  });
 
-  // Search form state
+  // Fusion search state (TicketCam + BusConnect advanced)
   const [searchForm, setSearchForm] = useState({
     origin: "",
     destination: "",
     departure_date: "",
-    passengers: 1
+    passengers: 1,
+    service_class: "economy",
+    budget_max: null,
+    time_preference: "any"
   });
 
-  // Booking form state
-  const [selectedRoute, setSelectedRoute] = useState(null);
-  const [selectedBaggage, setSelectedBaggage] = useState([]);
-  const [baggageOptions, setBaggageOptions] = useState([]);
-  const [promoCode, setPromoCode] = useState("");
-  const [carbonOffset, setCarbonOffset] = useState(false);
+  // Mobile Money integration state (from TicketCam)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("mobile_money");
+  const [mobileMoneyForm, setMobileMoneyForm] = useState({
+    provider: "OM",
+    phone_number: "",
+    amount: 0
+  });
 
-  // Tracking state
-  const [trackingReference, setTrackingReference] = useState("");
-  const [trackingInfo, setTrackingInfo] = useState(null);
+  // Smart features state
+  const [smartSuggestions, setSmartSuggestions] = useState([]);
+  const [priceAlerts, setPriceAlerts] = useState([]);
+  const [weatherInfo, setWeatherInfo] = useState({});
 
   useEffect(() => {
-    loadCities();
-    loadOffers();
-    loadBaggageOptions();
-    loadUserBookings();
+    loadInitialData();
   }, []);
+
+  const loadInitialData = async () => {
+    try {
+      await Promise.all([
+        loadCities(),
+        loadPopularRoutes(),
+        loadMobileMoneyProviders(),
+        loadUserBookings(),
+        loadNotifications(),
+        loadSmartSuggestions()
+      ]);
+    } catch (error) {
+      console.error("Error loading initial data:", error);
+      toast.error("Erreur lors du chargement des données");
+    }
+  };
 
   const loadCities = async () => {
     try {
-      const response = await axios.get(`${API}/cities`);
+      const response = await axios.get(`${API}/cities/enhanced`);
       setCities(response.data.cities);
     } catch (error) {
       console.error("Error loading cities:", error);
-      toast.error("Erreur lors du chargement des villes");
     }
   };
 
-  const loadOffers = async () => {
+  const loadPopularRoutes = async () => {
     try {
-      const response = await axios.get(`${API}/offers`);
-      setOffers(response.data.offers);
+      const response = await axios.get(`${API}/popular-routes`);
+      setPopularRoutes(response.data.popular_routes);
     } catch (error) {
-      console.error("Error loading offers:", error);
+      console.error("Error loading popular routes:", error);
     }
   };
 
-  const loadBaggageOptions = async () => {
+  const loadMobileMoneyProviders = async () => {
     try {
-      const response = await axios.get(`${API}/baggage/options`);
-      setBaggageOptions(response.data.baggage_options);
+      const response = await axios.get(`${API}/mobile-money/providers`);
+      setMobileMoneyProviders(response.data.providers);
     } catch (error) {
-      console.error("Error loading baggage options:", error);
+      console.error("Error loading mobile money providers:", error);
     }
   };
 
   const loadUserBookings = async () => {
     try {
-      const response = await axios.get(`${API}/bookings/user/${user.id}`);
-      setBookings(response.data.bookings);
+      // Mock data for now
+      setBookings([]);
     } catch (error) {
       console.error("Error loading bookings:", error);
     }
   };
 
-  const searchRoutes = async () => {
+  const loadNotifications = async () => {
+    try {
+      const response = await axios.get(`${API}/notifications/${user.id}`);
+      setNotifications(response.data.notifications);
+    } catch (error) {
+      console.error("Error loading notifications:", error);
+    }
+  };
+
+  const loadSmartSuggestions = async () => {
+    // Mock smart suggestions based on user behavior
+    const suggestions = [
+      { 
+        route: "Yaoundé → Douala", 
+        reason: "Voyage fréquent", 
+        price: 4200, 
+        originalPrice: 4900,
+        savings: 700,
+        icon: "heart"
+      },
+      { 
+        route: "Yaoundé → Bafoussam", 
+        reason: "Nouvelle destination populaire", 
+        price: 5800, 
+        originalPrice: 6500,
+        savings: 700,
+        icon: "trending-up"
+      }
+    ];
+    setSmartSuggestions(suggestions);
+  };
+
+  const performSmartSearch = async () => {
     if (!searchForm.origin || !searchForm.destination || !searchForm.departure_date) {
-      toast.error("Veuillez remplir tous les champs de recherche");
+      toast.error("Veuillez remplir tous les champs obligatoires");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/search`, searchForm);
+      const params = new URLSearchParams({
+        origin: searchForm.origin,
+        destination: searchForm.destination,
+        departure_date: searchForm.departure_date,
+        passengers: searchForm.passengers.toString(),
+        service_class: searchForm.service_class,
+        time_preference: searchForm.time_preference
+      });
+
+      if (searchForm.budget_max) {
+        params.append('budget_max', searchForm.budget_max.toString());
+      }
+
+      const response = await axios.get(`${API}/search/smart?${params}`);
       setRoutes(response.data.routes);
-      toast.success(`${response.data.total} trajets trouvés`);
+      setActiveTab("results");
+      toast.success(`${response.data.total} trajets trouvés avec prix dynamique`);
     } catch (error) {
       console.error("Error searching routes:", error);
       toast.error("Erreur lors de la recherche");
@@ -138,26 +230,14 @@ function App() {
     }
   };
 
-  const selectRoute = (route) => {
-    setSelectedRoute(route);
+  const selectRouteAndProceedToBooking = (route) => {
+    setSearchForm(prev => ({ ...prev, selectedRoute: route }));
+    setMobileMoneyForm(prev => ({ ...prev, amount: route.dynamic_price * searchForm.passengers }));
     setActiveTab("booking");
   };
 
-  const toggleBaggage = (option) => {
-    const existing = selectedBaggage.find(b => b.type === option.type);
-    if (existing) {
-      setSelectedBaggage(selectedBaggage.filter(b => b.type !== option.type));
-    } else {
-      setSelectedBaggage([...selectedBaggage, { 
-        type: option.type, 
-        quantity: 1, 
-        price: option.price 
-      }]);
-    }
-  };
-
-  const createBooking = async () => {
-    if (!selectedRoute) {
+  const createFusionBooking = async () => {
+    if (!searchForm.selectedRoute) {
       toast.error("Aucun trajet sélectionné");
       return;
     }
@@ -166,23 +246,28 @@ function App() {
     try {
       const bookingData = {
         user_id: user.id,
-        route_id: selectedRoute.id,
+        route_id: searchForm.selectedRoute.id,
+        service_class: searchForm.service_class,
         passenger_count: searchForm.passengers,
-        seat_numbers: Array.from({length: searchForm.passengers}, (_, i) => `${i + 1}A`),
-        baggage: selectedBaggage,
-        promo_code: promoCode || null,
-        carbon_offset: carbonOffset
+        base_price: searchForm.selectedRoute.dynamic_price,
+        payment_method: selectedPaymentMethod,
+        mobile_money_provider: selectedPaymentMethod === "mobile_money" ? mobileMoneyForm.provider : null,
+        mobile_money_phone: selectedPaymentMethod === "mobile_money" ? mobileMoneyForm.phone_number : null,
+        passenger_details: [
+          { name: `${user.first_name} ${user.last_name}`, phone: user.phone }
+        ]
       };
 
-      const response = await axios.post(`${API}/bookings`, bookingData);
-      toast.success(`Réservation confirmée ! Référence: ${response.data.booking_reference}`);
+      const response = await axios.post(`${API}/bookings/fusion`, bookingData);
+      toast.success(`Réservation créée ! Référence: ${response.data.booking_reference}`);
+      
+      // If mobile money, show payment instructions
+      if (selectedPaymentMethod === "mobile_money" && response.data.payment_details) {
+        toast.info(response.data.payment_details.instructions);
+      }
       
       setBookings([...bookings, response.data]);
       setActiveTab("tickets");
-      setSelectedRoute(null);
-      setSelectedBaggage([]);
-      setPromoCode("");
-      setCarbonOffset(false);
     } catch (error) {
       console.error("Error creating booking:", error);
       toast.error("Erreur lors de la réservation");
@@ -191,450 +276,751 @@ function App() {
     }
   };
 
-  const trackBooking = async () => {
-    if (!trackingReference) {
-      toast.error("Veuillez saisir une référence de réservation");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await axios.get(`${API}/track/${trackingReference}`);
-      setTrackingInfo(response.data);
-      toast.success("Informations de suivi mises à jour");
-    } catch (error) {
-      console.error("Error tracking booking:", error);
-      toast.error("Référence introuvable");
-    } finally {
-      setLoading(false);
+  const getServiceClassIcon = (className) => {
+    switch(className) {
+      case 'economy': return <Bus className="w-4 h-4 text-blue-600" />;
+      case 'comfort': return <Car className="w-4 h-4 text-green-600" />;
+      case 'vip': return <Crown className="w-4 h-4 text-purple-600" />;
+      case 'express': return <Lightning className="w-4 h-4 text-yellow-600" />;
+      default: return <Bus className="w-4 h-4" />;
     }
   };
 
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'on_time': return 'bg-green-500';
-      case 'delayed': return 'bg-yellow-500';
-      case 'boarding': return 'bg-blue-500';
-      case 'en_route': return 'bg-purple-500';
-      case 'arrived': return 'bg-gray-500';
-      default: return 'bg-gray-500';
+  const getServiceClassColor = (className) => {
+    switch(className) {
+      case 'economy': return 'from-blue-500 to-blue-600';
+      case 'comfort': return 'from-green-500 to-green-600';
+      case 'vip': return 'from-purple-500 to-purple-600';
+      case 'express': return 'from-yellow-500 to-yellow-600';
+      default: return 'from-gray-500 to-gray-600';
     }
   };
 
-  const getStatusText = (status) => {
-    switch(status) {
-      case 'on_time': return 'À l\'heure';
-      case 'delayed': return 'Retardé';
-      case 'boarding': return 'Embarquement';
-      case 'en_route': return 'En route';
-      case 'arrived': return 'Arrivé';
-      default: return 'Inconnu';
+  const getMobileMoneyIcon = (provider) => {
+    switch(provider) {
+      case 'OM': return <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs">OM</div>;
+      case 'MOMO': return <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-xs">MTN</div>;
+      case 'EUM': return <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs">EU</div>;
+      default: return <Smartphone className="w-8 h-8" />;
     }
   };
 
-  const getAmenityIcon = (amenity) => {
-    switch(amenity.toLowerCase()) {
-      case 'wifi': return <Wifi className="w-4 h-4" />;
-      case 'ac': return <Car className="w-4 h-4" />;
-      case 'toilettes': return <Coffee className="w-4 h-4" />;
-      case 'prises usb': return <Zap className="w-4 h-4" />;
-      case 'collations': return <Utensils className="w-4 h-4" />;
-      case 'télévision': return <Monitor className="w-4 h-4" />;
-      default: return <CheckCircle className="w-4 h-4" />;
-    }
-  };
-
-  const getBaggageIcon = (type) => {
-    switch(type) {
-      case 'carry_on': return <Backpack className="w-5 h-5" />;
-      case 'checked': return <Briefcase className="w-5 h-5" />;
-      case 'extra': return <Plus className="w-5 h-5" />;
-      case 'bike': return <Bike className="w-5 h-5" />;
-      case 'sports': return <Dumbbell className="w-5 h-5" />;
-      default: return <Briefcase className="w-5 h-5" />;
-    }
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('fr-FR').format(price);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto p-4 max-w-6xl">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100">
+      <div className="container mx-auto p-4 max-w-7xl">
+        
+        {/* Fusion Header (TicketCam + BusConnect style) */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🚌 BusConnect Cameroun
-          </h1>
-          <p className="text-gray-600">Votre compagnon de voyage intelligent</p>
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 rounded-2xl shadow-xl">
+              <Bus className="w-10 h-10 text-white" />
+            </div>
+            <div>
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
+                BusConnect
+              </h1>
+              <p className="text-xl text-cyan-600 font-semibold tracking-wide">Cameroun</p>
+            </div>
+            {user.subscription_type === "premium" && (
+              <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2">
+                <Crown className="w-4 h-4 mr-2" />
+                Premium
+              </Badge>
+            )}
+          </div>
+          
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Réservez vos billets de transport interurbain
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Rapide, sécurisé et pratique avec Mobile Money
+            </p>
+          </div>
+
+          {/* Key Features (TicketCam style) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all">
+              <CardContent className="p-6 text-center">
+                <Search className="w-12 h-12 text-cyan-600 mx-auto mb-4" />
+                <h3 className="font-bold text-lg mb-2">Recherche intelligente</h3>
+                <p className="text-gray-600 text-sm">Prix dynamiques et suggestions IA</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all">
+              <CardContent className="p-6 text-center">
+                <Smartphone className="w-12 h-12 text-orange-600 mx-auto mb-4" />
+                <h3 className="font-bold text-lg mb-2">Mobile Money</h3>
+                <p className="text-gray-600 text-sm">Orange Money & MTN Money</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all">
+              <CardContent className="p-6 text-center">
+                <QrCode className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+                <h3 className="font-bold text-lg mb-2">Billet électronique</h3>
+                <p className="text-gray-600 text-sm">QR code sécurisé</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Main Tabs */}
+        {/* Smart Notifications Bar */}
+        {notifications.length > 0 && (
+          <Card className="mb-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <Bell className="w-5 h-5" />
+                <div className="flex-1 overflow-x-auto">
+                  <div className="flex gap-4">
+                    {notifications.slice(0, 3).map((notif, idx) => (
+                      <div key={idx} className="whitespace-nowrap bg-white/20 px-3 py-2 rounded-lg">
+                        <span className="text-sm font-medium">{notif.title}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Enhanced Navigation Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8 bg-white shadow-md rounded-lg">
+          <TabsList className="grid w-full grid-cols-5 mb-8 bg-white shadow-xl rounded-2xl p-2">
+            <TabsTrigger 
+              value="home" 
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-xl transition-all"
+              data-testid="home-tab"
+            >
+              <Bus className="w-4 h-4" />
+              <span className="hidden md:inline">Accueil</span>
+            </TabsTrigger>
             <TabsTrigger 
               value="search" 
-              className="flex items-center gap-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-xl transition-all"
               data-testid="search-tab"
             >
               <Search className="w-4 h-4" />
-              Recherche
-            </TabsTrigger>
-            <TabsTrigger 
-              value="tracking" 
-              className="flex items-center gap-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
-              data-testid="tracking-tab"
-            >
-              <Navigation className="w-4 h-4" />
-              Suivi Live
+              <span className="hidden md:inline">Recherche</span>
             </TabsTrigger>
             <TabsTrigger 
               value="tickets" 
-              className="flex items-center gap-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-xl transition-all"
               data-testid="tickets-tab"
             >
               <Ticket className="w-4 h-4" />
-              Mes Billets
+              <span className="hidden md:inline">Billets</span>
             </TabsTrigger>
             <TabsTrigger 
               value="offers" 
-              className="flex items-center gap-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-xl transition-all"
               data-testid="offers-tab"
             >
               <Gift className="w-4 h-4" />
-              Offres
+              <span className="hidden md:inline">Offres</span>
             </TabsTrigger>
             <TabsTrigger 
               value="profile" 
-              className="flex items-center gap-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-xl transition-all"
               data-testid="profile-tab"
             >
               <User className="w-4 h-4" />
-              Profil
+              <span className="hidden md:inline">Profil</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Search Tab */}
-          <TabsContent value="search" className="space-y-6">
-            <Card data-testid="search-form">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Search className="w-5 h-5" />
-                  Rechercher un trajet
-                </CardTitle>
-                <CardDescription>
-                  Trouvez le meilleur trajet pour votre destination
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="origin">Ville de départ</Label>
-                    <Select onValueChange={(value) => setSearchForm({...searchForm, origin: value})}>
-                      <SelectTrigger data-testid="origin-select">
-                        <SelectValue placeholder="Sélectionnez la ville de départ" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city) => (
-                          <SelectItem key={city.name} value={city.name}>
-                            {city.name} ({city.region})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="destination">Ville d'arrivée</Label>
-                    <Select onValueChange={(value) => setSearchForm({...searchForm, destination: value})}>
-                      <SelectTrigger data-testid="destination-select">
-                        <SelectValue placeholder="Sélectionnez la ville d'arrivée" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city) => (
-                          <SelectItem key={city.name} value={city.name}>
-                            {city.name} ({city.region})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+          {/* Home Tab (TicketCam style with enhancements) */}
+          <TabsContent value="home" className="space-y-6">
+            
+            {/* Quick Search Section */}
+            <Card className="shadow-2xl border-0 bg-gradient-to-r from-white to-blue-50">
+              <CardContent className="p-8">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">Rechercher un trajet</h3>
+                  <p className="text-gray-600">Prix en temps réel avec IA</p>
                 </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                  <Select onValueChange={(value) => setSearchForm({...searchForm, origin: value})}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Ville de départ" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city.name} value={city.name}>
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            {city.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="date">Date de départ</Label>
-                    <Input
-                      type="date"
-                      value={searchForm.departure_date}
-                      onChange={(e) => setSearchForm({...searchForm, departure_date: e.target.value})}
-                      data-testid="departure-date"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="passengers">Nombre de passagers</Label>
-                    <Select onValueChange={(value) => setSearchForm({...searchForm, passengers: parseInt(value)})}>
-                      <SelectTrigger data-testid="passengers-select">
-                        <SelectValue placeholder="1 passager" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[1,2,3,4,5,6].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
+                  <Select onValueChange={(value) => setSearchForm({...searchForm, destination: value})}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Ville d'arrivée" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city.name} value={city.name}>
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            {city.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Input
+                    type="date"
+                    value={searchForm.departure_date}
+                    onChange={(e) => setSearchForm({...searchForm, departure_date: e.target.value})}
+                    className="h-12"
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+
+                  <Select onValueChange={(value) => setSearchForm({...searchForm, passengers: parseInt(value)})}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="1 passager" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1,2,3,4,5,6].map((num) => (
+                        <SelectItem key={num} value={num.toString()}>
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4" />
                             {num} passager{num > 1 ? 's' : ''}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <Button 
-                  onClick={searchRoutes} 
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  onClick={performSmartSearch}
+                  className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg"
                   disabled={loading}
-                  data-testid="search-button"
+                  data-testid="search-button-home"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Search className="w-4 h-4 mr-2" />}
-                  Rechercher
+                  {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  ) : (
+                    <Search className="w-5 h-5 mr-2" />
+                  )}
+                  Rechercher les meilleurs prix
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Search Results */}
-            {routes.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold">Trajets disponibles ({routes.length})</h3>
-                {routes.map((route) => (
-                  <Card key={route.id} className="hover:shadow-lg transition-shadow" data-testid={`route-${route.id}`}>
+            {/* Popular Routes (TicketCam integration) */}
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Trajets populaires</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {popularRoutes.map((route, idx) => (
+                  <Card key={idx} className="group hover:shadow-2xl transition-all duration-300 border-0 bg-white/90 backdrop-blur-sm cursor-pointer" 
+                        onClick={() => {
+                          setSearchForm({
+                            ...searchForm,
+                            origin: route.origin,
+                            destination: route.destination,
+                            departure_date: new Date().toISOString().split('T')[0]
+                          });
+                          setActiveTab("search");
+                        }}>
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start mb-4">
-                        <div className="flex items-center gap-4">
-                          <div className="text-center">
-                            <div className="font-bold text-lg">{route.departure_time}</div>
-                            <div className="text-sm text-gray-600">{route.origin}</div>
-                          </div>
-                          
-                          <div className="flex flex-col items-center px-4">
-                            <Route className="w-5 h-5 text-blue-500" />
-                            <div className="text-xs text-gray-500">{route.duration}</div>
-                          </div>
-                          
-                          <div className="text-center">
-                            <div className="font-bold text-lg">{route.arrival_time}</div>
-                            <div className="text-sm text-gray-600">{route.destination}</div>
-                          </div>
+                        <div>
+                          <h4 className="font-bold text-lg text-gray-800">
+                            {route.origin} → {route.destination}
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            {route.companies_count} compagnies • {route.average_duration}
+                          </p>
                         </div>
-
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-600">{route.price.toLocaleString()} FCFA</div>
-                          <div className="text-sm text-gray-600">{route.available_seats} places disponibles</div>
-                        </div>
+                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-cyan-600 transition-colors" />
                       </div>
 
                       <div className="flex justify-between items-center mb-4">
                         <div>
-                          <Badge variant="secondary" className="mr-2">{route.company}</Badge>
-                          <Badge variant="outline">{route.bus_type}</Badge>
+                          <span className="text-sm text-gray-600">À partir de</span>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-2xl font-bold text-cyan-600">
+                              {formatPrice(route.current_price || route.base_price)} FCFA
+                            </span>
+                            {route.current_price && route.current_price < route.base_price && (
+                              <span className="text-xs text-red-500 line-through">
+                                {formatPrice(route.base_price)} FCFA
+                              </span>
+                            )}
+                          </div>
                         </div>
                         
-                        <div className="flex gap-2">
-                          {route.amenities.map((amenity, idx) => (
-                            <div key={idx} className="flex items-center gap-1 text-xs text-gray-600">
-                              {getAmenityIcon(amenity)}
-                              <span>{amenity}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <Button 
-                        onClick={() => selectRoute(route)}
-                        className="w-full bg-green-600 hover:bg-green-700"
-                        data-testid={`select-route-${route.id}`}
-                      >
-                        Sélectionner ce trajet
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Tracking Tab */}
-          <TabsContent value="tracking" className="space-y-6">
-            <Card data-testid="tracking-form">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Navigation className="w-5 h-5" />
-                  Suivi en temps réel
-                </CardTitle>
-                <CardDescription>
-                  Suivez votre bus en temps réel
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="tracking-ref">Référence de réservation</Label>
-                  <Input
-                    placeholder="Ex: BC123456"
-                    value={trackingReference}
-                    onChange={(e) => setTrackingReference(e.target.value)}
-                    data-testid="tracking-reference"
-                  />
-                </div>
-                
-                <Button 
-                  onClick={trackBooking}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                  disabled={loading}
-                  data-testid="track-button"
-                >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Compass className="w-4 h-4 mr-2" />}
-                  Suivre mon trajet
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Tracking Results */}
-            {trackingInfo && (
-              <Card data-testid="tracking-info">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bus className="w-5 h-5" />
-                    Statut du trajet - {trackingInfo.booking_reference}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-4 h-4 rounded-full ${getStatusColor(trackingInfo.status)}`} />
-                    <div>
-                      <div className="font-semibold">{getStatusText(trackingInfo.status)}</div>
-                      <div className="text-sm text-gray-600">
-                        Actuellement à {trackingInfo.current_location}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="font-semibold mb-2">Prochains arrêts</h4>
-                      <div className="space-y-2">
-                        {trackingInfo.next_stops.map((stop, idx) => (
-                          <div key={idx} className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                            <span className="text-sm">{idx + 1}. {stop}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <div className="text-sm text-gray-600">Arrivée estimée</div>
-                        <div className="font-semibold">{trackingInfo.estimated_arrival}</div>
-                        {trackingInfo.delay_minutes > 0 && (
-                          <div className="text-sm text-yellow-600">
-                            Retard: {trackingInfo.delay_minutes} min
+                        {route.price_trend && (
+                          <div className="flex items-center gap-1">
+                            {route.price_trend === 'decreasing' ? 
+                              <TrendingDown className="w-4 h-4 text-green-600" /> :
+                              route.price_trend === 'increasing' ?
+                              <TrendingUp className="w-4 h-4 text-red-600" /> :
+                              <div className="w-4 h-4 bg-gray-300 rounded-full" />
+                            }
+                            <span className="text-xs text-gray-500 capitalize">{route.price_trend}</span>
                           </div>
                         )}
                       </div>
 
-                      <div>
-                        <div className="text-sm text-gray-600">Distance restante</div>
-                        <div className="font-semibold">{trackingInfo.distance_remaining_km} km</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Mises à jour en direct</h4>
-                    <div className="space-y-2">
-                      {trackingInfo.live_updates.map((update, idx) => (
-                        <div key={idx} className="text-sm bg-blue-50 p-2 rounded">
-                          {update}
+                      <div className="flex justify-between items-center">
+                        <div className="text-xs text-gray-500">
+                          Prochain départ: {route.next_departure}
                         </div>
-                      ))}
-                    </div>
+                        <div className="text-xs text-gray-500">
+                          {route.seats_available} places disponibles
+                        </div>
+                      </div>
+
+                      {route.special_offer && (
+                        <div className="mt-3 p-2 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-lg">
+                          <p className="text-xs font-medium text-orange-800">{route.special_offer}</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Smart Suggestions */}
+            {smartSuggestions.length > 0 && (
+              <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-purple-800">
+                    <Target className="w-5 h-5" />
+                    Suggestions intelligentes pour vous
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {smartSuggestions.map((suggestion, idx) => (
+                      <Card key={idx} className="bg-white/70 hover:bg-white transition-all cursor-pointer">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-semibold">{suggestion.route}</h4>
+                            <Heart className="w-4 h-4 text-pink-500" />
+                          </div>
+                          <p className="text-sm text-gray-600 mb-3">{suggestion.reason}</p>
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="font-bold text-green-600">{formatPrice(suggestion.price)} FCFA</span>
+                              <span className="text-xs text-gray-500 ml-2 line-through">
+                                {formatPrice(suggestion.originalPrice)} FCFA
+                              </span>
+                            </div>
+                            <Badge className="bg-green-100 text-green-800">
+                              Économisez {formatPrice(suggestion.savings)} FCFA
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
             )}
           </TabsContent>
 
-          {/* Tickets Tab */}
+          {/* Enhanced Search Tab */}
+          <TabsContent value="search" className="space-y-6">
+            <Card className="shadow-xl">
+              <CardHeader>
+                <CardTitle>Recherche avancée avec IA</CardTitle>
+                <CardDescription>Prix dynamiques et filtres intelligents</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Classe de service</Label>
+                    <Select 
+                      value={searchForm.service_class}
+                      onValueChange={(value) => setSearchForm({...searchForm, service_class: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="economy">
+                          <div className="flex items-center gap-2">
+                            {getServiceClassIcon("economy")}
+                            Économique
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="comfort">
+                          <div className="flex items-center gap-2">
+                            {getServiceClassIcon("comfort")}
+                            Confort
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="vip">
+                          <div className="flex items-center gap-2">
+                            {getServiceClassIcon("vip")}
+                            VIP
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="express">
+                          <div className="flex items-center gap-2">
+                            {getServiceClassIcon("express")}
+                            Express
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Préférence horaire</Label>
+                    <Select 
+                      value={searchForm.time_preference}
+                      onValueChange={(value) => setSearchForm({...searchForm, time_preference: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Toute heure</SelectItem>
+                        <SelectItem value="morning">Matin (5h-12h)</SelectItem>
+                        <SelectItem value="afternoon">Après-midi (12h-18h)</SelectItem>
+                        <SelectItem value="evening">Soir (18h-23h)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Budget maximum (optionnel)</Label>
+                  <Input
+                    type="number"
+                    placeholder="Ex: 15000 FCFA"
+                    value={searchForm.budget_max || ""}
+                    onChange={(e) => setSearchForm({...searchForm, budget_max: e.target.value ? parseInt(e.target.value) : null})}
+                  />
+                </div>
+
+                <Button 
+                  onClick={performSmartSearch}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Search className="w-4 h-4 mr-2" />}
+                  Recherche intelligente
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Results Tab */}
+          <TabsContent value="results" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold">Résultats de recherche ({routes.length})</h3>
+              <Badge className="bg-cyan-100 text-cyan-800">
+                <Lightning className="w-3 h-3 mr-1" />
+                Prix dynamiques IA
+              </Badge>
+            </div>
+
+            {routes.map((route) => (
+              <Card key={route.id} className="hover:shadow-xl transition-all border-0 bg-white/95">
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    {/* Route Info */}
+                    <div className="lg:col-span-2">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="text-center">
+                          <div className="font-bold text-xl text-cyan-600">{route.departure_time}</div>
+                          <div className="text-sm text-gray-600">{route.origin}</div>
+                        </div>
+                        
+                        <div className="flex-1 flex flex-col items-center">
+                          <div className="flex items-center w-full">
+                            <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+                            <div className="flex-1 h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
+                            <Bus className="w-6 h-6 text-cyan-600 mx-2" />
+                            <div className="flex-1 h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
+                            <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-2">{route.duration} • {route.distance_km}km</div>
+                        </div>
+                        
+                        <div className="text-center">
+                          <div className="font-bold text-xl text-blue-600">{route.arrival_time}</div>
+                          <div className="text-sm text-gray-600">{route.destination}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        <Badge className={`bg-gradient-to-r ${getServiceClassColor(route.service_class)} text-white`}>
+                          {getServiceClassIcon(route.service_class)}
+                          <span className="ml-1 capitalize">{route.service_class}</span>
+                        </Badge>
+                        
+                        <Badge variant="outline">{route.company}</Badge>
+                        
+                        {route.eco_friendly && (
+                          <Badge className="bg-green-100 text-green-800">
+                            <Leaf className="w-3 h-3 mr-1" />
+                            Éco
+                          </Badge>
+                        )}
+
+                        <Badge variant="outline">
+                          <Star className="w-3 h-3 mr-1" />
+                          {route.driver_info?.rating || 4.5}
+                        </Badge>
+                      </div>
+
+                      {route.amenities && (
+                        <div className="flex flex-wrap gap-2">
+                          {route.amenities.slice(0, 4).map((amenity, idx) => (
+                            <div key={idx} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                              <Wifi className="w-3 h-3 inline mr-1" />
+                              {amenity}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* AI Insights */}
+                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-lg">
+                      <div className="text-sm font-semibold text-blue-800 mb-2">Analyse IA</div>
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between">
+                          <span>Popularité:</span>
+                          <span>{route.route_popularity}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Demande:</span>
+                          <Badge 
+                            variant="outline" 
+                            className={
+                              route.demand_level === 'high' ? 'border-red-500 text-red-700' :
+                              route.demand_level === 'low' ? 'border-green-500 text-green-700' :
+                              'border-yellow-500 text-yellow-700'
+                            }
+                          >
+                            {route.demand_level}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Empreinte CO₂:</span>
+                          <span>{route.carbon_footprint}kg</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Price & Action */}
+                    <div className="flex flex-col justify-between">
+                      <div className="text-right mb-4">
+                        <div className="flex items-center justify-end gap-2 mb-2">
+                          {route.dynamic_price < route.base_price && (
+                            <span className="text-sm text-gray-500 line-through">
+                              {formatPrice(route.base_price)} FCFA
+                            </span>
+                          )}
+                          <div className="text-2xl font-bold text-cyan-600">
+                            {formatPrice(route.dynamic_price)} FCFA
+                          </div>
+                        </div>
+                        
+                        <div className="text-sm text-gray-600 mb-1">
+                          {route.available_seats} places disponibles
+                        </div>
+                        
+                        {route.dynamic_price < route.base_price && (
+                          <Badge className="bg-green-100 text-green-800 text-xs">
+                            <Percent className="w-3 h-3 mr-1" />
+                            Économisez {formatPrice(route.base_price - route.dynamic_price)} FCFA
+                          </Badge>
+                        )}
+                      </div>
+
+                      <Button 
+                        onClick={() => selectRouteAndProceedToBooking(route)}
+                        className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Réserver
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+
+          {/* Booking Tab with Mobile Money Integration */}
+          <TabsContent value="booking" className="space-y-6">
+            {searchForm.selectedRoute && (
+              <Card className="shadow-2xl">
+                <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white">
+                  <CardTitle>Finaliser la réservation</CardTitle>
+                  <CardDescription className="text-cyan-100">
+                    {searchForm.selectedRoute.origin} → {searchForm.selectedRoute.destination}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8 space-y-6">
+                  
+                  {/* Payment Method Selection (TicketCam integration) */}
+                  <div>
+                    <h4 className="font-semibold mb-4">Mode de paiement</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {mobileMoneyProviders.map((provider) => (
+                        <Card 
+                          key={provider.code}
+                          className={`cursor-pointer transition-all ${
+                            mobileMoneyForm.provider === provider.code 
+                              ? 'ring-2 ring-cyan-500 bg-cyan-50' 
+                              : 'hover:shadow-md'
+                          }`}
+                          onClick={() => setMobileMoneyForm(prev => ({ ...prev, provider: provider.code }))}
+                        >
+                          <CardContent className="p-4 text-center">
+                            {getMobileMoneyIcon(provider.code)}
+                            <div className="mt-2">
+                              <div className="font-semibold text-sm">{provider.name}</div>
+                              <div className="text-xs text-gray-600">
+                                Frais: {(provider.fees_percent * 100).toFixed(1)}%
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+
+                    {selectedPaymentMethod === "mobile_money" && (
+                      <div className="mt-4">
+                        <Label>Numéro de téléphone Mobile Money</Label>
+                        <Input
+                          placeholder="+237 6XX XXX XXX"
+                          value={mobileMoneyForm.phone_number}
+                          onChange={(e) => setMobileMoneyForm(prev => ({ ...prev, phone_number: e.target.value }))}
+                          className="mt-2"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Price Summary */}
+                  <Card className="bg-gradient-to-r from-gray-50 to-cyan-50">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold mb-4">Récapitulatif</h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span>Prix du trajet ({searchForm.passengers} passager{searchForm.passengers > 1 ? 's' : ''})</span>
+                          <span className="font-semibold">
+                            {formatPrice(searchForm.selectedRoute.dynamic_price * searchForm.passengers)} FCFA
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between text-sm">
+                          <span>Taxes et frais (5%)</span>
+                          <span>{formatPrice(Math.round(searchForm.selectedRoute.dynamic_price * searchForm.passengers * 0.05))} FCFA</span>
+                        </div>
+                        
+                        {selectedPaymentMethod === "mobile_money" && (
+                          <div className="flex justify-between text-sm">
+                            <span>Frais Mobile Money</span>
+                            <span>
+                              {formatPrice(Math.round(mobileMoneyForm.amount * (mobileMoneyProviders.find(p => p.code === mobileMoneyForm.provider)?.fees_percent || 0.02)))} FCFA
+                            </span>
+                          </div>
+                        )}
+                        
+                        <div className="border-t pt-3 font-bold text-lg">
+                          <div className="flex justify-between">
+                            <span>Total à payer</span>
+                            <span className="text-cyan-600">
+                              {formatPrice(Math.round(
+                                (searchForm.selectedRoute.dynamic_price * searchForm.passengers * 1.05) +
+                                (selectedPaymentMethod === "mobile_money" ? 
+                                  mobileMoneyForm.amount * (mobileMoneyProviders.find(p => p.code === mobileMoneyForm.provider)?.fees_percent || 0.02) : 0)
+                              ))} FCFA
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setActiveTab("results")}
+                      className="flex-1"
+                    >
+                      Retour aux résultats
+                    </Button>
+                    <Button 
+                      onClick={createFusionBooking}
+                      disabled={loading || !mobileMoneyForm.phone_number}
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                    >
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 h-4 mr-2" />}
+                      Confirmer et Payer
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Other tabs would be similar to the original but enhanced with fusion features */}
           <TabsContent value="tickets" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Ticket className="w-5 h-5" />
-                  Mes billets ({bookings.length})
-                </CardTitle>
+                <CardTitle>Mes billets électroniques</CardTitle>
               </CardHeader>
               <CardContent>
                 {bookings.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Ticket className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>Aucun billet trouvé</p>
-                    <p className="text-sm">Réservez votre premier trajet dans l'onglet Recherche</p>
+                  <div className="text-center py-8">
+                    <QrCode className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <p className="text-gray-500 mb-4">Aucun billet trouvé</p>
+                    <Button 
+                      onClick={() => setActiveTab("home")}
+                      className="bg-gradient-to-r from-cyan-500 to-blue-600"
+                    >
+                      Réserver un trajet
+                    </Button>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="grid gap-4">
                     {bookings.map((booking) => (
-                      <Card key={booking.id} className="border-l-4 border-l-blue-500" data-testid={`ticket-${booking.booking_reference}`}>
+                      <Card key={booking.id} className="border-l-4 border-l-cyan-500">
                         <CardContent className="p-4">
-                          <div className="flex justify-between items-start mb-4">
+                          <div className="flex justify-between items-start">
                             <div>
-                              <div className="font-bold text-lg">Référence: {booking.booking_reference}</div>
+                              <div className="font-bold">Référence: {booking.booking_reference}</div>
                               <div className="text-sm text-gray-600">
                                 {booking.passenger_count} passager{booking.passenger_count > 1 ? 's' : ''}
                               </div>
                             </div>
-                            
-                            <div className="text-right">
-                              <div className="font-bold text-xl text-green-600">
-                                {booking.total_price.toLocaleString()} FCFA
-                              </div>
-                              <Badge variant="outline" className="text-green-600 border-green-600">
-                                {booking.status}
-                              </Badge>
-                            </div>
+                            <Badge className="bg-green-100 text-green-800">
+                              {booking.status}
+                            </Badge>
                           </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <div className="text-sm text-gray-600">Sièges réservés</div>
-                              <div className="font-semibold">{booking.seat_numbers.join(', ')}</div>
+                          <div className="mt-4 flex justify-between items-center">
+                            <div className="text-2xl font-bold text-cyan-600">
+                              {formatPrice(booking.final_price)} FCFA
                             </div>
-                            
-                            {booking.baggage.length > 0 && (
-                              <div>
-                                <div className="text-sm text-gray-600">Bagages</div>
-                                <div className="flex gap-2">
-                                  {booking.baggage.map((bag, idx) => (
-                                    <Badge key={idx} variant="secondary">
-                                      {bag.type} x{bag.quantity}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <QrCode className="w-4 h-4" />
-                              <span className="text-sm">Code QR: {booking.qr_code}</span>
-                            </div>
-                            
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setTrackingReference(booking.booking_reference);
-                                setActiveTab("tracking");
-                              }}
-                              data-testid={`track-booking-${booking.booking_reference}`}
-                            >
-                              Suivre le trajet
+                            <Button variant="outline" size="sm">
+                              <QrCode className="w-4 h-4 mr-2" />
+                              Voir le billet
                             </Button>
                           </div>
                         </CardContent>
@@ -646,291 +1032,53 @@ function App() {
             </Card>
           </TabsContent>
 
-          {/* Offers Tab */}
+          {/* Profile and Offers tabs would be similar with fusion enhancements */}
           <TabsContent value="offers" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Gift className="w-5 h-5" />
-                  Offres spéciales
-                </CardTitle>
-                <CardDescription>
-                  Profitez de nos promotions exclusives
-                </CardDescription>
-              </CardHeader>
+            <Card className="text-center py-12">
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {offers.map((offer) => (
-                    <Card key={offer.id} className="overflow-hidden" data-testid={`offer-${offer.id}`}>
-                      {offer.image_url && (
-                        <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
-                          <img 
-                            src={offer.image_url} 
-                            alt={offer.title}
-                            className="w-full h-full object-cover opacity-75"
-                          />
-                          <div className="absolute inset-0 bg-black bg-opacity-30" />
-                        </div>
-                      )}
-                      
-                      <CardContent className="p-4">
-                        <h3 className="font-bold text-lg mb-2">{offer.title}</h3>
-                        <p className="text-sm text-gray-600 mb-4">{offer.description}</p>
-                        
-                        <div className="flex justify-between items-center">
-                          {offer.discount_percent && (
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">
-                              -{offer.discount_percent}%
-                            </Badge>
-                          )}
-                          
-                          {offer.cashback_amount && (
-                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                              +{offer.cashback_amount} FCFA
-                            </Badge>
-                          )}
-
-                          {offer.type === 'carbon_offset' && (
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">
-                              <Leaf className="w-3 h-3 mr-1" />
-                              Éco-responsable
-                            </Badge>
-                          )}
-                        </div>
-
-                        {offer.code && (
-                          <div className="mt-4 p-2 bg-gray-100 rounded text-center">
-                            <div className="text-xs text-gray-600">Code promo</div>
-                            <div className="font-mono font-bold">{offer.code}</div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                <Gift className="w-16 h-16 mx-auto mb-4 text-cyan-500" />
+                <h3 className="text-xl font-bold mb-2">Offres spéciales à venir</h3>
+                <p className="text-gray-600">Restez connecté pour des promotions exclusives !</p>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Profile Tab */}
           <TabsContent value="profile" className="space-y-6">
-            <Card data-testid="user-profile">
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  Mon Profil
-                </CardTitle>
+                <CardTitle>Mon profil BusConnect</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
+              <CardContent>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
                     {user.first_name[0]}{user.last_name[0]}
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold">{user.first_name} {user.last_name}</h3>
-                    <p className="text-gray-600">Client BusConnect</p>
+                    <h3 className="text-xl font-bold">{user.first_name} {user.last_name}</h3>
+                    <p className="text-gray-600">Client depuis 2024</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card className="text-center p-4">
-                    <div className="text-2xl font-bold text-blue-600">{bookings.length}</div>
+                  <Card className="text-center p-4 bg-cyan-50">
+                    <div className="text-2xl font-bold text-cyan-600">{bookings.length}</div>
                     <div className="text-sm text-gray-600">Voyages effectués</div>
                   </Card>
                   
-                  <Card className="text-center p-4">
-                    <div className="text-2xl font-bold text-green-600">2,500</div>
+                  <Card className="text-center p-4 bg-green-50">
+                    <div className="text-2xl font-bold text-green-600">{user.loyalty_points}</div>
                     <div className="text-sm text-gray-600">Points fidélité</div>
                   </Card>
                   
-                  <Card className="text-center p-4">
+                  <Card className="text-center p-4 bg-purple-50">
                     <div className="text-2xl font-bold text-purple-600">5</div>
                     <div className="text-sm text-gray-600">Codes promo utilisés</div>
                   </Card>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-4">Progression Fidélité</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Vers le statut Premium</span>
-                      <span>{bookings.length}/10 voyages</span>
-                    </div>
-                    <Progress value={(bookings.length / 10) * 100} className="w-full" />
-                    <p className="text-xs text-gray-600">
-                      Plus que {10 - bookings.length} voyages pour débloquer des avantages exclusifs !
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-2">Préférences</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Notifications</span>
-                      <Badge variant="outline">Activées</Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Newsletter</span>
-                      <Badge variant="outline">Abonné</Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Compensation carbone</span>
-                      <Badge variant="outline">Préférée</Badge>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-
-        {/* Booking Modal/Section */}
-        {selectedRoute && activeTab === "booking" && (
-          <Card className="mt-8" data-testid="booking-form">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Ticket className="w-5 h-5" />
-                Finaliser la réservation
-              </CardTitle>
-              <CardDescription>
-                {selectedRoute.origin} → {selectedRoute.destination} | {selectedRoute.departure_time}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Baggage Selection */}
-              <div>
-                <h4 className="font-semibold mb-4">Sélection des bagages</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {baggageOptions.map((option) => (
-                    <Card 
-                      key={option.type}
-                      className={`cursor-pointer transition-all ${
-                        selectedBaggage.some(b => b.type === option.type) 
-                          ? 'ring-2 ring-blue-500 bg-blue-50' 
-                          : 'hover:shadow-md'
-                      }`}
-                      onClick={() => toggleBaggage(option)}
-                      data-testid={`baggage-${option.type}`}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-3 mb-2">
-                          {getBaggageIcon(option.type)}
-                          <div className="flex-1">
-                            <div className="font-medium">{option.name}</div>
-                            <div className="text-xs text-gray-600">{option.description}</div>
-                          </div>
-                          {option.included ? (
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">
-                              Inclus
-                            </Badge>
-                          ) : (
-                            <div className="text-right">
-                              <div className="font-bold text-sm">+{option.price} FCFA</div>
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              {/* Promo Code */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="promo">Code promotionnel (optionnel)</Label>
-                  <Input
-                    placeholder="Ex: WEEKEND15"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                    data-testid="promo-code-input"
-                  />
-                </div>
-                
-                <div className="flex items-center space-x-2 pt-6">
-                  <input
-                    type="checkbox"
-                    id="carbon-offset"
-                    checked={carbonOffset}
-                    onChange={(e) => setCarbonOffset(e.target.checked)}
-                    className="rounded"
-                    data-testid="carbon-offset-checkbox"
-                  />
-                  <Label htmlFor="carbon-offset" className="text-sm">
-                    Compensation carbone (+500 FCFA) <Leaf className="w-3 h-3 inline text-green-600" />
-                  </Label>
-                </div>
-              </div>
-
-              {/* Price Summary */}
-              <Card className="bg-gray-50">
-                <CardContent className="p-4">
-                  <h4 className="font-semibold mb-3">Récapitulatif des prix</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Trajet ({searchForm.passengers} passager{searchForm.passengers > 1 ? 's' : ''})</span>
-                      <span>{(selectedRoute.price * searchForm.passengers).toLocaleString()} FCFA</span>
-                    </div>
-                    
-                    {selectedBaggage.map((bag, idx) => (
-                      <div key={idx} className="flex justify-between">
-                        <span>{bag.type} (x{bag.quantity})</span>
-                        <span>{(bag.price * bag.quantity).toLocaleString()} FCFA</span>
-                      </div>
-                    ))}
-                    
-                    {carbonOffset && (
-                      <div className="flex justify-between">
-                        <span>Compensation carbone</span>
-                        <span>500 FCFA</span>
-                      </div>
-                    )}
-                    
-                    {promoCode && (
-                      <div className="flex justify-between text-green-600">
-                        <span>Code promo ({promoCode})</span>
-                        <span>-15%</span>
-                      </div>
-                    )}
-                    
-                    <div className="border-t pt-2 font-bold text-lg">
-                      <div className="flex justify-between">
-                        <span>Total</span>
-                        <span className="text-blue-600">
-                          {((selectedRoute.price * searchForm.passengers) + 
-                            selectedBaggage.reduce((sum, bag) => sum + (bag.price * bag.quantity), 0) +
-                            (carbonOffset ? 500 : 0)).toLocaleString()} FCFA
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Action Buttons */}
-              <div className="flex gap-4">
-                <Button 
-                  variant="outline" 
-                  onClick={() => {setSelectedRoute(null); setActiveTab("search");}}
-                  className="flex-1"
-                  data-testid="cancel-booking"
-                >
-                  Annuler
-                </Button>
-                <Button 
-                  onClick={createBooking}
-                  disabled={loading}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                  data-testid="confirm-booking"
-                >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 h-4 mr-2" />}
-                  Confirmer la réservation
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
       
       <Toaster />
