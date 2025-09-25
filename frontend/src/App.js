@@ -340,6 +340,13 @@ function App() {
                 Premium
               </Badge>
             )}
+            <Button 
+              onClick={() => setCurrentView("registration")}
+              className="ml-auto bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+            >
+              <User className="w-4 h-4 mr-2" />
+              Inscription
+            </Button>
           </div>
           
           <div className="mb-6">
