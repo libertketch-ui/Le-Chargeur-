@@ -1,0 +1,797 @@
+{
+  "timestamp": "2025-09-25T23:06:55.727488",
+  "total_tests": 13,
+  "passed_tests": 10,
+  "success_rate": 76.92307692307693,
+  "test_details": [
+    {
+      "test": "API Health Check",
+      "success": true,
+      "details": "",
+      "response_data": {
+        "message": "BusConnect Cameroun API - FlixBus Style",
+        "version": "1.0"
+      }
+    },
+    {
+      "test": "Get Cities",
+      "success": false,
+      "details": "Only 62 cities found, expected 120+",
+      "response_data": {
+        "cities": [
+          {
+            "name": "Yaound\u00e9",
+            "region": "Centre",
+            "lat": 3.8667,
+            "lng": 11.5167
+          },
+          {
+            "name": "Mbalmayo",
+            "region": "Centre",
+            "lat": 3.5167,
+            "lng": 11.5
+          },
+          {
+            "name": "Akonolinga",
+            "region": "Centre",
+            "lat": 3.7667,
+            "lng": 12.25
+          },
+          {
+            "name": "Bafia",
+            "region": "Centre",
+            "lat": 4.75,
+            "lng": 11.2333
+          },
+          {
+            "name": "Mfou",
+            "region": "Centre",
+            "lat": 3.7167,
+            "lng": 11.6833
+          },
+          {
+            "name": "Obala",
+            "region": "Centre",
+            "lat": 4.1667,
+            "lng": 11.5333
+          },
+          {
+            "name": "Ntui",
+            "region": "Centre",
+            "lat": 4.8167,
+            "lng": 11.6333
+          },
+          {
+            "name": "Monat\u00e9l\u00e9",
+            "region": "Centre",
+            "lat": 3.7,
+            "lng": 11.3667
+          },
+          {
+            "name": "Douala",
+            "region": "Littoral",
+            "lat": 4.0611,
+            "lng": 9.7067
+          },
+          {
+            "name": "Ed\u00e9a",
+            "region": "Littoral",
+            "lat": 3.7833,
+            "lng": 10.1333
+          },
+          {
+            "name": "Nkongsamba",
+            "region": "Littoral",
+            "lat": 4.95,
+            "lng": 9.9333
+          },
+          {
+            "name": "Loum",
+            "region": "Littoral",
+            "lat": 4.7167,
+            "lng": 9.7333
+          },
+          {
+            "name": "Mbanga",
+            "region": "Littoral",
+            "lat": 4.4833,
+            "lng": 9.5667
+          },
+          {
+            "name": "Manjo",
+            "region": "Littoral",
+            "lat": 4.8167,
+            "lng": 9.8333
+          },
+          {
+            "name": "Dizangu\u00e9",
+            "region": "Littoral",
+            "lat": 3.6833,
+            "lng": 10.6167
+          },
+          {
+            "name": "Bafoussam",
+            "region": "Ouest",
+            "lat": 5.4667,
+            "lng": 10.4167
+          },
+          {
+            "name": "Dschang",
+            "region": "Ouest",
+            "lat": 5.45,
+            "lng": 10.05
+          },
+          {
+            "name": "Mbouda",
+            "region": "Ouest",
+            "lat": 5.6167,
+            "lng": 10.25
+          },
+          {
+            "name": "Bandjoun",
+            "region": "Ouest",
+            "lat": 5.3667,
+            "lng": 10.4
+          },
+          {
+            "name": "Bangangt\u00e9",
+            "region": "Ouest",
+            "lat": 5.15,
+            "lng": 10.5167
+          },
+          {
+            "name": "Foumban",
+            "region": "Ouest",
+            "lat": 5.7167,
+            "lng": 10.9
+          },
+          {
+            "name": "K\u00e9kem",
+            "region": "Ouest",
+            "lat": 5.35,
+            "lng": 10.0833
+          },
+          {
+            "name": "Bafang",
+            "region": "Ouest",
+            "lat": 5.1667,
+            "lng": 10.1833
+          },
+          {
+            "name": "Bamenda",
+            "region": "Nord-Ouest",
+            "lat": 5.9667,
+            "lng": 10.1667
+          },
+          {
+            "name": "Kumbo",
+            "region": "Nord-Ouest",
+            "lat": 6.2,
+            "lng": 10.6833
+          },
+          {
+            "name": "Wum",
+            "region": "Nord-Ouest",
+            "lat": 6.3833,
+            "lng": 10.0667
+          },
+          {
+            "name": "Ndop",
+            "region": "Nord-Ouest",
+            "lat": 6.0167,
+            "lng": 10.45
+          },
+          {
+            "name": "Mbengwi",
+            "region": "Nord-Ouest",
+            "lat": 6.1667,
+            "lng": 9.9333
+          },
+          {
+            "name": "Fundong",
+            "region": "Nord-Ouest",
+            "lat": 6.2333,
+            "lng": 10.2833
+          },
+          {
+            "name": "Bu\u00e9a",
+            "region": "Sud-Ouest",
+            "lat": 4.15,
+            "lng": 9.2833
+          },
+          {
+            "name": "Limbe",
+            "region": "Sud-Ouest",
+            "lat": 4.0167,
+            "lng": 9.2
+          },
+          {
+            "name": "Kumba",
+            "region": "Sud-Ouest",
+            "lat": 4.6333,
+            "lng": 9.45
+          },
+          {
+            "name": "Tiko",
+            "region": "Sud-Ouest",
+            "lat": 4.0667,
+            "lng": 9.3667
+          },
+          {
+            "name": "Mamf\u00e9",
+            "region": "Sud-Ouest",
+            "lat": 5.7667,
+            "lng": 9.3
+          },
+          {
+            "name": "Tombel",
+            "region": "Sud-Ouest",
+            "lat": 4.6167,
+            "lng": 9.6
+          },
+          {
+            "name": "Bangem",
+            "region": "Sud-Ouest",
+            "lat": 4.8167,
+            "lng": 9.7667
+          },
+          {
+            "name": "Ebolowa",
+            "region": "Sud",
+            "lat": 2.9167,
+            "lng": 11.15
+          },
+          {
+            "name": "Kribi",
+            "region": "Sud",
+            "lat": 2.9333,
+            "lng": 9.9167
+          },
+          {
+            "name": "Sangm\u00e9lima",
+            "region": "Sud",
+            "lat": 2.9167,
+            "lng": 11.9833
+          },
+          {
+            "name": "Ambam",
+            "region": "Sud",
+            "lat": 2.3833,
+            "lng": 11.2667
+          },
+          {
+            "name": "Campo",
+            "region": "Sud",
+            "lat": 2.3667,
+            "lng": 9.8167
+          },
+          {
+            "name": "Lolodorf",
+            "region": "Sud",
+            "lat": 3.2333,
+            "lng": 10.7333
+          },
+          {
+            "name": "Bertoua",
+            "region": "Est",
+            "lat": 4.5833,
+            "lng": 13.6833
+          },
+          {
+            "name": "Batouri",
+            "region": "Est",
+            "lat": 4.4333,
+            "lng": 14.3667
+          },
+          {
+            "name": "Yokadouma",
+            "region": "Est",
+            "lat": 3.5167,
+            "lng": 15.0833
+          },
+          {
+            "name": "Abong-Mbang",
+            "region": "Est",
+            "lat": 3.9833,
+            "lng": 13.1833
+          },
+          {
+            "name": "Doum\u00e9",
+            "region": "Est",
+            "lat": 4.2333,
+            "lng": 13.15
+          },
+          {
+            "name": "Ngaound\u00e9r\u00e9",
+            "region": "Adamaoua",
+            "lat": 7.3167,
+            "lng": 13.5833
+          },
+          {
+            "name": "Meiganga",
+            "region": "Adamaoua",
+            "lat": 6.5167,
+            "lng": 14.2833
+          },
+          {
+            "name": "Tibati",
+            "region": "Adamaoua",
+            "lat": 6.4667,
+            "lng": 12.6167
+          },
+          {
+            "name": "Banyo",
+            "region": "Adamaoua",
+            "lat": 6.75,
+            "lng": 11.8167
+          },
+          {
+            "name": "Tign\u00e8re",
+            "region": "Adamaoua",
+            "lat": 7.3667,
+            "lng": 12.65
+          },
+          {
+            "name": "Garoua",
+            "region": "Nord",
+            "lat": 9.3,
+            "lng": 13.4
+          },
+          {
+            "name": "Maroua",
+            "region": "Nord",
+            "lat": 10.5833,
+            "lng": 14.3167
+          },
+          {
+            "name": "Guider",
+            "region": "Nord",
+            "lat": 9.9333,
+            "lng": 13.95
+          },
+          {
+            "name": "Mokolo",
+            "region": "Nord",
+            "lat": 10.7333,
+            "lng": 13.8
+          },
+          {
+            "name": "Yagoua",
+            "region": "Nord",
+            "lat": 10.3333,
+            "lng": 15.2333
+          },
+          {
+            "name": "Ka\u00e9l\u00e9",
+            "region": "Nord",
+            "lat": 10.1,
+            "lng": 14.45
+          },
+          {
+            "name": "Kousseri",
+            "region": "Extr\u00eame-Nord",
+            "lat": 12.0833,
+            "lng": 15.0333
+          },
+          {
+            "name": "Mora",
+            "region": "Extr\u00eame-Nord",
+            "lat": 11.05,
+            "lng": 14.1333
+          },
+          {
+            "name": "Waza",
+            "region": "Extr\u00eame-Nord",
+            "lat": 11.3833,
+            "lng": 14.6333
+          },
+          {
+            "name": "Kolofata",
+            "region": "Extr\u00eame-Nord",
+            "lat": 10.9667,
+            "lng": 14.3
+          }
+        ]
+      }
+    },
+    {
+      "test": "Search Routes",
+      "success": true,
+      "details": "Found 3 routes",
+      "response_data": {
+        "routes": [
+          {
+            "id": "4c54289b-73b2-4c52-8973-6633b84459b3",
+            "origin": "Yaound\u00e9",
+            "destination": "Douala",
+            "departure_time": "09:15",
+            "arrival_time": "13:05",
+            "duration": "4h50min",
+            "price": 14874,
+            "company": "Touristique Express",
+            "available_seats": 33,
+            "total_seats": 45,
+            "bus_type": "Standard",
+            "amenities": [
+              "Collations",
+              "WiFi",
+              "Prises USB",
+              "AC"
+            ],
+            "distance_km": 201
+          },
+          {
+            "id": "b3a49934-b3f3-42bf-acf3-40705899e2c5",
+            "origin": "Yaound\u00e9",
+            "destination": "Douala",
+            "departure_time": "11:00",
+            "arrival_time": "16:10",
+            "duration": "5h10min",
+            "price": 15075,
+            "company": "Express Union",
+            "available_seats": 35,
+            "total_seats": 45,
+            "bus_type": "Luxury",
+            "amenities": [
+              "Collations",
+              "Toilettes",
+              "WiFi",
+              "Prises USB"
+            ],
+            "distance_km": 201
+          },
+          {
+            "id": "87de971b-4b66-4965-9bda-ba21f4e0978d",
+            "origin": "Yaound\u00e9",
+            "destination": "Douala",
+            "departure_time": "19:15",
+            "arrival_time": "00:09",
+            "duration": "5h54min",
+            "price": 13065,
+            "company": "Musango Transport",
+            "available_seats": 21,
+            "total_seats": 45,
+            "bus_type": "VIP",
+            "amenities": [
+              "AC",
+              "Prises USB"
+            ],
+            "distance_km": 201
+          }
+        ],
+        "total": 3
+      }
+    },
+    {
+      "test": "Popular Routes",
+      "success": true,
+      "details": "Found 6 popular routes",
+      "response_data": {
+        "popular_routes": [
+          {
+            "id": "651f1e7b-a94c-474b-afdb-93e17e9b6a7a",
+            "origin": "Yaound\u00e9",
+            "destination": "Douala",
+            "departure_time": "07:00",
+            "arrival_time": "12:47",
+            "duration": "5h47min",
+            "price": 9648,
+            "company": "Transcam Transport",
+            "available_seats": 29,
+            "total_seats": 45,
+            "bus_type": "VIP",
+            "amenities": [
+              "T\u00e9l\u00e9vision",
+              "Prises USB",
+              "WiFi"
+            ],
+            "distance_km": 201
+          },
+          {
+            "id": "fba1c4fc-1c40-4f68-b058-f40d34c0cc01",
+            "origin": "Douala",
+            "destination": "Bafoussam",
+            "departure_time": "07:15",
+            "arrival_time": "11:19",
+            "duration": "4h04min",
+            "price": 10440,
+            "company": "Express Union",
+            "available_seats": 22,
+            "total_seats": 45,
+            "bus_type": "Standard",
+            "amenities": [
+              "WiFi",
+              "AC",
+              "Prises USB",
+              "T\u00e9l\u00e9vision"
+            ],
+            "distance_km": 174
+          },
+          {
+            "id": "582966ba-e238-4d1f-9dee-3313f0be53a0",
+            "origin": "Yaound\u00e9",
+            "destination": "Bamenda",
+            "departure_time": "20:30",
+            "arrival_time": "03:46",
+            "duration": "7h16min",
+            "price": 16066,
+            "company": "Touristique Express",
+            "available_seats": 34,
+            "total_seats": 45,
+            "bus_type": "Standard",
+            "amenities": [
+              "AC",
+              "Collations",
+              "Toilettes",
+              "T\u00e9l\u00e9vision"
+            ],
+            "distance_km": 277
+          },
+          {
+            "id": "2c72a134-2ac9-4d66-947a-767aadc90525",
+            "origin": "Douala",
+            "destination": "Bu\u00e9a",
+            "departure_time": "10:30",
+            "arrival_time": "12:03",
+            "duration": "2h33min",
+            "price": 2679,
+            "company": "Central Voyages",
+            "available_seats": 32,
+            "total_seats": 45,
+            "bus_type": "Luxury",
+            "amenities": [
+              "Collations",
+              "WiFi"
+            ],
+            "distance_km": 47
+          },
+          {
+            "id": "fb734b97-fc32-4936-bb09-2fc8c9902042",
+            "origin": "Yaound\u00e9",
+            "destination": "Bertoua",
+            "departure_time": "16:30",
+            "arrival_time": "22:21",
+            "duration": "6h51min",
+            "price": 13662,
+            "company": "Touristique Express",
+            "available_seats": 17,
+            "total_seats": 45,
+            "bus_type": "Luxury",
+            "amenities": [
+              "AC",
+              "Prises USB",
+              "T\u00e9l\u00e9vision",
+              "Collations"
+            ],
+            "distance_km": 253
+          },
+          {
+            "id": "a8ca5f20-b45a-42e5-b0cb-f8a8bcacba17",
+            "origin": "Garoua",
+            "destination": "Ngaound\u00e9r\u00e9",
+            "departure_time": "11:00",
+            "arrival_time": "16:40",
+            "duration": "5h40min",
+            "price": 13260,
+            "company": "Central Voyages",
+            "available_seats": 20,
+            "total_seats": 45,
+            "bus_type": "Luxury",
+            "amenities": [
+              "WiFi",
+              "Collations"
+            ],
+            "distance_km": 221
+          }
+        ]
+      }
+    },
+    {
+      "test": "Create User",
+      "success": true,
+      "details": "Created user with ID: aafb8da8-57fa-4e0f-ae3e-175ab5deb641",
+      "response_data": {
+        "id": "aafb8da8-57fa-4e0f-ae3e-175ab5deb641",
+        "email": "test_1758841615@busconnect.cm",
+        "phone": "+237123456789",
+        "first_name": "Jean",
+        "last_name": "Dupont",
+        "user_type": "client",
+        "status": "pending",
+        "documents": [],
+        "created_at": "2025-09-25T23:06:55.379004"
+      }
+    },
+    {
+      "test": "Get User",
+      "success": false,
+      "details": "Status: 500",
+      "response_data": {}
+    },
+    {
+      "test": "Baggage Options",
+      "success": true,
+      "details": "Found baggage types: ['carry_on', 'checked', 'extra', 'bike', 'sports']",
+      "response_data": {
+        "baggage_options": [
+          {
+            "type": "carry_on",
+            "name": "Bagage \u00e0 main",
+            "description": "8kg max, 42x32x25cm",
+            "price": 0,
+            "icon": "backpack",
+            "included": true
+          },
+          {
+            "type": "checked",
+            "name": "Bagage soute",
+            "description": "20kg max, 80x60x40cm",
+            "price": 0,
+            "icon": "suitcase",
+            "included": true
+          },
+          {
+            "type": "extra",
+            "name": "Bagage suppl\u00e9mentaire",
+            "description": "20kg max, dimensions standard",
+            "price": 2500,
+            "icon": "plus",
+            "included": false
+          },
+          {
+            "type": "bike",
+            "name": "Transport v\u00e9lo",
+            "description": "V\u00e9lo standard, bien emball\u00e9",
+            "price": 3000,
+            "icon": "bike",
+            "included": false
+          },
+          {
+            "type": "sports",
+            "name": "\u00c9quipement sportif",
+            "description": "25kg max, \u00e9quipement sp\u00e9cialis\u00e9",
+            "price": 4000,
+            "icon": "dumbbell",
+            "included": false
+          }
+        ]
+      }
+    },
+    {
+      "test": "Get Offers",
+      "success": true,
+      "details": "Found 3 offers",
+      "response_data": {
+        "offers": [
+          {
+            "id": "6aedc8c5-dfde-43a3-b65c-660b6104f268",
+            "title": "Offre Weekend",
+            "description": "15% de r\u00e9duction sur tous les trajets du weekend",
+            "discount_percent": 15,
+            "code": "WEEKEND15",
+            "valid_until": "2025-12-31",
+            "type": "weekend_special",
+            "image_url": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400"
+          },
+          {
+            "id": "497489e6-2083-4479-a70c-c123608fa1d5",
+            "title": "Cashback Fid\u00e9lit\u00e9",
+            "description": "Apr\u00e8s 5 voyages, recevez 2500 FCFA de cashback",
+            "cashback_amount": 2500,
+            "required_trips": 5,
+            "type": "cashback",
+            "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400"
+          },
+          {
+            "id": "56f0a0fb-0085-4c06-883e-7c067b4f1951",
+            "title": "Compensation Carbone",
+            "description": "Voyagez \u00e9co-responsable pour seulement 500 FCFA",
+            "carbon_price": 500,
+            "type": "carbon_offset",
+            "image_url": "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e5?w=400"
+          }
+        ]
+      }
+    },
+    {
+      "test": "Promo Codes",
+      "success": true,
+      "details": "Found promo codes: ['BIENVENUE20', 'WEEKEND15', 'ETUDIANT10', 'FIDELITE']",
+      "response_data": {
+        "promo_codes": [
+          {
+            "code": "BIENVENUE20",
+            "discount_percent": 20,
+            "valid_until": "2025-12-31",
+            "description": "20% de r\u00e9duction pour les nouveaux clients"
+          },
+          {
+            "code": "WEEKEND15",
+            "discount_percent": 15,
+            "valid_until": "2025-12-31",
+            "description": "15% de r\u00e9duction pour les voyages du weekend"
+          },
+          {
+            "code": "ETUDIANT10",
+            "discount_percent": 10,
+            "valid_until": "2025-12-31",
+            "description": "10% de r\u00e9duction pour les \u00e9tudiants"
+          },
+          {
+            "code": "FIDELITE",
+            "discount_percent": 25,
+            "valid_until": "2025-12-31",
+            "description": "25% de r\u00e9duction pour clients fid\u00e8les"
+          }
+        ]
+      }
+    },
+    {
+      "test": "Validate Promo Code",
+      "success": true,
+      "details": "Promo validation: {'valid': True, 'discount_percent': 15, 'description': '15% de r\u00e9duction pour les voyages du weekend'}",
+      "response_data": {
+        "valid": true,
+        "discount_percent": 15,
+        "description": "15% de r\u00e9duction pour les voyages du weekend"
+      }
+    },
+    {
+      "test": "Create Booking",
+      "success": true,
+      "details": "Created booking: BC415610",
+      "response_data": {
+        "id": "2b8c40ad-2c79-4182-9527-0ec37ed1795f",
+        "user_id": "aafb8da8-57fa-4e0f-ae3e-175ab5deb641",
+        "route_id": "test-route-123",
+        "passenger_count": 2,
+        "seat_numbers": [
+          "1A",
+          "1B"
+        ],
+        "baggage": [
+          {
+            "type": "extra",
+            "quantity": 1,
+            "price": 2500
+          }
+        ],
+        "promo_code": "WEEKEND15",
+        "carbon_offset": true,
+        "total_price": 28050,
+        "status": "confirmed",
+        "booking_reference": "BC415610",
+        "created_at": "2025-09-25T23:06:55.650889",
+        "qr_code": "QR_BC415610"
+      }
+    },
+    {
+      "test": "Get User Bookings",
+      "success": false,
+      "details": "Status: 500",
+      "response_data": {}
+    },
+    {
+      "test": "Track Booking",
+      "success": true,
+      "details": "Tracking data: boarding at Yaound\u00e9",
+      "response_data": {
+        "booking_reference": "BC415610",
+        "status": "boarding",
+        "current_location": "Yaound\u00e9",
+        "next_stops": [
+          "Douala",
+          "Yaound\u00e9"
+        ],
+        "estimated_arrival": "18:58",
+        "delay_minutes": 23,
+        "distance_remaining_km": 190,
+        "live_updates": [
+          "Bus parti \u00e0 l'heure de Yaound\u00e9",
+          "Arr\u00eat \u00e0 Mbalmayo - 5 min",
+          "Trafic fluide vers Ed\u00e9a"
+        ]
+      }
+    }
+  ]
+}
