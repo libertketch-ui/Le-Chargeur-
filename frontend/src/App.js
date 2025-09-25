@@ -313,6 +313,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100">
+      
+      {/* Show Registration System or Main App */}
+      {currentView === "registration" ? (
+        <RegistrationSystem onComplete={() => setCurrentView("main")} />
+      ) : (
+        <>
+        {/* Rest of the main app */}
       <div className="container mx-auto p-4 max-w-7xl">
         
         {/* Fusion Header (TicketCam + BusConnect style) */}
