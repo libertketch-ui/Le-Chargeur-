@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime, timedelta
 import random
 import math
+import hashlib
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -21,54 +22,75 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
-app = FastAPI(title="BusConnect Cameroun API - Enhanced", description="Advanced bus booking system with Yango & Bolt features")
+app = FastAPI(title="BusConnect Cameroun - Fusion Edition", description="Ultimate bus booking system with Yango, Bolt & TicketCam fusion")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
-# === ENHANCED MODELS ===
+# === FUSION MODELS (BusConnect + TicketCam) ===
+
+# Mobile Money Integration (from TicketCam)
+class MobileMoneyProvider(BaseModel):
+    name: str  # "Orange Money", "MTN Money", "Express Union Mobile"
+    code: str  # "OM", "MOMO", "EUM"
+    fees_percent: float = 0.02
+    min_amount: int = 1000
+    max_amount: int = 2000000
+    logo_url: str
+    ussd_code: str
+
+class MobileMoneyPayment(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    booking_id: str
+    provider: str  # OM, MOMO, EUM
+    phone_number: str
+    amount: int
+    transaction_id: Optional[str] = None
+    status: str = "pending"  # pending, success, failed, cancelled
+    fees: int = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    confirmed_at: Optional[datetime] = None
+
+# Enhanced User with Cameroon-specific features
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: str
     phone: str
     first_name: str
     last_name: str
-    user_type: str = "client"  # client, agency, transporter, occasional_transport
-    status: str = "pending"  # pending, active, rejected
-    documents: List[str] = []
-    subscription_type: str = "standard"  # standard, premium, vip
-    subscription_expires: Optional[datetime] = None
-    emergency_contact: Optional[str] = None
-    profile_photo: Optional[str] = None
-    favorite_destinations: List[str] = []
-    travel_preferences: Dict[str, Any] = {}
+    user_type: str = "client"
+    status: str = "active"
+    preferred_language: str = "fr"  # fr, en
+    preferred_payment: str = "mobile_money"
+    mobile_money_accounts: List[Dict[str, str]] = []  # [{"provider": "OM", "number": "237XXX"}]
+    home_city: Optional[str] = None
+    work_city: Optional[str] = None
+    frequent_destinations: List[str] = []
+    subscription_type: str = "standard"
     loyalty_points: int = 0
+    total_trips: int = 0
+    carbon_offset_trips: int = 0
+    referral_code: str = Field(default_factory=lambda: f"REF{random.randint(100000, 999999)}")
+    referred_by: Optional[str] = None
+    profile_complete: bool = False
+    documents_verified: bool = False
+    emergency_contact: Optional[Dict[str, str]] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-class UserCreate(BaseModel):
-    email: str
-    phone: str
-    first_name: str
-    last_name: str
-    user_type: str = "client"
-    documents: List[str] = []
-    emergency_contact: Optional[str] = None
-
+# Enhanced Service Classes with Cameroon market pricing
 class ServiceClass(BaseModel):
-    name: str  # economy, comfort, premium, vip, express
+    name: str
+    display_name: str
     price_multiplier: float
     amenities: List[str]
     description: str
     max_passengers: int
+    comfort_level: int  # 1-5 stars
+    popular_with: List[str]  # ["business", "families", "students", "tourists"]
+    available_cities: List[str] = []  # Cities where this class is available
 
-class BusStop(BaseModel):
-    city: str
-    stop_name: str
-    coordinates: Dict[str, float]
-    estimated_time: str
-    stop_order: int
-
-class BusRoute(BaseModel):
+# Smart Route with AI-powered features
+class SmartRoute(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     origin: str
     destination: str
@@ -76,917 +98,690 @@ class BusRoute(BaseModel):
     arrival_time: str
     duration: str
     base_price: int
+    dynamic_price: int  # AI-adjusted price based on demand
     company: str
     available_seats: int
     total_seats: int
-    service_classes: List[ServiceClass]
+    service_class: str
     amenities: List[str]
     distance_km: int
-    intermediate_stops: List[BusStop] = []
-    driver_info: Dict[str, Any] = {}
-    vehicle_info: Dict[str, Any] = {}
-    safety_features: List[str] = []
-    can_schedule_advance: bool = True
-    max_advance_days: int = 90
+    route_popularity: int  # 1-100 based on bookings
+    weather_impact: str = "none"  # none, light, moderate, severe
+    traffic_prediction: str = "normal"  # light, normal, heavy
+    intermediate_stops: List[Dict[str, Any]] = []
+    driver_info: Dict[str, Any]
+    vehicle_info: Dict[str, Any]
+    safety_features: List[str]
+    real_time_updates: List[str] = []
+    carbon_footprint: float  # kg CO2 per passenger
+    eco_friendly: bool = False
+    price_history: List[Dict[str, Any]] = []
+    demand_level: str = "normal"  # low, normal, high, peak
+    promotional_rate: Optional[float] = None
+    last_updated: datetime = Field(default_factory=datetime.utcnow)
 
-class MultiStopRequest(BaseModel):
-    stops: List[Dict[str, str]]  # [{"city": "Yaoundé", "type": "pickup"}, {"city": "Bafoussam", "type": "dropoff"}]
-    departure_date: str
-    passengers: int = 1
-    service_class: str = "economy"
-
-class AdvancedSearchQuery(BaseModel):
-    origin: str
-    destination: str
-    departure_date: str
-    return_date: Optional[str] = None
-    passengers: int = 1
-    service_class: str = "economy"
-    flexible_dates: bool = False
-    max_transfers: int = 0
-    prefer_direct: bool = True
-    time_preference: str = "any"  # morning, afternoon, evening, any
-
-class BaggageItem(BaseModel):
-    type: str  # carry_on, checked, extra, bike, sports, fragile, documents
-    quantity: int = 1
-    price: int = 0
-    weight_kg: Optional[float] = None
-    dimensions: Optional[str] = None
-    insurance: bool = False
-
-class SafetyFeature(BaseModel):
-    emergency_button: bool = True
-    trip_sharing: bool = True
-    audio_recording: bool = False
-    driver_verification: bool = True
-    real_time_monitoring: bool = True
-
-class BookingForOther(BaseModel):
-    passenger_name: str
-    passenger_phone: str
-    relationship: str  # family, friend, colleague
-    emergency_contact: Optional[str] = None
-
-class PromoCode(BaseModel):
-    code: str
-    discount_percent: int
-    discount_amount: Optional[int] = None
-    valid_until: str
-    description: str
-    usage_limit: int = 1
-    min_amount: int = 0
-    applicable_classes: List[str] = []
-
-class PremiumSubscription(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    user_id: str
-    plan_type: str  # monthly, yearly
-    benefits: List[str]
-    price: int
-    auto_renewal: bool = True
-    expires_at: datetime
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
+# Enhanced Booking with full TicketCam integration
 class Booking(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     route_id: str
+    booking_reference: str = Field(default_factory=lambda: f"TC{random.randint(100000, 999999)}")
     passenger_count: int
+    passenger_details: List[Dict[str, str]] = []
     seat_numbers: List[str]
     service_class: str = "economy"
-    baggage: List[BaggageItem] = []
+    total_base_price: int
+    taxes_and_fees: int = 0
+    discount_amount: int = 0
+    final_price: int
+    payment_method: str = "mobile_money"
+    payment_details: Optional[MobileMoneyPayment] = None
     promo_code: Optional[str] = None
     carbon_offset: bool = False
-    total_price: int
-    status: str = "confirmed"  # confirmed, cancelled, completed, in_progress
-    booking_reference: str = Field(default_factory=lambda: f"BC{random.randint(100000, 999999)}")
-    qr_code: str = ""
-    booking_for_other: Optional[BookingForOther] = None
-    safety_preferences: SafetyFeature = Field(default_factory=SafetyFeature)
+    carbon_offset_price: int = 0
+    insurance: bool = False
+    insurance_price: int = 0
+    baggage: List[Dict[str, Any]] = []
+    special_requests: str = ""
+    booking_for_other: Optional[Dict[str, str]] = None
     scheduled_departure: Optional[datetime] = None
     is_advance_booking: bool = False
-    insurance: bool = False
-    special_requests: str = ""
+    status: str = "confirmed"  # pending_payment, confirmed, cancelled, completed, refunded
+    qr_code: str = ""
+    electronic_ticket: Dict[str, Any] = {}
+    check_in_status: str = "pending"  # pending, checked_in, boarded, no_show
     rating: Optional[int] = None
     review: Optional[str] = None
+    refund_policy: Dict[str, Any] = {}
+    cancellation_fee: int = 0
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    confirmed_at: Optional[datetime] = None
+    departure_reminder_sent: bool = False
+    follow_up_sent: bool = False
 
-class BookingCreate(BaseModel):
-    user_id: str
-    route_id: str
-    passenger_count: int
-    seat_numbers: List[str]
-    service_class: str = "economy"
-    baggage: List[BaggageItem] = []
-    promo_code: Optional[str] = None
-    carbon_offset: bool = False
-    booking_for_other: Optional[BookingForOther] = None
-    scheduled_departure: Optional[str] = None
-    insurance: bool = False
-    special_requests: str = ""
-
-class TrackingInfo(BaseModel):
-    booking_reference: str
-    status: str  # on_time, delayed, boarding, en_route, arrived, cancelled
-    current_location: str
-    next_stops: List[str]
-    estimated_arrival: str
-    delay_minutes: int = 0
-    distance_remaining_km: int
-    live_updates: List[str]
-    driver_contact: Optional[str] = None
-    emergency_contact: Optional[str] = None
-    last_updated: datetime = Field(default_factory=datetime.utcnow)
-
-class Rating(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    booking_id: str
-    user_id: str
-    driver_rating: int
-    service_rating: int
-    cleanliness_rating: int
-    punctuality_rating: int
-    comment: str
-    photos: List[str] = []
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-class SupportTicket(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    user_id: str
-    booking_reference: Optional[str] = None
-    category: str  # complaint, refund, lost_item, safety, general
-    priority: str = "medium"  # low, medium, high, urgent
-    title: str
-    description: str
-    status: str = "open"  # open, in_progress, resolved, closed
-    attachments: List[str] = []
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-class ParcelDelivery(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    sender_id: str
-    recipient_name: str
-    recipient_phone: str
+# Popular Routes (TicketCam style)
+class PopularRoute(BaseModel):
     origin: str
     destination: str
-    parcel_type: str  # documents, small_package, medium_package
-    weight_kg: float
-    declared_value: int
-    insurance: bool = False
-    delivery_instructions: str = ""
-    tracking_code: str = Field(default_factory=lambda: f"PD{random.randint(100000, 999999)}")
-    status: str = "pending"  # pending, collected, in_transit, delivered
-    price: int
+    base_price: int
+    currency: str = "FCFA"
+    weekly_bookings: int
+    average_duration: str
+    companies_count: int
+    next_departure: str
+    route_image: Optional[str] = None
+    special_offer: Optional[str] = None
+
+# Smart Notifications
+class Notification(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    type: str  # price_drop, route_update, payment, reminder, promo
+    title: str
+    message: str
+    action_url: Optional[str] = None
+    read: bool = False
+    priority: str = "normal"  # low, normal, high, urgent
+    scheduled_for: Optional[datetime] = None
+    sent_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# === ENHANCED CITIES DATA ===
-CAMEROON_CITIES = [
-    # Centre Region
-    {"name": "Yaoundé", "region": "Centre", "lat": 3.8667, "lng": 11.5167, "major": True, "airport": True},
-    {"name": "Mbalmayo", "region": "Centre", "lat": 3.5167, "lng": 11.5000, "major": False, "airport": False},
-    {"name": "Akonolinga", "region": "Centre", "lat": 3.7667, "lng": 12.2500, "major": False, "airport": False},
-    {"name": "Bafia", "region": "Centre", "lat": 4.7500, "lng": 11.2333, "major": False, "airport": False},
-    {"name": "Mfou", "region": "Centre", "lat": 3.7167, "lng": 11.6833, "major": False, "airport": False},
-    {"name": "Obala", "region": "Centre", "lat": 4.1667, "lng": 11.5333, "major": False, "airport": False},
-    {"name": "Ntui", "region": "Centre", "lat": 4.8167, "lng": 11.6333, "major": False, "airport": False},
-    {"name": "Monatélé", "region": "Centre", "lat": 3.7000, "lng": 11.3667, "major": False, "airport": False},
-    
-    # Littoral Region  
-    {"name": "Douala", "region": "Littoral", "lat": 4.0611, "lng": 9.7067, "major": True, "airport": True},
-    {"name": "Edéa", "region": "Littoral", "lat": 3.7833, "lng": 10.1333, "major": False, "airport": False},
-    {"name": "Nkongsamba", "region": "Littoral", "lat": 4.9500, "lng": 9.9333, "major": True, "airport": False},
-    {"name": "Loum", "region": "Littoral", "lat": 4.7167, "lng": 9.7333, "major": False, "airport": False},
-    {"name": "Mbanga", "region": "Littoral", "lat": 4.4833, "lng": 9.5667, "major": False, "airport": False},
-    {"name": "Manjo", "region": "Littoral", "lat": 4.8167, "lng": 9.8333, "major": False, "airport": False},
-    {"name": "Dizangué", "region": "Littoral", "lat": 3.6833, "lng": 10.6167, "major": False, "airport": False},
-    
-    # Ouest Region
-    {"name": "Bafoussam", "region": "Ouest", "lat": 5.4667, "lng": 10.4167, "major": True, "airport": True},
-    {"name": "Dschang", "region": "Ouest", "lat": 5.4500, "lng": 10.0500, "major": True, "airport": False},
-    {"name": "Mbouda", "region": "Ouest", "lat": 5.6167, "lng": 10.2500, "major": False, "airport": False},
-    {"name": "Bandjoun", "region": "Ouest", "lat": 5.3667, "lng": 10.4000, "major": False, "airport": False},
-    {"name": "Bangangté", "region": "Ouest", "lat": 5.1500, "lng": 10.5167, "major": False, "airport": False},
-    {"name": "Foumban", "region": "Ouest", "lat": 5.7167, "lng": 10.9000, "major": True, "airport": False},
-    {"name": "Kékem", "region": "Ouest", "lat": 5.3500, "lng": 10.0833, "major": False, "airport": False},
-    {"name": "Bafang", "region": "Ouest", "lat": 5.1667, "lng": 10.1833, "major": False, "airport": False},
-    
-    # Nord-Ouest Region
-    {"name": "Bamenda", "region": "Nord-Ouest", "lat": 5.9667, "lng": 10.1667, "major": True, "airport": True},
-    {"name": "Kumbo", "region": "Nord-Ouest", "lat": 6.2000, "lng": 10.6833, "major": False, "airport": False},
-    {"name": "Wum", "region": "Nord-Ouest", "lat": 6.3833, "lng": 10.0667, "major": False, "airport": False},
-    {"name": "Ndop", "region": "Nord-Ouest", "lat": 6.0167, "lng": 10.4500, "major": False, "airport": False},
-    {"name": "Mbengwi", "region": "Nord-Ouest", "lat": 6.1667, "lng": 9.9333, "major": False, "airport": False},
-    {"name": "Fundong", "region": "Nord-Ouest", "lat": 6.2333, "lng": 10.2833, "major": False, "airport": False},
-    
-    # Sud-Ouest Region  
-    {"name": "Buéa", "region": "Sud-Ouest", "lat": 4.1500, "lng": 9.2833, "major": True, "airport": False},
-    {"name": "Limbe", "region": "Sud-Ouest", "lat": 4.0167, "lng": 9.2000, "major": True, "airport": False},
-    {"name": "Kumba", "region": "Sud-Ouest", "lat": 4.6333, "lng": 9.4500, "major": True, "airport": False},
-    {"name": "Tiko", "region": "Sud-Ouest", "lat": 4.0667, "lng": 9.3667, "major": False, "airport": True},
-    {"name": "Mamfé", "region": "Sud-Ouest", "lat": 5.7667, "lng": 9.3000, "major": False, "airport": False},
-    {"name": "Tombel", "region": "Sud-Ouest", "lat": 4.6167, "lng": 9.6000, "major": False, "airport": False},
-    {"name": "Bangem", "region": "Sud-Ouest", "lat": 4.8167, "lng": 9.7667, "major": False, "airport": False},
-    
-    # Sud Region
-    {"name": "Ebolowa", "region": "Sud", "lat": 2.9167, "lng": 11.1500, "major": True, "airport": False},
-    {"name": "Kribi", "region": "Sud", "lat": 2.9333, "lng": 9.9167, "major": True, "airport": False},
-    {"name": "Sangmélima", "region": "Sud", "lat": 2.9167, "lng": 11.9833, "major": False, "airport": False},
-    {"name": "Ambam", "region": "Sud", "lat": 2.3833, "lng": 11.2667, "major": False, "airport": False},
-    {"name": "Campo", "region": "Sud", "lat": 2.3667, "lng": 9.8167, "major": False, "airport": False},
-    {"name": "Lolodorf", "region": "Sud", "lat": 3.2333, "lng": 10.7333, "major": False, "airport": False},
-    
-    # Est Region
-    {"name": "Bertoua", "region": "Est", "lat": 4.5833, "lng": 13.6833, "major": True, "airport": True},
-    {"name": "Batouri", "region": "Est", "lat": 4.4333, "lng": 14.3667, "major": False, "airport": False},
-    {"name": "Yokadouma", "region": "Est", "lat": 3.5167, "lng": 15.0833, "major": False, "airport": False},
-    {"name": "Abong-Mbang", "region": "Est", "lat": 3.9833, "lng": 13.1833, "major": False, "airport": False},
-    {"name": "Doumé", "region": "Est", "lat": 4.2333, "lng": 13.1500, "major": False, "airport": False},
-    
-    # Adamaoua Region
-    {"name": "Ngaoundéré", "region": "Adamaoua", "lat": 7.3167, "lng": 13.5833, "major": True, "airport": True},
-    {"name": "Meiganga", "region": "Adamaoua", "lat": 6.5167, "lng": 14.2833, "major": False, "airport": False},
-    {"name": "Tibati", "region": "Adamaoua", "lat": 6.4667, "lng": 12.6167, "major": False, "airport": False},
-    {"name": "Banyo", "region": "Adamaoua", "lat": 6.7500, "lng": 11.8167, "major": False, "airport": False},
-    {"name": "Tignère", "region": "Adamaoua", "lat": 7.3667, "lng": 12.6500, "major": False, "airport": False},
-    
-    # Nord Region
-    {"name": "Garoua", "region": "Nord", "lat": 9.3000, "lng": 13.4000, "major": True, "airport": True},
-    {"name": "Maroua", "region": "Nord", "lat": 10.5833, "lng": 14.3167, "major": True, "airport": True},
-    {"name": "Guider", "region": "Nord", "lat": 9.9333, "lng": 13.9500, "major": False, "airport": False},
-    {"name": "Mokolo", "region": "Nord", "lat": 10.7333, "lng": 13.8000, "major": False, "airport": False},
-    {"name": "Yagoua", "region": "Nord", "lat": 10.3333, "lng": 15.2333, "major": False, "airport": False},
-    {"name": "Kaélé", "region": "Nord", "lat": 10.1000, "lng": 14.4500, "major": False, "airport": False},
-    
-    # Extrême-Nord Region
-    {"name": "Kousseri", "region": "Extrême-Nord", "lat": 12.0833, "lng": 15.0333, "major": False, "airport": False},
-    {"name": "Mora", "region": "Extrême-Nord", "lat": 11.0500, "lng": 14.1333, "major": False, "airport": False},
-    {"name": "Waza", "region": "Extrême-Nord", "lat": 11.3833, "lng": 14.6333, "major": False, "airport": False},
-    {"name": "Kolofata", "region": "Extrême-Nord", "lat": 10.9667, "lng": 14.3000, "major": False, "airport": False}
-]
+# === DATA CONSTANTS ===
 
-BUS_COMPANIES = [
+# Mobile Money Providers in Cameroon
+MOBILE_MONEY_PROVIDERS = [
     {
-        "name": "Express Union", 
-        "rating": 4.5, 
-        "safety_rating": 4.7,
-        "fleet_size": 150,
-        "specialties": ["long_distance", "vip_service"]
+        "name": "Orange Money",
+        "code": "OM",
+        "fees_percent": 0.015,
+        "min_amount": 500,
+        "max_amount": 2000000,
+        "logo_url": "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=100",
+        "ussd_code": "#150#"
     },
     {
-        "name": "Touristique Express", 
-        "rating": 4.3, 
-        "safety_rating": 4.5,
-        "fleet_size": 120,
-        "specialties": ["comfort", "reliability"]
+        "name": "MTN Mobile Money",
+        "code": "MOMO",
+        "fees_percent": 0.02,
+        "min_amount": 500,
+        "max_amount": 2000000,
+        "logo_url": "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=100",
+        "ussd_code": "*126#"
     },
     {
-        "name": "Central Voyages", 
-        "rating": 4.2, 
-        "safety_rating": 4.4,
-        "fleet_size": 100,
-        "specialties": ["affordable", "frequent"]
-    },
-    {
-        "name": "Binam Voyages", 
-        "rating": 4.4, 
-        "safety_rating": 4.6,
-        "fleet_size": 80,
-        "specialties": ["premium", "punctuality"]
-    },
-    {
-        "name": "Vatican Transport", 
-        "rating": 4.1, 
-        "safety_rating": 4.3,
-        "fleet_size": 90,
-        "specialties": ["economy", "regional"]
-    },
-    {
-        "name": "Transcam Transport", 
-        "rating": 4.3, 
-        "safety_rating": 4.5,
-        "fleet_size": 110,
-        "specialties": ["intercity", "comfort"]
-    },
-    {
-        "name": "Guaranti Express", 
-        "rating": 4.6, 
-        "safety_rating": 4.8,
-        "fleet_size": 75,
-        "specialties": ["luxury", "safety"]
-    },
-    {
-        "name": "Musango Transport", 
-        "rating": 4.0, 
-        "safety_rating": 4.2,
-        "fleet_size": 95,
-        "specialties": ["budget", "coverage"]
+        "name": "Express Union Mobile",
+        "code": "EUM",
+        "fees_percent": 0.01,
+        "min_amount": 1000,
+        "max_amount": 5000000,
+        "logo_url": "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=100",
+        "ussd_code": "#144#"
     }
 ]
 
-SERVICE_CLASSES = [
+# Enhanced Cameroon Cities with detailed info
+CAMEROON_CITIES_ENHANCED = [
+    # Major Cities (from TicketCam popular routes)
+    {"name": "Yaoundé", "region": "Centre", "lat": 3.8667, "lng": 11.5167, "major": True, "airport": True, "population": 4500000, "economic_level": "high"},
+    {"name": "Douala", "region": "Littoral", "lat": 4.0611, "lng": 9.7067, "major": True, "airport": True, "population": 3700000, "economic_level": "high"},
+    {"name": "Bafoussam", "region": "Ouest", "lat": 5.4667, "lng": 10.4167, "major": True, "airport": True, "population": 450000, "economic_level": "medium"},
+    {"name": "Bamenda", "region": "Nord-Ouest", "lat": 5.9667, "lng": 10.1667, "major": True, "airport": True, "population": 500000, "economic_level": "medium"},
+    {"name": "Bertoua", "region": "Est", "lat": 4.5833, "lng": 13.6833, "major": True, "airport": True, "population": 300000, "economic_level": "medium"},
+    {"name": "Garoua", "region": "Nord", "lat": 9.3000, "lng": 13.4000, "major": True, "airport": True, "population": 450000, "economic_level": "medium"},
+    {"name": "Maroua", "region": "Nord", "lat": 10.5833, "lng": 14.3167, "major": True, "airport": True, "population": 400000, "economic_level": "medium"},
+    {"name": "Ngaoundéré", "region": "Adamaoua", "lat": 7.3167, "lng": 13.5833, "major": True, "airport": True, "population": 300000, "economic_level": "medium"},
+    # Add more cities with economic data for smart pricing...
+    {"name": "Kribi", "region": "Sud", "lat": 2.9333, "lng": 9.9167, "major": True, "airport": False, "population": 70000, "economic_level": "low"},
+    {"name": "Limbe", "region": "Sud-Ouest", "lat": 4.0167, "lng": 9.2000, "major": True, "airport": False, "population": 120000, "economic_level": "medium"},
+]
+
+# Enhanced Service Classes with Cameroon market reality
+SERVICE_CLASSES_ENHANCED = [
     {
         "name": "economy",
-        "display_name": "Économie",
+        "display_name": "Économique",
         "price_multiplier": 1.0,
-        "amenities": ["Siège standard", "Bagages inclus"],
-        "description": "Service de base confortable et abordable",
-        "max_passengers": 45
+        "amenities": ["Siège standard", "Bagages inclus", "Arrêts fréquents"],
+        "description": "Transport abordable pour tous",
+        "max_passengers": 45,
+        "comfort_level": 2,
+        "popular_with": ["students", "daily_commuters", "budget_travelers"],
+        "available_cities": [city["name"] for city in CAMEROON_CITIES_ENHANCED]
     },
     {
         "name": "comfort",
         "display_name": "Confort",
-        "price_multiplier": 1.3,
-        "amenities": ["Sièges inclinables", "WiFi", "Collations", "Prises USB"],
-        "description": "Plus d'espace et de commodités",
-        "max_passengers": 35
-    },
-    {
-        "name": "premium",
-        "display_name": "Premium",
-        "price_multiplier": 1.6,
-        "amenities": ["Sièges cuir", "Repas inclus", "WiFi premium", "Divertissement", "Service personnalisé"],
-        "description": "Expérience de voyage de luxe",
-        "max_passengers": 28
+        "price_multiplier": 1.4,
+        "amenities": ["Sièges inclinables", "WiFi", "Collations", "Prises USB", "Climatisation"],
+        "description": "Plus de confort pour vos voyages",
+        "max_passengers": 35,
+        "comfort_level": 3,
+        "popular_with": ["business", "families", "tourists"],
+        "available_cities": ["Yaoundé", "Douala", "Bafoussam", "Bamenda", "Bertoua"]
     },
     {
         "name": "vip",
         "display_name": "VIP",
-        "price_multiplier": 2.0,
-        "amenities": ["Cabines privées", "Service concierge", "Repas gastronomique", "WiFi haut débit", "Chauffeur dédié"],
-        "description": "Service exclusif de première classe",
-        "max_passengers": 16
+        "price_multiplier": 2.2,
+        "amenities": ["Sièges cuir", "Service personnalisé", "Repas inclus", "WiFi premium", "Toilettes privées"],
+        "description": "Voyage de luxe à la camerounaise",
+        "max_passengers": 20,
+        "comfort_level": 5,
+        "popular_with": ["business", "government", "diaspora"],
+        "available_cities": ["Yaoundé", "Douala", "Bafoussam"]
     },
     {
         "name": "express",
         "display_name": "Express",
-        "price_multiplier": 1.4,
-        "amenities": ["Trajet direct", "WiFi", "Collations", "Arrivée garantie"],
-        "description": "Trajet rapide sans arrêts intermédiaires",
-        "max_passengers": 40
+        "price_multiplier": 1.7,
+        "amenities": ["Trajet direct", "WiFi", "Collations", "Arrivée garantie", "Peu d'arrêts"],
+        "description": "Rapide et efficace",
+        "max_passengers": 40,
+        "comfort_level": 4,
+        "popular_with": ["business", "urgent_travel"],
+        "available_cities": ["Yaoundé", "Douala", "Bafoussam", "Bamenda"]
     }
 ]
 
-ENHANCED_PROMO_CODES = [
-    {"code": "BIENVENUE25", "discount_percent": 25, "valid_until": "2025-12-31", "description": "25% de réduction pour les nouveaux clients", "usage_limit": 1, "min_amount": 5000},
-    {"code": "WEEKEND15", "discount_percent": 15, "valid_until": "2025-12-31", "description": "15% de réduction pour les voyages du weekend", "usage_limit": 5, "min_amount": 3000},
-    {"code": "ETUDIANT20", "discount_percent": 20, "valid_until": "2025-12-31", "description": "20% de réduction pour les étudiants", "usage_limit": 10, "min_amount": 2000},
-    {"code": "FIDELITE30", "discount_percent": 30, "valid_until": "2025-12-31", "description": "30% de réduction pour clients fidèles", "usage_limit": 3, "min_amount": 10000},
-    {"code": "FAMILLE10", "discount_percent": 10, "valid_until": "2025-12-31", "description": "10% de réduction pour les familles (3+ personnes)", "usage_limit": 20, "min_amount": 15000},
-    {"code": "PREMIUM50", "discount_amount": 5000, "valid_until": "2025-12-31", "description": "5000 FCFA de réduction sur les classes Premium", "usage_limit": 1, "min_amount": 20000, "applicable_classes": ["premium", "vip"]},
-    {"code": "NOEL2024", "discount_percent": 40, "valid_until": "2025-01-31", "description": "Offre spéciale Nouvel An", "usage_limit": 1, "min_amount": 8000}
+# Popular Routes (TicketCam integration)
+POPULAR_ROUTES_DATA = [
+    {
+        "origin": "Yaoundé",
+        "destination": "Douala", 
+        "base_price": 4500,
+        "weekly_bookings": 450,
+        "average_duration": "4h30",
+        "companies_count": 8,
+        "next_departure": "06:00",
+        "special_offer": "15% de réduction ce weekend"
+    },
+    {
+        "origin": "Douala",
+        "destination": "Bafoussam",
+        "base_price": 3500,
+        "weekly_bookings": 320,
+        "average_duration": "3h45",
+        "companies_count": 6,
+        "next_departure": "05:30",
+        "special_offer": None
+    },
+    {
+        "origin": "Yaoundé",
+        "destination": "Bertoua",
+        "base_price": 5000,
+        "weekly_bookings": 180,
+        "average_duration": "5h15",
+        "companies_count": 4,
+        "next_departure": "07:00",
+        "special_offer": "Nouveau: Service VIP disponible"
+    },
+    {
+        "origin": "Yaoundé",
+        "destination": "Bamenda",
+        "base_price": 6500,
+        "weekly_bookings": 250,
+        "average_duration": "6h00",
+        "companies_count": 5,
+        "next_departure": "06:30",
+        "special_offer": None
+    }
 ]
 
-PREMIUM_BENEFITS = [
-    "Réservation prioritaire",
-    "Annulation gratuite jusqu'à 2h avant le départ",
-    "Sélection de siège gratuite",
-    "Support client 24/7",
-    "Bagages supplémentaires gratuits",
-    "Accès aux salons d'attente",
-    "Remise de 10% sur tous les trajets",
-    "Points fidélité doublés"
+# Enhanced Bus Companies with real Cameroon operators
+BUS_COMPANIES_ENHANCED = [
+    {
+        "name": "Express Union",
+        "rating": 4.5,
+        "safety_rating": 4.7,
+        "fleet_size": 150,
+        "specialties": ["long_distance", "vip_service"],
+        "payment_methods": ["OM", "MOMO", "EUM", "cash"],
+        "founded_year": 1995,
+        "headquarters": "Douala",
+        "routes_count": 45,
+        "logo_color": "#1e40af"
+    },
+    {
+        "name": "Touristique Express",
+        "rating": 4.3,
+        "safety_rating": 4.5,
+        "fleet_size": 120,
+        "specialties": ["comfort", "reliability"],
+        "payment_methods": ["OM", "MOMO", "cash"],
+        "founded_year": 1990,
+        "headquarters": "Yaoundé",
+        "routes_count": 38,
+        "logo_color": "#059669"
+    },
+    {
+        "name": "Central Voyages",
+        "rating": 4.2,
+        "safety_rating": 4.4,
+        "fleet_size": 100,
+        "specialties": ["affordable", "frequent"],
+        "payment_methods": ["MOMO", "OM", "cash"],
+        "founded_year": 2000,
+        "headquarters": "Bafoussam",
+        "routes_count": 32,
+        "logo_color": "#dc2626"
+    },
+    {
+        "name": "Guaranti Express",
+        "rating": 4.6,
+        "safety_rating": 4.8,
+        "fleet_size": 75,
+        "specialties": ["luxury", "safety"],
+        "payment_methods": ["EUM", "OM", "MOMO", "cash"],
+        "founded_year": 1998,
+        "headquarters": "Douala",
+        "routes_count": 25,
+        "logo_color": "#7c3aed"
+    }
 ]
+
+# === UTILITY FUNCTIONS ===
 
 def calculate_distance(lat1, lon1, lat2, lon2):
-    """Calculate distance between two coordinates using Haversine formula"""
-    R = 6371  # Earth's radius in km
-    
+    """Enhanced distance calculation"""
+    R = 6371
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
     dlat = lat2 - lat1
     dlon = lon2 - lon1
-    
     a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
     c = 2 * math.asin(math.sqrt(a))
-    
     return int(R * c)
 
-def generate_intermediate_stops(origin_city, destination_city, distance):
-    """Generate intermediate stops between two cities"""
-    stops = []
-    if distance > 200:  # Add stops for longer journeys
-        potential_stops = [city for city in CAMEROON_CITIES if city["major"]]
-        # Simple logic to add 1-2 intermediate stops
-        num_stops = min(2, distance // 150)
-        for i in range(num_stops):
-            stop = random.choice(potential_stops)
-            if stop["name"] not in [origin_city, destination_city]:
-                stops.append(BusStop(
-                    city=stop["name"],
-                    stop_name=f"Gare routière {stop['name']}",
-                    coordinates={"lat": stop["lat"], "lng": stop["lng"]},
-                    estimated_time=f"{random.randint(5, 20)} min",
-                    stop_order=i + 1
-                ))
-    return stops
+def calculate_dynamic_price(base_price, demand_level, time_until_departure, service_class):
+    """AI-powered dynamic pricing"""
+    multiplier = 1.0
+    
+    # Demand-based pricing
+    demand_multipliers = {"low": 0.85, "normal": 1.0, "high": 1.15, "peak": 1.35}
+    multiplier *= demand_multipliers.get(demand_level, 1.0)
+    
+    # Time-based pricing (last minute or advance booking)
+    if time_until_departure < 2:  # Less than 2 hours
+        multiplier *= 1.2
+    elif time_until_departure > 720:  # More than 30 days
+        multiplier *= 0.9
+    
+    # Service class adjustment
+    service_multipliers = {"economy": 1.0, "comfort": 1.4, "vip": 2.2, "express": 1.7}
+    multiplier *= service_multipliers.get(service_class, 1.0)
+    
+    return int(base_price * multiplier)
 
-def get_service_class_info(class_name):
-    """Get service class information"""
-    return next((sc for sc in SERVICE_CLASSES if sc["name"] == class_name), SERVICE_CLASSES[0])
-
-def generate_enhanced_routes(origin_city, destination_city, service_class="economy"):
-    """Generate enhanced bus routes with multiple service classes"""
-    origin = next((city for city in CAMEROON_CITIES if city["name"] == origin_city), None)
-    destination = next((city for city in CAMEROON_CITIES if city["name"] == destination_city), None)
+def generate_electronic_ticket(booking):
+    """Generate secure electronic ticket with QR code"""
+    ticket_data = {
+        "reference": booking.booking_reference,
+        "passenger_name": f"{booking.passenger_details[0].get('name', 'N/A')}",
+        "route": f"{booking.route_id}",
+        "seats": booking.seat_numbers,
+        "departure": booking.scheduled_departure.isoformat() if booking.scheduled_departure else None,
+        "class": booking.service_class,
+        "issued_at": datetime.utcnow().isoformat()
+    }
     
-    if not origin or not destination:
-        return []
+    # Generate secure hash for QR code
+    ticket_string = str(ticket_data)
+    qr_hash = hashlib.sha256(ticket_string.encode()).hexdigest()[:16]
     
-    distance = calculate_distance(origin["lat"], origin["lng"], destination["lat"], destination["lng"])
-    
-    routes = []
-    for i in range(random.randint(2, 5)):
-        company = random.choice(BUS_COMPANIES)
-        service_info = get_service_class_info(service_class)
-        
-        base_price = max(3000, distance * random.randint(50, 85))
-        final_price = int(base_price * service_info["price_multiplier"])
-        
-        # Generate departure time
-        hour = random.randint(5, 23)
-        minute = random.choice([0, 15, 30, 45])
-        departure_time = f"{hour:02d}:{minute:02d}"
-        
-        # Calculate arrival time
-        travel_hours = (distance / 55) + random.uniform(0.5, 2)  # Account for stops and traffic
-        arrival_hour = (hour + int(travel_hours)) % 24
-        arrival_minute = (minute + int((travel_hours % 1) * 60)) % 60
-        arrival_time = f"{arrival_hour:02d}:{arrival_minute:02d}"
-        
-        duration = f"{int(travel_hours)}h{int((travel_hours % 1) * 60):02d}min"
-        
-        # Generate driver and vehicle info
-        driver_names = ["Mamadou Diallo", "Jean Baptiste", "Hassan Njoya", "Pierre Talla", "Ibrahim Souley"]
-        vehicle_plates = [f"CM-{random.randint(1000, 9999)}-{chr(random.randint(65, 90))}{chr(random.randint(65, 90))}"]
-        
-        route = BusRoute(
-            id=str(uuid.uuid4()),
-            origin=origin_city,
-            destination=destination_city,
-            departure_time=departure_time,
-            arrival_time=arrival_time,
-            duration=duration,
-            base_price=final_price,
-            company=company["name"],
-            available_seats=random.randint(int(service_info["max_passengers"] * 0.3), service_info["max_passengers"]),
-            total_seats=service_info["max_passengers"],
-            service_classes=[ServiceClass(
-                name=service_info["name"],
-                price_multiplier=service_info["price_multiplier"],
-                amenities=service_info["amenities"],
-                description=service_info["description"],
-                max_passengers=service_info["max_passengers"]
-            )],
-            amenities=service_info["amenities"],
-            distance_km=distance,
-            intermediate_stops=generate_intermediate_stops(origin_city, destination_city, distance),
-            driver_info={
-                "name": random.choice(driver_names),
-                "rating": round(random.uniform(4.0, 5.0), 1),
-                "experience_years": random.randint(5, 20),
-                "license_number": f"DL{random.randint(100000, 999999)}",
-                "phone": f"+237{random.randint(600000000, 699999999)}"
-            },
-            vehicle_info={
-                "plate_number": random.choice(vehicle_plates),
-                "model": random.choice(["Mercedes Sprinter", "Iveco Daily", "Toyota Hiace", "Hyundai Universe"]),
-                "year": random.randint(2018, 2024),
-                "capacity": service_info["max_passengers"],
-                "features": service_info["amenities"]
-            },
-            safety_features=[
-                "Ceintures de sécurité", "Extincteur", "Trousse de secours", 
-                "GPS tracking", "Caméras de surveillance", "Communication radio"
-            ],
-            can_schedule_advance=True,
-            max_advance_days=90
-        )
-        
-        routes.append(route)
-    
-    return routes
+    return {
+        "qr_code": f"TC_{booking.booking_reference}_{qr_hash}",
+        "ticket_data": ticket_data,
+        "security_hash": qr_hash,
+        "mobile_display_url": f"/ticket/{booking.booking_reference}",
+        "pdf_download_url": f"/ticket/{booking.booking_reference}/pdf"
+    }
 
 # === ENHANCED API ENDPOINTS ===
 
 @api_router.get("/")
 async def root():
-    return {"message": "BusConnect Cameroun API - Enhanced with Yango & Bolt Features", "version": "2.0"}
+    return {
+        "message": "BusConnect Cameroun - Fusion Edition", 
+        "version": "3.0",
+        "features": [
+            "Yandex Yango Advanced Search",
+            "Bolt Security & Premium",
+            "TicketCam Mobile Money Integration",
+            "AI Dynamic Pricing",
+            "Smart Notifications",
+            "Electronic Tickets"
+        ]
+    }
 
-@api_router.get("/cities")
-async def get_cities():
-    """Get all available cities with enhanced information"""
-    return {"cities": CAMEROON_CITIES}
-
-@api_router.get("/cities/popular")
-async def get_popular_cities():
-    """Get popular destinations based on user data"""
-    popular = [city for city in CAMEROON_CITIES if city.get("major", False)]
-    return {"popular_cities": popular[:10]}
-
-@api_router.post("/search/advanced")
-async def advanced_search(query: AdvancedSearchQuery):
-    """Advanced search with flexible dates, service classes, and preferences"""
-    routes = generate_enhanced_routes(query.origin, query.destination, query.service_class)
+@api_router.get("/popular-routes")
+async def get_popular_routes():
+    """Get popular routes with real-time data (TicketCam style)"""
+    enhanced_routes = []
     
-    # Apply filters
-    if query.prefer_direct:
-        routes = [r for r in routes if len(r.intermediate_stops) <= 1]
-    
-    if query.time_preference != "any":
-        time_filters = {
-            "morning": (5, 12),
-            "afternoon": (12, 18),
-            "evening": (18, 23)
+    for route_data in POPULAR_ROUTES_DATA:
+        # Add real-time enhancements
+        enhanced_route = {
+            **route_data,
+            "current_price": calculate_dynamic_price(
+                route_data["base_price"], 
+                random.choice(["normal", "high"]), 
+                random.randint(5, 48), 
+                "economy"
+            ),
+            "seats_available": random.randint(5, 40),
+            "next_3_departures": [
+                f"{6 + i}:{random.randint(0, 59):02d}" for i in range(3)
+            ],
+            "price_trend": random.choice(["stable", "increasing", "decreasing"]),
+            "weather_status": random.choice(["clear", "rainy", "cloudy"])
         }
-        start_hour, end_hour = time_filters.get(query.time_preference, (0, 24))
-        routes = [r for r in routes if start_hour <= int(r.departure_time.split(':')[0]) < end_hour]
+        enhanced_routes.append(enhanced_route)
+    
+    return {"popular_routes": enhanced_routes}
+
+@api_router.get("/mobile-money/providers")
+async def get_mobile_money_providers():
+    """Get available mobile money providers"""
+    return {"providers": MOBILE_MONEY_PROVIDERS}
+
+@api_router.post("/mobile-money/initiate")
+async def initiate_mobile_money_payment(payment_data: dict):
+    """Initiate mobile money payment"""
+    booking_id = payment_data.get("booking_id")
+    provider = payment_data.get("provider")
+    phone = payment_data.get("phone_number")
+    amount = payment_data.get("amount")
+    
+    # Find provider
+    provider_info = next((p for p in MOBILE_MONEY_PROVIDERS if p["code"] == provider), None)
+    if not provider_info:
+        raise HTTPException(status_code=400, detail="Invalid mobile money provider")
+    
+    # Calculate fees
+    fees = int(amount * provider_info["fees_percent"])
+    total_amount = amount + fees
+    
+    # Create payment record
+    payment = MobileMoneyPayment(
+        booking_id=booking_id,
+        provider=provider,
+        phone_number=phone,
+        amount=amount,
+        fees=fees,
+        transaction_id=f"{provider}_{random.randint(100000000, 999999999)}"
+    )
+    
+    # In real implementation, integrate with actual mobile money API
+    # For demo, simulate successful initiation
+    
+    await db.mobile_payments.insert_one(payment.dict())
     
     return {
-        "routes": [r.dict() for r in routes], 
-        "total": len(routes),
-        "search_params": query.dict()
+        "payment_id": payment.id,
+        "transaction_id": payment.transaction_id,
+        "ussd_code": provider_info["ussd_code"],
+        "total_amount": total_amount,
+        "fees": fees,
+        "instructions": f"Composez {provider_info['ussd_code']} et suivez les instructions pour payer {total_amount} FCFA",
+        "status": "initiated"
     }
 
-@api_router.post("/search/multi-stop")
-async def multi_stop_search(query: MultiStopRequest):
-    """Search for routes with multiple stops"""
-    # This is a simplified version - in reality, you'd need complex routing algorithms
-    all_routes = []
+@api_router.get("/search/smart")
+async def smart_search(
+    origin: str = Query(...),
+    destination: str = Query(...),
+    departure_date: str = Query(...),
+    passengers: int = Query(1),
+    service_class: str = Query("economy"),
+    budget_max: Optional[int] = Query(None),
+    time_preference: str = Query("any")
+):
+    """AI-powered smart search with dynamic pricing"""
     
-    for i in range(len(query.stops) - 1):
-        current_stop = query.stops[i]
-        next_stop = query.stops[i + 1]
+    # Get city information
+    origin_city = next((city for city in CAMEROON_CITIES_ENHANCED if city["name"] == origin), None)
+    dest_city = next((city for city in CAMEROON_CITIES_ENHANCED if city["name"] == destination), None)
+    
+    if not origin_city or not dest_city:
+        raise HTTPException(status_code=404, detail="City not found")
+    
+    distance = calculate_distance(origin_city["lat"], origin_city["lng"], dest_city["lat"], dest_city["lng"])
+    
+    # Generate smart routes with AI pricing
+    routes = []
+    
+    for i in range(random.randint(3, 8)):
+        company = random.choice(BUS_COMPANIES_ENHANCED)
         
-        routes = generate_enhanced_routes(
-            current_stop["city"], 
-            next_stop["city"], 
-            query.service_class
+        # Base price calculation considering economic levels
+        base_multiplier = 1.0
+        if origin_city["economic_level"] == "high" or dest_city["economic_level"] == "high":
+            base_multiplier *= 1.2
+        
+        base_price = max(2000, int(distance * random.randint(40, 70) * base_multiplier))
+        
+        # AI dynamic pricing
+        demand_level = random.choice(["low", "normal", "high"])
+        hours_until = random.randint(1, 48)
+        dynamic_price = calculate_dynamic_price(base_price, demand_level, hours_until, service_class)
+        
+        # Generate departure time based on preference
+        if time_preference == "morning":
+            hour = random.randint(5, 11)
+        elif time_preference == "afternoon":
+            hour = random.randint(12, 17)
+        elif time_preference == "evening":
+            hour = random.randint(18, 23)
+        else:
+            hour = random.randint(5, 23)
+        
+        departure_time = f"{hour:02d}:{random.randint(0, 59):02d}"
+        
+        # Calculate arrival
+        travel_duration = (distance / 60) + random.uniform(0.5, 2)
+        arrival_hour = (hour + int(travel_duration)) % 24
+        arrival_minute = random.randint(0, 59)
+        arrival_time = f"{arrival_hour:02d}:{arrival_minute:02d}"
+        
+        service_info = next((s for s in SERVICE_CLASSES_ENHANCED if s["name"] == service_class), SERVICE_CLASSES_ENHANCED[0])
+        
+        # Skip if budget filter doesn't match
+        if budget_max and dynamic_price > budget_max:
+            continue
+        
+        route = SmartRoute(
+            origin=origin,
+            destination=destination,
+            departure_time=departure_time,
+            arrival_time=arrival_time,
+            duration=f"{int(travel_duration)}h{int((travel_duration % 1) * 60):02d}",
+            base_price=base_price,
+            dynamic_price=dynamic_price,
+            company=company["name"],
+            available_seats=random.randint(5, service_info["max_passengers"] - 5),
+            total_seats=service_info["max_passengers"],
+            service_class=service_class,
+            amenities=service_info["amenities"],
+            distance_km=distance,
+            route_popularity=random.randint(60, 95),
+            demand_level=demand_level,
+            driver_info={
+                "name": random.choice(["Mamadou Diallo", "Jean Baptiste", "Hassan Njoya"]),
+                "rating": round(random.uniform(4.0, 5.0), 1),
+                "experience_years": random.randint(5, 20)
+            },
+            vehicle_info={
+                "model": random.choice(["Mercedes Sprinter", "Iveco Daily", "Toyota Hiace"]),
+                "year": random.randint(2018, 2024),
+                "plate_number": f"CM-{random.randint(1000, 9999)}-XX"
+            },
+            carbon_footprint=round(distance * 0.12 * (1.0 if service_class == "economy" else 1.3), 2),
+            eco_friendly=random.choice([True, False])
         )
-        all_routes.extend(routes)
+        
+        routes.append(route)
     
-    return {"routes": [r.dict() for r in all_routes], "total": len(all_routes)}
+    # Sort by price by default
+    routes.sort(key=lambda r: r.dynamic_price)
+    
+    return {
+        "routes": [r.dict() for r in routes],
+        "total": len(routes),
+        "search_metadata": {
+            "origin_info": origin_city,
+            "destination_info": dest_city,
+            "distance_km": distance,
+            "average_price": int(sum(r.dynamic_price for r in routes) / len(routes)) if routes else 0,
+            "price_trends": "Prices are currently normal for this route"
+        }
+    }
 
-@api_router.get("/suggestions/{user_id}")
-async def get_smart_suggestions(user_id: str):
-    """Get intelligent destination suggestions based on user history"""
-    # This would typically analyze user's booking history
-    # For now, return popular routes
-    suggestions = [
-        {"destination": "Douala", "reason": "Voyage fréquent", "discount": 10},
-        {"destination": "Bafoussam", "reason": "Nouvelle destination", "discount": 15},
-        {"destination": "Bamenda", "reason": "Recommandé pour vous", "discount": 5}
+@api_router.post("/bookings/fusion")
+async def create_fusion_booking(booking_data: dict):
+    """Create booking with full fusion features"""
+    
+    user_id = booking_data.get("user_id")
+    route_id = booking_data.get("route_id")
+    service_class = booking_data.get("service_class", "economy")
+    passenger_count = booking_data.get("passenger_count", 1)
+    payment_method = booking_data.get("payment_method", "mobile_money")
+    
+    # Generate pricing
+    base_price = booking_data.get("base_price", 5000)
+    service_info = next((s for s in SERVICE_CLASSES_ENHANCED if s["name"] == service_class), SERVICE_CLASSES_ENHANCED[0])
+    
+    total_base_price = int(base_price * service_info["price_multiplier"] * passenger_count)
+    taxes_and_fees = int(total_base_price * 0.05)  # 5% taxes
+    
+    # Apply discounts
+    discount_amount = 0
+    promo_code = booking_data.get("promo_code")
+    if promo_code == "WEEKEND15":
+        discount_amount = int(total_base_price * 0.15)
+    
+    final_price = total_base_price + taxes_and_fees - discount_amount
+    
+    # Create booking
+    booking = Booking(
+        user_id=user_id,
+        route_id=route_id,
+        passenger_count=passenger_count,
+        passenger_details=booking_data.get("passenger_details", []),
+        seat_numbers=booking_data.get("seat_numbers", [f"{i}A" for i in range(1, passenger_count + 1)]),
+        service_class=service_class,
+        total_base_price=total_base_price,
+        taxes_and_fees=taxes_and_fees,
+        discount_amount=discount_amount,
+        final_price=final_price,
+        payment_method=payment_method,
+        promo_code=promo_code,
+        carbon_offset=booking_data.get("carbon_offset", False),
+        insurance=booking_data.get("insurance", False),
+        baggage=booking_data.get("baggage", []),
+        special_requests=booking_data.get("special_requests", ""),
+        refund_policy={
+            "cancellation_allowed": True,
+            "free_cancellation_hours": 2,
+            "refund_percentage": 80
+        }
+    )
+    
+    # Generate electronic ticket
+    booking.electronic_ticket = generate_electronic_ticket(booking)
+    booking.qr_code = booking.electronic_ticket["qr_code"]
+    
+    # Save booking
+    await db.bookings.insert_one(booking.dict())
+    
+    # If mobile money payment, create payment record
+    if payment_method == "mobile_money" and booking_data.get("mobile_money_provider"):
+        payment_result = await initiate_mobile_money_payment({
+            "booking_id": booking.id,
+            "provider": booking_data["mobile_money_provider"],
+            "phone_number": booking_data["mobile_money_phone"],
+            "amount": final_price
+        })
+        booking.payment_details = payment_result
+    
+    return booking
+
+@api_router.get("/notifications/{user_id}")
+async def get_user_notifications(user_id: str):
+    """Get smart notifications for user"""
+    
+    # Generate sample smart notifications
+    notifications = [
+        {
+            "id": str(uuid.uuid4()),
+            "type": "price_drop",
+            "title": "💰 Baisse de prix détectée !",
+            "message": "Le trajet Yaoundé → Douala est maintenant à 3,800 FCFA (-15%)",
+            "priority": "high",
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "type": "route_update",
+            "title": "🚌 Nouveau service VIP disponible",
+            "message": "Service VIP maintenant disponible sur Yaoundé → Bertoua",
+            "priority": "normal",
+            "created_at": datetime.utcnow() - timedelta(hours=2)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "type": "promo",
+            "title": "🎁 Offre spéciale weekend",
+            "message": "15% de réduction avec le code WEEKEND15. Valable jusqu'à dimanche !",
+            "priority": "high",
+            "created_at": datetime.utcnow() - timedelta(hours=5)
+        }
     ]
     
-    return {"suggestions": suggestions}
+    return {"notifications": notifications}
 
-@api_router.post("/users/enhanced")
-async def create_enhanced_user(user: UserCreate):
-    """Create new user with enhanced profile"""
-    user_dict = user.dict()
-    user_obj = User(**user_dict)
-    await db.users.insert_one(user_obj.dict())
-    return user_obj
-
-@api_router.get("/users/{user_id}/profile")
-async def get_user_profile(user_id: str):
-    """Get enhanced user profile"""
-    user = await db.users.find_one({"id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+@api_router.get("/analytics/dashboard")
+async def get_analytics_dashboard():
+    """Get analytics dashboard data"""
     
-    # Get user's booking statistics
-    bookings = await db.bookings.find({"user_id": user_id}).to_list(100)
-    
-    profile_stats = {
-        "total_trips": len(bookings),
-        "total_spent": sum(b.get("total_price", 0) for b in bookings),
-        "favorite_destinations": user.get("favorite_destinations", []),
-        "loyalty_points": user.get("loyalty_points", 0),
-        "subscription_type": user.get("subscription_type", "standard")
+    analytics = {
+        "total_users": 15420,
+        "total_bookings": 3280,
+        "total_revenue": 185000000,
+        "mobile_money_usage": {
+            "Orange Money": 45.2,
+            "MTN Mobile Money": 38.7,
+            "Express Union Mobile": 16.1
+        },
+        "popular_service_classes": {
+            "economy": 62.3,
+            "comfort": 25.8,
+            "express": 8.7,
+            "vip": 3.2
+        },
+        "top_routes": [
+            {"route": "Yaoundé → Douala", "bookings": 1250},
+            {"route": "Douala → Bafoussam", "bookings": 890},
+            {"route": "Yaoundé → Bamenda", "bookings": 650}
+        ],
+        "customer_satisfaction": 4.6,
+        "on_time_performance": 87.3
     }
     
-    return {"user": user, "stats": profile_stats}
+    return analytics
 
-@api_router.post("/bookings/enhanced")
-async def create_enhanced_booking(booking: BookingCreate):
-    """Create enhanced booking with all new features"""
-    # Calculate total price with service class multiplier
-    service_info = get_service_class_info(booking.service_class)
-    base_price = 15000  # This should come from the actual route
-    
-    service_price = int(base_price * service_info["price_multiplier"])
-    baggage_price = sum(item.price * item.quantity for item in booking.baggage)
-    carbon_price = 500 if booking.carbon_offset else 0
-    insurance_price = 1500 if booking.insurance else 0
-    
-    total_price = (service_price * booking.passenger_count) + baggage_price + carbon_price + insurance_price
-    
-    # Apply promo code if provided
-    if booking.promo_code:
-        promo = next((p for p in ENHANCED_PROMO_CODES if p["code"] == booking.promo_code), None)
-        if promo and total_price >= promo.get("min_amount", 0):
-            if promo.get("discount_percent"):
-                discount = total_price * (promo["discount_percent"] / 100)
-                total_price = int(total_price - discount)
-            elif promo.get("discount_amount"):
-                total_price = max(0, total_price - promo["discount_amount"])
-    
-    booking_dict = booking.dict()
-    booking_dict["total_price"] = total_price
-    booking_dict["service_class"] = booking.service_class
-    
-    # Handle advance booking
-    if booking.scheduled_departure:
-        booking_dict["scheduled_departure"] = datetime.fromisoformat(booking.scheduled_departure)
-        booking_dict["is_advance_booking"] = True
-    
-    booking_obj = Booking(**booking_dict)
-    booking_obj.qr_code = f"QR_{booking_obj.booking_reference}"
-    
-    await db.bookings.insert_one(booking_obj.dict())
-    
-    # Award loyalty points (10 points per 1000 FCFA spent)
-    loyalty_points = total_price // 100
-    await db.users.update_one(
-        {"id": booking.user_id},
-        {"$inc": {"loyalty_points": loyalty_points}}
-    )
-    
-    return booking_obj
+@api_router.get("/cities/enhanced")
+async def get_enhanced_cities():
+    """Get enhanced city information"""
+    return {"cities": CAMEROON_CITIES_ENHANCED}
 
-@api_router.get("/bookings/user/{user_id}/enhanced")
-async def get_enhanced_user_bookings(user_id: str):
-    """Get enhanced user bookings with full details"""
-    bookings = await db.bookings.find({"user_id": user_id}).to_list(100)
-    
-    # Enrich bookings with route information
-    for booking in bookings:
-        if booking.get("route_id"):
-            # In a real app, you'd fetch route details from the database
-            booking["route_details"] = {
-                "origin": "Yaoundé",
-                "destination": "Douala",
-                "company": "Express Union"
-            }
-    
-    return {"bookings": bookings, "total": len(bookings)}
+@api_router.get("/companies/enhanced") 
+async def get_enhanced_companies():
+    """Get enhanced bus company information"""
+    return {"companies": BUS_COMPANIES_ENHANCED}
 
-@api_router.get("/track/{reference}/enhanced")
-async def track_booking_enhanced(reference: str):
-    """Enhanced tracking with safety features"""
-    # Get booking details
-    booking = await db.bookings.find_one({"booking_reference": reference})
-    if not booking:
-        raise HTTPException(status_code=404, detail="Booking not found")
-    
-    # Simulate enhanced tracking data
-    statuses = ["on_time", "delayed", "boarding", "en_route", "arrived"]
-    locations = ["Yaoundé", "Mbalmayo", "Edéa", "Nkongsamba", "Douala"]
-    
-    tracking = TrackingInfo(
-        booking_reference=reference,
-        status=random.choice(statuses),
-        current_location=random.choice(locations),
-        next_stops=random.sample(locations, 2),
-        estimated_arrival=f"{random.randint(14, 20)}:{random.randint(0, 59):02d}",
-        delay_minutes=random.randint(0, 45),
-        distance_remaining_km=random.randint(20, 250),
-        live_updates=[
-            f"Bus parti à l'heure de {booking.get('origin', 'Yaoundé')}",
-            "Arrêt technique - 10 min",
-            "Trafic fluide, arrivée prévue dans les temps"
-        ],
-        driver_contact="+237650123456",
-        emergency_contact="+237677888999"
-    )
-    
-    return tracking
-
-@api_router.get("/offers/enhanced")
-async def get_enhanced_offers():
-    """Get enhanced promotional offers"""
-    offers = [
-        {
-            "id": str(uuid.uuid4()),
-            "title": "Offre Premium Découverte",
-            "description": "Voyagez en classe Premium pour le prix du Confort",
-            "discount_percent": 25,
-            "code": "PREMIUM25",
-            "valid_until": "2025-12-31",
-            "type": "premium_upgrade",
-            "target_audience": "new_premium",
-            "image_url": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400"
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "title": "Réservation Anticipée",
-            "description": "Réservez 30 jours à l'avance et économisez 20%",
-            "discount_percent": 20,
-            "code": "ADVANCE20",
-            "valid_until": "2025-12-31",
-            "type": "early_booking",
-            "min_advance_days": 30,
-            "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400"
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "title": "Programme Fidélité Plus",
-            "description": "Cumulez des points et débloquez des voyages gratuits",
-            "cashback_amount": 5000,
-            "required_trips": 10,
-            "type": "loyalty_program",
-            "image_url": "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e5?w=400"
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "title": "Abonnement Premium",
-            "description": "Accès illimité aux services premium et réductions exclusives",
-            "monthly_price": 15000,
-            "benefits": PREMIUM_BENEFITS,
-            "type": "subscription",
-            "image_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400"
-        }
-    ]
-    
-    return {"offers": offers}
-
-@api_router.post("/premium/subscribe")
-async def subscribe_premium(user_id: str, plan_type: str = "monthly"):
-    """Subscribe to premium service"""
-    prices = {"monthly": 15000, "yearly": 150000}
-    price = prices.get(plan_type, 15000)
-    
-    expires_at = datetime.utcnow() + timedelta(days=30 if plan_type == "monthly" else 365)
-    
-    subscription = PremiumSubscription(
-        user_id=user_id,
-        plan_type=plan_type,
-        benefits=PREMIUM_BENEFITS,
-        price=price,
-        expires_at=expires_at
-    )
-    
-    await db.subscriptions.insert_one(subscription.dict())
-    
-    # Update user subscription status
-    await db.users.update_one(
-        {"id": user_id},
-        {
-            "$set": {
-                "subscription_type": "premium",
-                "subscription_expires": expires_at
-            }
-        }
-    )
-    
-    return subscription
-
-@api_router.post("/bookings/{booking_id}/rate")
-async def rate_booking(booking_id: str, rating_data: Rating):
-    """Rate and review a completed booking"""
-    await db.ratings.insert_one(rating_data.dict())
-    
-    # Update booking with rating
-    await db.bookings.update_one(
-        {"id": booking_id},
-        {
-            "$set": {
-                "rating": rating_data.service_rating,
-                "review": rating_data.comment
-            }
-        }
-    )
-    
-    return {"message": "Rating submitted successfully", "rating": rating_data}
-
-@api_router.post("/support/ticket")
-async def create_support_ticket(ticket: SupportTicket):
-    """Create support ticket"""
-    await db.support_tickets.insert_one(ticket.dict())
-    return ticket
-
-@api_router.get("/support/tickets/{user_id}")
-async def get_user_tickets(user_id: str):
-    """Get user's support tickets"""
-    tickets = await db.support_tickets.find({"user_id": user_id}).to_list(50)
-    return {"tickets": tickets}
-
-@api_router.post("/parcel/book")
-async def book_parcel_delivery(parcel: ParcelDelivery):
-    """Book parcel delivery service"""
-    # Calculate price based on weight and distance
-    base_price = 2000
-    weight_price = parcel.weight_kg * 500
-    insurance_price = (parcel.declared_value * 0.02) if parcel.insurance else 0
-    
-    total_price = int(base_price + weight_price + insurance_price)
-    parcel.price = total_price
-    
-    await db.parcels.insert_one(parcel.dict())
-    return parcel
-
-@api_router.get("/parcel/track/{tracking_code}")
-async def track_parcel(tracking_code: str):
-    """Track parcel delivery"""
-    parcel = await db.parcels.find_one({"tracking_code": tracking_code})
-    if not parcel:
-        raise HTTPException(status_code=404, detail="Parcel not found")
-    
-    return parcel
-
-@api_router.get("/analytics/popular-routes")
-async def get_popular_routes():
-    """Get analytics on popular routes"""
-    # This would typically query actual booking data
-    popular = [
-        {"route": "Yaoundé - Douala", "bookings": 1250, "revenue": 18750000},
-        {"route": "Douala - Bafoussam", "bookings": 890, "revenue": 12450000},
-        {"route": "Yaoundé - Bamenda", "bookings": 670, "revenue": 10050000},
-        {"route": "Bafoussam - Dschang", "bookings": 520, "revenue": 6240000}
-    ]
-    return {"popular_routes": popular}
-
-@api_router.get("/baggage/enhanced-options")
-async def get_enhanced_baggage_options():
-    """Get enhanced baggage options with insurance"""
-    options = [
-        {
-            "type": "carry_on",
-            "name": "Bagage à main",
-            "description": "8kg max, 42x32x25cm",
-            "price": 0,
-            "icon": "backpack",
-            "included": True,
-            "insurance_available": False
-        },
-        {
-            "type": "checked",
-            "name": "Bagage soute",
-            "description": "25kg max, 80x60x40cm",
-            "price": 0,
-            "icon": "suitcase",
-            "included": True,
-            "insurance_available": True,
-            "insurance_price": 1000
-        },
-        {
-            "type": "extra",
-            "name": "Bagage supplémentaire",
-            "description": "25kg max, dimensions standard",
-            "price": 3000,
-            "icon": "plus",
-            "included": False,
-            "insurance_available": True,
-            "insurance_price": 1500
-        },
-        {
-            "type": "bike",
-            "name": "Transport vélo",
-            "description": "Vélo standard, bien emballé",
-            "price": 4000,
-            "icon": "bike",
-            "included": False,
-            "insurance_available": True,
-            "insurance_price": 2000
-        },
-        {
-            "type": "sports",
-            "name": "Équipement sportif",
-            "description": "30kg max, équipement spécialisé",
-            "price": 5000,
-            "icon": "dumbbell",
-            "included": False,
-            "insurance_available": True,
-            "insurance_price": 2500
-        },
-        {
-            "type": "fragile",
-            "name": "Objets fragiles",
-            "description": "Emballage spécialisé, manutention délicate",
-            "price": 6000,
-            "icon": "package",
-            "included": False,
-            "insurance_available": True,
-            "insurance_price": 3000
-        },
-        {
-            "type": "documents",
-            "name": "Documents importants",
-            "description": "Transport sécurisé de documents",
-            "price": 1500,
-            "icon": "file-text",
-            "included": False,
-            "insurance_available": True,
-            "insurance_price": 500
-        }
-    ]
-    
-    return {"baggage_options": options}
-
-@api_router.get("/service-classes")
-async def get_service_classes():
-    """Get all available service classes"""
-    return {"service_classes": SERVICE_CLASSES}
+@api_router.get("/service-classes/enhanced")
+async def get_enhanced_service_classes():
+    """Get enhanced service classes"""
+    return {"service_classes": SERVICE_CLASSES_ENHANCED}
 
 # Include router
 app.include_router(api_router)
