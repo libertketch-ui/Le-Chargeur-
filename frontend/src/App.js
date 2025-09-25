@@ -67,6 +67,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 function App() {
+  const [currentView, setCurrentView] = useState("main"); // "main" or "registration"
   const [activeTab, setActiveTab] = useState("home");
   const [cities, setCities] = useState([]);
   const [routes, setRoutes] = useState([]);
