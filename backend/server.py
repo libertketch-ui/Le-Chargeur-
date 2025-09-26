@@ -13,10 +13,8 @@ from datetime import datetime, timedelta
 import random
 import math
 import hashlib
-import re
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import smtplib
+import requests
+import json
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -26,696 +24,713 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
-app = FastAPI(title="BusConnect Cameroun - Complete Registration System", description="Advanced registration system with document validation")
-
-# Create a router with the /api prefix
+# Create the main app
+app = FastAPI(title="Connect237 - Ultimate Cameroon Transport Platform", description="Complete transport ecosystem for Cameroon")
 api_router = APIRouter(prefix="/api")
 
-# === ENHANCED USER REGISTRATION MODELS ===
+# === ENHANCED MODELS FOR CONNECT237 ===
 
-class DocumentUpload(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    user_id: str
-    document_type: str  # "authorization_transport", "driving_license", "vehicle_photo", "identity_card"
-    file_name: str
-    file_data: str  # base64 encoded
-    file_size: int
-    mime_type: str
-    uploaded_at: datetime = Field(default_factory=datetime.utcnow)
-    validation_status: str = "pending"  # pending, approved, rejected
-    admin_notes: Optional[str] = None
-    validated_by: Optional[str] = None
-    validated_at: Optional[datetime] = None
+class WeatherInfo(BaseModel):
+    city: str
+    temperature: float
+    description: str
+    humidity: int
+    wind_speed: float
+    icon: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-class Vehicle(BaseModel):
+class TouristAttraction(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    owner_id: str
-    brand: str
-    model: str
-    year: int
-    plate_number: str
-    capacity: int
-    vehicle_type: str  # "bus", "minibus", "car"
-    color: str
-    insurance_expiry: str
-    technical_control_expiry: str
-    photos: List[str] = []  # Document IDs
-    features: List[str] = []  # ["AC", "WiFi", "TV", etc.]
-    status: str = "pending_validation"  # pending_validation, approved, rejected, active, maintenance
-    validation_notes: Optional[str] = None
-    routes_assigned: List[str] = []  # List of route IDs
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    name: str
+    city: str
+    region: str
+    description: str
+    image_url: str
+    category: str  # "nature", "cultural", "adventure", "historical"
+    rating: float
+    coordinates: Dict[str, float]
 
-class ValidationCode(BaseModel):
+class TransportAgency(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    user_id: str
-    code: str
-    code_type: str  # "sms", "email", "registration"
-    phone_or_email: str
-    expires_at: datetime
-    used: bool = False
-    attempts: int = 0
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-class EnhancedUser(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    email: Optional[EmailStr] = None
+    name: str
+    registration_number: str
+    headquarters: str
     phone: str
-    first_name: str
-    last_name: str
-    user_type: str  # "client", "agency", "individual_transport", "occasional_transport"
-    
-    # Registration info
-    registration_status: str = "pending_validation"  # pending_validation, documents_required, approved, rejected
-    email_verified: bool = False
-    phone_verified: bool = False
-    
-    # Agency specific fields
-    agency_name: Optional[str] = None
-    agency_address: Optional[str] = None
-    agency_license_number: Optional[str] = None
-    
-    # Transport provider fields
-    driving_license_number: Optional[str] = None
-    driving_license_expiry: Optional[str] = None
-    transport_experience_years: Optional[int] = None
-    preferred_routes: List[str] = []
-    
-    # Documents
-    uploaded_documents: List[str] = []  # Document IDs
-    vehicles: List[str] = []  # Vehicle IDs
-    
-    # Validation
-    validation_notes: Optional[str] = None
-    validated_by: Optional[str] = None
-    validated_at: Optional[datetime] = None
-    
-    # Standard fields
-    subscription_type: str = "standard"
-    loyalty_points: int = 0
-    profile_complete: bool = False
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    email: Optional[str] = None
+    website: Optional[str] = None
+    founded_year: int
+    fleet_size: int
+    routes_served: List[str]
+    services: List[str]  # ["passenger", "cargo", "courier"]
+    rating: float
+    logo_url: str
+    verified: bool = True
+    premium_partner: bool = False
 
-class UserRegistration(BaseModel):
-    email: Optional[EmailStr] = None
-    phone: str
-    first_name: str
-    last_name: str
-    user_type: str
-    
-    # Agency fields (if user_type == "agency")
-    agency_name: Optional[str] = None
-    agency_address: Optional[str] = None
-    agency_license_number: Optional[str] = None
-    
-    # Transport provider fields (if user_type in ["individual_transport", "occasional_transport"])
-    driving_license_number: Optional[str] = None
-    driving_license_expiry: Optional[str] = None
-    transport_experience_years: Optional[int] = None
-    
-    # Client preferences
-    preferred_language: str = "fr"
-
-class AdminAction(BaseModel):
+class CourierService(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    admin_id: str
-    action_type: str  # "approve_user", "reject_user", "approve_document", "reject_document", "approve_vehicle"
-    target_id: str  # User ID, Document ID, or Vehicle ID
-    notes: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-class Route(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    provider_id: str  # User ID of transport provider
-    vehicle_id: str
+    sender_id: str
+    recipient_name: str
+    recipient_phone: str
     origin: str
     destination: str
-    departure_times: List[str]  # ["06:00", "14:00", "20:00"]
-    duration: str
-    base_price: int
-    service_class: str
-    available_days: List[str]  # ["monday", "tuesday", etc.]
-    max_passengers: int
-    amenities: List[str]
-    status: str = "active"  # active, inactive, suspended
+    pickup_address: str
+    delivery_address: str
+    package_type: str  # "documents", "clothes", "electronics", "food", "other"
+    weight_kg: float
+    declared_value: int
+    urgent: bool = False
+    insurance: bool = False
+    pickup_time: Optional[str] = None
+    delivery_instructions: str = ""
+    tracking_number: str = Field(default_factory=lambda: f"C237{random.randint(100000, 999999)}")
+    status: str = "pending"  # pending, collected, in_transit, delivered, failed
+    price: int
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class GPSLocation(BaseModel):
+    vehicle_id: str
+    latitude: float
+    longitude: float
+    heading: float
+    speed_kmh: float
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    driver_status: str = "active"  # active, break, offline
+
+class PaymentMethod(BaseModel):
+    type: str  # "mobile_money", "account_credit", "voucher", "reservation"
+    provider: Optional[str] = None  # "MTN", "ORANGE"
+    account_number: Optional[str] = None
+    voucher_code: Optional[str] = None
+    reservation_fee: int = 500  # FCFA
+
+class EnhancedBooking(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    route_id: str
+    agency_id: str
+    vehicle_id: Optional[str] = None
+    
+    # Passenger details
+    passenger_count: int
+    custom_passenger_count: Optional[int] = None
+    passenger_details: List[Dict[str, Any]] = []
+    
+    # Journey details
+    departure_date: str
+    departure_time: str
+    pickup_location: Dict[str, Any]  # {"address": "", "coordinates": {"lat": 0, "lng": 0}}
+    dropoff_location: Dict[str, Any]
+    
+    # Pricing
+    base_price: int
+    reservation_fee: int = 500
+    total_price: int
+    payment_method: PaymentMethod
+    payment_status: str = "reservation"  # reservation, partial, completed
+    
+    # Services
+    courier_services: List[str] = []  # Courier service IDs if any
+    special_requests: str = ""
+    
+    # Status
+    status: str = "reserved"  # reserved, confirmed, in_progress, completed, cancelled
+    booking_reference: str = Field(default_factory=lambda: f"C237{random.randint(100000, 999999)}")
+    qr_code: str = ""
+    
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# === CAMEROON DATA ===
+
+# Major Transport Agencies in Cameroon
+CAMEROON_TRANSPORT_AGENCIES = [
+    {
+        "name": "Express Union",
+        "registration_number": "RC/YDE/2010/B/1234",
+        "headquarters": "Douala",
+        "phone": "+237699123456",
+        "email": "contact@expressunion.cm",
+        "website": "www.expressunion.cm",
+        "founded_year": 1995,
+        "fleet_size": 200,
+        "routes_served": ["Yaoundé-Douala", "Douala-Bafoussam", "Yaoundé-Bamenda", "Douala-Bertoua"],
+        "services": ["passenger", "cargo", "courier"],
+        "rating": 4.5,
+        "logo_url": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=200",
+        "premium_partner": True
+    },
+    {
+        "name": "Touristique Express",
+        "registration_number": "RC/YDE/2008/A/5678",
+        "headquarters": "Yaoundé",
+        "phone": "+237677234567",
+        "email": "info@touristiqueexpress.cm",
+        "founded_year": 1990,
+        "fleet_size": 150,
+        "routes_served": ["Yaoundé-Douala", "Yaoundé-Bafoussam", "Yaoundé-Bertoua"],
+        "services": ["passenger", "courier"],
+        "rating": 4.3,
+        "logo_url": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=200",
+        "premium_partner": True
+    },
+    {
+        "name": "Central Voyages",
+        "registration_number": "RC/BFM/2005/C/9012",
+        "headquarters": "Bafoussam",
+        "phone": "+237655345678",
+        "founded_year": 2000,
+        "fleet_size": 120,
+        "routes_served": ["Bafoussam-Yaoundé", "Bafoussam-Douala", "Bafoussam-Bamenda"],
+        "services": ["passenger", "cargo"],
+        "rating": 4.2,
+        "logo_url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200",
+        "premium_partner": False
+    },
+    {
+        "name": "Binam Voyages",
+        "registration_number": "RC/YDE/2012/B/3456",
+        "headquarters": "Yaoundé",
+        "phone": "+237699456789",
+        "founded_year": 2003,
+        "fleet_size": 100,
+        "routes_served": ["Yaoundé-Douala", "Yaoundé-Ngaoundéré", "Yaoundé-Bertoua"],
+        "services": ["passenger", "courier"],
+        "rating": 4.4,
+        "logo_url": "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=200",
+        "premium_partner": True
+    },
+    {
+        "name": "Guaranti Express",
+        "registration_number": "RC/DLA/2007/A/7890",
+        "headquarters": "Douala",
+        "phone": "+237677567890",
+        "founded_year": 1998,
+        "fleet_size": 80,
+        "routes_served": ["Douala-Yaoundé", "Douala-Bafoussam", "Douala-Limbe"],
+        "services": ["passenger", "cargo", "courier"],
+        "rating": 4.6,
+        "logo_url": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=200",
+        "premium_partner": True
+    },
+    {
+        "name": "Vatican Transport",
+        "registration_number": "RC/BDA/2009/C/2468",
+        "headquarters": "Bamenda",
+        "phone": "+237655678901",
+        "founded_year": 2001,
+        "fleet_size": 90,
+        "routes_served": ["Bamenda-Yaoundé", "Bamenda-Douala", "Bamenda-Bafoussam"],
+        "services": ["passenger", "cargo"],
+        "rating": 4.1,
+        "logo_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=200",
+        "premium_partner": False
+    },
+    {
+        "name": "Musango Transport",
+        "registration_number": "RC/GRA/2011/B/1357",
+        "headquarters": "Garoua",
+        "phone": "+237699789012",
+        "founded_year": 2004,
+        "fleet_size": 110,
+        "routes_served": ["Garoua-Yaoundé", "Garoua-Douala", "Garoua-Ngaoundéré"],
+        "services": ["passenger", "cargo", "courier"],
+        "rating": 4.0,
+        "logo_url": "https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=200",
+        "premium_partner": False
+    },
+    {
+        "name": "Transcam Transport",
+        "registration_number": "RC/YDE/2013/A/9753",
+        "headquarters": "Yaoundé",
+        "phone": "+237677890123",
+        "founded_year": 2006,
+        "fleet_size": 95,
+        "routes_served": ["Yaoundé-Douala", "Yaoundé-Ebolowa", "Yaoundé-Sangmélima"],
+        "services": ["passenger", "courier"],
+        "rating": 4.3,
+        "logo_url": "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=200",
+        "premium_partner": True
+    }
+]
+
+# Tourist Attractions in Cameroon
+CAMEROON_TOURIST_ATTRACTIONS = [
+    {
+        "name": "Mont Cameroun",
+        "city": "Buéa",
+        "region": "Sud-Ouest",
+        "description": "Plus haute montagne d'Afrique de l'Ouest avec vue spectaculaire",
+        "image_url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600",
+        "category": "nature",
+        "rating": 4.8,
+        "coordinates": {"lat": 4.2175, "lng": 9.1708}
+    },
+    {
+        "name": "Chutes de la Lobé",
+        "city": "Kribi",
+        "region": "Sud",
+        "description": "Cascades spectaculaires se jetant directement dans l'océan",
+        "image_url": "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600",
+        "category": "nature",
+        "rating": 4.7,
+        "coordinates": {"lat": 2.8833, "lng": 9.9167}
+    },
+    {
+        "name": "Palais des Rois Bamoun",
+        "city": "Foumban",
+        "region": "Ouest",
+        "description": "Palais royal historique avec musée et architecture traditionnelle",
+        "image_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600",
+        "category": "cultural",
+        "rating": 4.5,
+        "coordinates": {"lat": 5.7167, "lng": 10.9000}
+    },
+    {
+        "name": "Parc National de Waza",
+        "city": "Waza",
+        "region": "Extrême-Nord",
+        "description": "Réserve de faune avec éléphants, lions et antilopes",
+        "image_url": "https://images.unsplash.com/photo-1549366021-9f761d040a87?w=600",
+        "category": "nature",
+        "rating": 4.6,
+        "coordinates": {"lat": 11.3833, "lng": 14.6333}
+    },
+    {
+        "name": "Lac Nyos",
+        "city": "Wum",
+        "region": "Nord-Ouest",
+        "description": "Lac cratère mystérieux aux eaux cristallines",
+        "image_url": "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=600",
+        "category": "nature",
+        "rating": 4.4,
+        "coordinates": {"lat": 6.4333, "lng": 10.2967}
+    },
+    {
+        "name": "Plages de Limbe",
+        "city": "Limbe",
+        "region": "Sud-Ouest",
+        "description": "Plages de sable noir volcanique avec vue sur le mont Cameroun",
+        "image_url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600",
+        "category": "nature",
+        "rating": 4.3,
+        "coordinates": {"lat": 4.0167, "lng": 9.2000}
+    },
+    {
+        "name": "Réserve de Dja",
+        "city": "Sangmélima",
+        "region": "Sud",
+        "description": "Forêt tropicale primaire, site du patrimoine mondial UNESCO",
+        "image_url": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600",
+        "category": "nature",
+        "rating": 4.7,
+        "coordinates": {"lat": 3.2500, "lng": 12.7500}
+    },
+    {
+        "name": "Marché Central de Yaoundé",
+        "city": "Yaoundé",
+        "region": "Centre",
+        "description": "Marché traditionnel coloré avec artisanat local",
+        "image_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600",
+        "category": "cultural",
+        "rating": 4.2,
+        "coordinates": {"lat": 3.8480, "lng": 11.5021}
+    }
+]
+
+# Enhanced Cameroon Cities with Weather Simulation
+ENHANCED_CAMEROON_CITIES = [
+    {"name": "Yaoundé", "region": "Centre", "lat": 3.8667, "lng": 11.5167, "major": True, "airport": True, "population": 4500000},
+    {"name": "Douala", "region": "Littoral", "lat": 4.0611, "lng": 9.7067, "major": True, "airport": True, "population": 3700000},
+    {"name": "Bafoussam", "region": "Ouest", "lat": 5.4667, "lng": 10.4167, "major": True, "airport": True, "population": 450000},
+    {"name": "Bamenda", "region": "Nord-Ouest", "lat": 5.9667, "lng": 10.1667, "major": True, "airport": True, "population": 500000},
+    {"name": "Bertoua", "region": "Est", "lat": 4.5833, "lng": 13.6833, "major": True, "airport": True, "population": 300000},
+    {"name": "Garoua", "region": "Nord", "lat": 9.3000, "lng": 13.4000, "major": True, "airport": True, "population": 450000},
+    {"name": "Maroua", "region": "Nord", "lat": 10.5833, "lng": 14.3167, "major": True, "airport": True, "population": 400000},
+    {"name": "Ngaoundéré", "region": "Adamaoua", "lat": 7.3167, "lng": 13.5833, "major": True, "airport": True, "population": 300000},
+    {"name": "Kribi", "region": "Sud", "lat": 2.9333, "lng": 9.9167, "major": True, "airport": False, "population": 70000},
+    {"name": "Limbe", "region": "Sud-Ouest", "lat": 4.0167, "lng": 9.2000, "major": True, "airport": False, "population": 120000},
+    {"name": "Buéa", "region": "Sud-Ouest", "lat": 4.1500, "lng": 9.2833, "major": True, "airport": False, "population": 200000},
+    {"name": "Kumba", "region": "Sud-Ouest", "lat": 4.6333, "lng": 9.4500, "major": True, "airport": False, "population": 150000},
+    {"name": "Ebolowa", "region": "Sud", "lat": 2.9167, "lng": 11.1500, "major": True, "airport": False, "population": 80000},
+    {"name": "Foumban", "region": "Ouest", "lat": 5.7167, "lng": 10.9000, "major": True, "airport": False, "population": 120000},
+    {"name": "Dschang", "region": "Ouest", "lat": 5.4500, "lng": 10.0500, "major": True, "airport": False, "population": 100000}
+]
 
 # === UTILITY FUNCTIONS ===
 
-def generate_validation_code():
-    """Generate 6-digit validation code"""
-    return str(random.randint(100000, 999999))
-
-def validate_phone_number(phone: str) -> bool:
-    """Validate Cameroon phone number format"""
-    # Cameroon phone patterns: +237XXXXXXXXX or 237XXXXXXXXX or 6XXXXXXXX
-    patterns = [
-        r'^\+237[67]\d{8}$',  # +237XXXXXXXXX
-        r'^237[67]\d{8}$',    # 237XXXXXXXXX  
-        r'^[67]\d{8}$'        # 6XXXXXXXX or 7XXXXXXXX
+def generate_weather_data(city_name: str, region: str) -> WeatherInfo:
+    """Generate realistic weather data for Cameroon cities"""
+    
+    # Base temperatures by region (Cameroon climate)
+    regional_temps = {
+        "Centre": (22, 32),
+        "Littoral": (24, 31),
+        "Ouest": (18, 28),
+        "Nord-Ouest": (16, 26),
+        "Sud-Ouest": (22, 30),
+        "Sud": (21, 29),
+        "Est": (20, 30),
+        "Adamaoua": (15, 25),
+        "Nord": (20, 35),
+        "Extrême-Nord": (22, 40)
+    }
+    
+    min_temp, max_temp = regional_temps.get(region, (20, 30))
+    temp = random.uniform(min_temp, max_temp)
+    
+    weather_conditions = [
+        {"desc": "Ensoleillé", "icon": "☀️"},
+        {"desc": "Partiellement nuageux", "icon": "⛅"},
+        {"desc": "Nuageux", "icon": "☁️"},
+        {"desc": "Pluie légère", "icon": "🌦️"},
+        {"desc": "Orageux", "icon": "⛈️"}
     ]
     
-    return any(re.match(pattern, phone) for pattern in patterns)
-
-def normalize_phone_number(phone: str) -> str:
-    """Normalize phone number to +237XXXXXXXXX format"""
-    # Remove spaces and special chars except +
-    clean_phone = re.sub(r'[^\d+]', '', phone)
-    
-    if clean_phone.startswith('+237'):
-        return clean_phone
-    elif clean_phone.startswith('237'):
-        return '+' + clean_phone
-    elif clean_phone.startswith(('6', '7')) and len(clean_phone) == 9:
-        return '+237' + clean_phone
+    # Rainy season probability (May-October)
+    month = datetime.now().month
+    if 5 <= month <= 10:
+        weather_weights = [0.2, 0.3, 0.2, 0.2, 0.1]
     else:
-        raise ValueError("Invalid phone number format")
+        weather_weights = [0.4, 0.3, 0.2, 0.08, 0.02]
+    
+    weather = random.choices(weather_conditions, weights=weather_weights)[0]
+    
+    return WeatherInfo(
+        city=city_name,
+        temperature=round(temp, 1),
+        description=weather["desc"],
+        humidity=random.randint(40, 90),
+        wind_speed=round(random.uniform(5, 25), 1),
+        icon=weather["icon"]
+    )
 
-async def send_sms_code(phone: str, code: str) -> bool:
-    """Send SMS validation code (mock implementation)"""
-    try:
-        # In real implementation, integrate with SMS provider (Twilio, etc.)
-        print(f"SMS to {phone}: Your BusConnect validation code is: {code}")
-        return True
-    except Exception as e:
-        print(f"SMS sending failed: {e}")
-        return False
+def simulate_gps_tracking(vehicle_id: str) -> GPSLocation:
+    """Simulate real-time GPS tracking"""
+    # Random location around Cameroon
+    lat = random.uniform(2.0, 13.0)
+    lng = random.uniform(8.5, 16.0)
+    
+    return GPSLocation(
+        vehicle_id=vehicle_id,
+        latitude=lat,
+        longitude=lng,
+        heading=random.uniform(0, 360),
+        speed_kmh=random.uniform(40, 90),
+        driver_status=random.choice(["active", "break"])
+    )
 
-async def send_email_code(email: str, code: str) -> bool:
-    """Send email validation code (mock implementation)"""
-    try:
-        # In real implementation, integrate with email service
-        print(f"Email to {email}: Your BusConnect validation code is: {code}")
-        return True
-    except Exception as e:
-        print(f"Email sending failed: {e}")
-        return False
-
-# === REGISTRATION API ENDPOINTS ===
+# === API ENDPOINTS ===
 
 @api_router.get("/")
 async def root():
     return {
-        "message": "BusConnect Cameroun - Complete Registration System", 
-        "version": "4.0",
-        "user_types": ["client", "agency", "individual_transport", "occasional_transport"],
+        "app": "Connect237 - Ultimate Cameroon Transport Platform",
+        "version": "1.0.0",
         "features": [
-            "Multi-level User Registration",
-            "Document Upload & Validation", 
-            "SMS/Email Verification",
-            "Admin Approval System",
-            "Vehicle Management"
-        ]
-    }
-
-@api_router.post("/register/initiate")
-async def initiate_registration(registration: UserRegistration):
-    """Step 1: Initiate user registration with basic info"""
-    
-    # Validate phone number
-    if not validate_phone_number(registration.phone):
-        raise HTTPException(status_code=400, detail="Invalid phone number format")
-    
-    # Normalize phone
-    normalized_phone = normalize_phone_number(registration.phone)
-    
-    # Check if user already exists
-    existing_user = await db.users.find_one({
-        "$or": [
-            {"phone": normalized_phone},
-            {"email": registration.email} if registration.email else {}
-        ]
-    })
-    
-    if existing_user:
-        raise HTTPException(status_code=409, detail="User already exists with this phone or email")
-    
-    # Validate required fields based on user type
-    if registration.user_type == "agency":
-        if not all([registration.agency_name, registration.agency_address]):
-            raise HTTPException(status_code=400, detail="Agency name and address are required")
-    
-    elif registration.user_type in ["individual_transport", "occasional_transport"]:
-        if not all([registration.driving_license_number, registration.driving_license_expiry]):
-            raise HTTPException(status_code=400, detail="Driving license information is required")
-    
-    # Create user record
-    user_data = registration.dict()
-    user_data["phone"] = normalized_phone
-    user = EnhancedUser(**user_data)
-    
-    # Determine initial status based on user type
-    if user.user_type == "client":
-        user.registration_status = "pending_validation"  # Just needs phone/email verification
-    else:
-        user.registration_status = "documents_required"  # Needs document upload
-    
-    await db.users.insert_one(user.dict())
-    
-    # Send validation code
-    code = generate_validation_code()
-    expires_at = datetime.utcnow() + timedelta(minutes=10)
-    
-    # Prefer phone verification for Cameroon market
-    if normalized_phone:
-        validation_code = ValidationCode(
-            user_id=user.id,
-            code=code,
-            code_type="sms",
-            phone_or_email=normalized_phone,
-            expires_at=expires_at
-        )
-        
-        success = await send_sms_code(normalized_phone, code)
-        if not success and registration.email:
-            # Fallback to email if SMS fails
-            validation_code.code_type = "email"
-            validation_code.phone_or_email = registration.email
-            success = await send_email_code(registration.email, code)
-    
-    elif registration.email:
-        validation_code = ValidationCode(
-            user_id=user.id,
-            code=code,
-            code_type="email", 
-            phone_or_email=registration.email,
-            expires_at=expires_at
-        )
-        success = await send_email_code(registration.email, code)
-    
-    else:
-        raise HTTPException(status_code=400, detail="Phone number or email is required")
-    
-    if not success:
-        raise HTTPException(status_code=500, detail="Failed to send validation code")
-    
-    await db.validation_codes.insert_one(validation_code.dict())
-    
-    return {
-        "user_id": user.id,
-        "registration_status": user.registration_status,
-        "verification_sent_to": validation_code.phone_or_email,
-        "verification_method": validation_code.code_type,
-        "next_step": "verify_contact" if user.user_type == "client" else "upload_documents",
-        "message": f"Validation code sent to {validation_code.phone_or_email}"
-    }
-
-@api_router.post("/register/verify")
-async def verify_registration_code(user_id: str, code: str):
-    """Step 2: Verify SMS/Email code"""
-    
-    # Find validation code
-    validation_record = await db.validation_codes.find_one({
-        "user_id": user_id,
-        "used": False,
-        "expires_at": {"$gt": datetime.utcnow()}
-    })
-    
-    if not validation_record:
-        raise HTTPException(status_code=404, detail="Invalid or expired validation code")
-    
-    # Check code
-    if validation_record["code"] != code:
-        # Increment attempts
-        await db.validation_codes.update_one(
-            {"id": validation_record["id"]},
-            {"$inc": {"attempts": 1}}
-        )
-        
-        if validation_record["attempts"] >= 2:  # 3 attempts total
-            await db.validation_codes.update_one(
-                {"id": validation_record["id"]},
-                {"$set": {"used": True}}
-            )
-            raise HTTPException(status_code=429, detail="Too many attempts. Request new code.")
-        
-        raise HTTPException(status_code=400, detail="Invalid validation code")
-    
-    # Mark code as used
-    await db.validation_codes.update_one(
-        {"id": validation_record["id"]},
-        {"$set": {"used": True}}
-    )
-    
-    # Update user verification status
-    user = await db.users.find_one({"id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    update_fields = {}
-    if validation_record["code_type"] == "sms":
-        update_fields["phone_verified"] = True
-    else:
-        update_fields["email_verified"] = True
-    
-    # If client, complete registration
-    if user["user_type"] == "client":
-        update_fields["registration_status"] = "approved"
-        update_fields["profile_complete"] = True
-    
-    await db.users.update_one(
-        {"id": user_id},
-        {"$set": update_fields}
-    )
-    
-    return {
-        "success": True,
-        "user_type": user["user_type"],
-        "registration_status": update_fields.get("registration_status", user["registration_status"]),
-        "next_step": "complete" if user["user_type"] == "client" else "upload_documents",
-        "message": "Verification successful"
-    }
-
-@api_router.post("/register/upload-document")
-async def upload_document(
-    user_id: str = Form(...),
-    document_type: str = Form(...),  # "authorization_transport", "driving_license", "vehicle_photo", "identity_card"
-    file: UploadFile = File(...)
-):
-    """Step 3: Upload required documents"""
-    
-    # Validate user exists and needs documents
-    user = await db.users.find_one({"id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    if user["registration_status"] not in ["documents_required", "pending_validation"]:
-        raise HTTPException(status_code=400, detail="User not in document upload phase")
-    
-    # Validate document type for user type
-    valid_docs = {
-        "agency": ["authorization_transport", "identity_card"],
-        "individual_transport": ["driving_license", "vehicle_photo", "identity_card"], 
-        "occasional_transport": ["driving_license", "vehicle_photo", "identity_card"]
-    }
-    
-    if document_type not in valid_docs.get(user["user_type"], []):
-        raise HTTPException(status_code=400, detail=f"Invalid document type for {user['user_type']}")
-    
-    # Validate file
-    if file.size > 5 * 1024 * 1024:  # 5MB limit
-        raise HTTPException(status_code=413, detail="File too large (max 5MB)")
-    
-    allowed_types = ["image/jpeg", "image/png", "image/jpg", "application/pdf"]
-    if file.content_type not in allowed_types:
-        raise HTTPException(status_code=400, detail="Invalid file type. Only JPG, PNG, PDF allowed")
-    
-    # Read and encode file
-    file_data = await file.read()
-    file_base64 = base64.b64encode(file_data).decode('utf-8')
-    
-    # Create document record
-    document = DocumentUpload(
-        user_id=user_id,
-        document_type=document_type,
-        file_name=file.filename,
-        file_data=file_base64,
-        file_size=file.size,
-        mime_type=file.content_type
-    )
-    
-    await db.documents.insert_one(document.dict())
-    
-    # Update user's uploaded documents
-    await db.users.update_one(
-        {"id": user_id},
-        {
-            "$push": {"uploaded_documents": document.id},
-            "$set": {"registration_status": "pending_validation"}
+            "Real-time Vehicle Tracking",
+            "Weather Integration", 
+            "Tourist Attractions",
+            "Courier Services",
+            "Enhanced Payment System",
+            "Custom Passenger Count",
+            "Pickup Location Selection",
+            "Reservation System",
+            "Multi-Agency Support"
+        ],
+        "contact": {
+            "whatsapp": "+237699000000",
+            "email": "support@connect237.cm",
+            "phone": "+237677000000"
         }
-    )
-    
-    # Check if all required documents uploaded
-    user_docs = await db.documents.find({"user_id": user_id}).to_list(100)
-    uploaded_types = [doc["document_type"] for doc in user_docs]
-    
-    required_docs = valid_docs[user["user_type"]]
-    all_uploaded = all(doc_type in uploaded_types for doc_type in required_docs)
-    
-    return {
-        "document_id": document.id,
-        "uploaded_documents": uploaded_types,
-        "required_documents": required_docs,
-        "all_required_uploaded": all_uploaded,
-        "next_step": "wait_approval" if all_uploaded else "upload_more_documents",
-        "message": f"Document {document_type} uploaded successfully"
     }
 
-@api_router.post("/register/add-vehicle")
-async def add_vehicle(
-    user_id: str,
-    vehicle_data: Dict[str, Any]
-):
-    """Add vehicle for transport providers"""
-    
-    user = await db.users.find_one({"id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    if user["user_type"] not in ["individual_transport", "occasional_transport"]:
-        raise HTTPException(status_code=400, detail="Only transport providers can add vehicles")
-    
-    # Create vehicle record
-    vehicle = Vehicle(
-        owner_id=user_id,
-        **vehicle_data
-    )
-    
-    await db.vehicles.insert_one(vehicle.dict())
-    
-    # Update user's vehicles
-    await db.users.update_one(
-        {"id": user_id},
-        {"$push": {"vehicles": vehicle.id}}
-    )
-    
-    return {
-        "vehicle_id": vehicle.id,
-        "status": "pending_validation",
-        "message": "Vehicle added successfully. Waiting for admin approval."
-    }
+@api_router.get("/agencies")
+async def get_transport_agencies():
+    """Get all registered transport agencies"""
+    return {"agencies": CAMEROON_TRANSPORT_AGENCIES}
 
-# === ADMIN ENDPOINTS ===
+@api_router.get("/agencies/premium")
+async def get_premium_agencies():
+    """Get premium partner agencies"""
+    premium_agencies = [agency for agency in CAMEROON_TRANSPORT_AGENCIES if agency.get("premium_partner", False)]
+    return {"premium_agencies": premium_agencies}
 
-@api_router.get("/admin/pending-users")
-async def get_pending_users():
-    """Get users pending admin approval"""
+@api_router.get("/weather/{city}")
+async def get_city_weather(city: str):
+    """Get real-time weather for a city"""
+    city_info = next((c for c in ENHANCED_CAMEROON_CITIES if c["name"].lower() == city.lower()), None)
     
-    users = await db.users.find({
-        "registration_status": "pending_validation",
-        "user_type": {"$in": ["agency", "individual_transport", "occasional_transport"]}
-    }).to_list(100)
+    if not city_info:
+        raise HTTPException(status_code=404, detail="City not found")
     
-    # Enrich with document info
-    for user in users:
-        if user["uploaded_documents"]:
-            docs = await db.documents.find({
-                "id": {"$in": user["uploaded_documents"]}
-            }).to_list(100)
-            user["documents"] = docs
-        else:
-            user["documents"] = []
-    
-    return {"pending_users": users}
+    weather = generate_weather_data(city_info["name"], city_info["region"])
+    return weather
 
-@api_router.get("/admin/user/{user_id}/details")
-async def get_user_details_for_admin(user_id: str):
-    """Get complete user details for admin review"""
+@api_router.get("/weather/all")
+async def get_all_weather():
+    """Get weather for all major cities"""
+    weather_data = []
+    for city in ENHANCED_CAMEROON_CITIES:
+        if city["major"]:
+            weather = generate_weather_data(city["name"], city["region"])
+            weather_data.append(weather)
     
-    user = await db.users.find_one({"id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Get documents
-    documents = []
-    if user["uploaded_documents"]:
-        documents = await db.documents.find({
-            "id": {"$in": user["uploaded_documents"]}
-        }).to_list(100)
-    
-    # Get vehicles
+    return {"weather_data": weather_data}
+
+@api_router.get("/attractions")
+async def get_tourist_attractions():
+    """Get tourist attractions in Cameroon"""
+    return {"attractions": CAMEROON_TOURIST_ATTRACTIONS}
+
+@api_router.get("/attractions/by-city/{city}")
+async def get_attractions_by_city(city: str):
+    """Get tourist attractions in a specific city"""
+    city_attractions = [attr for attr in CAMEROON_TOURIST_ATTRACTIONS if attr["city"].lower() == city.lower()]
+    return {"city": city, "attractions": city_attractions}
+
+@api_router.get("/tracking/{vehicle_id}")
+async def track_vehicle(vehicle_id: str):
+    """Get real-time GPS location of a vehicle"""
+    location = simulate_gps_tracking(vehicle_id)
+    return location
+
+@api_router.get("/tracking/route/{route_id}")
+async def track_route_vehicles(route_id: str):
+    """Get all vehicles on a specific route"""
+    # Simulate 3-5 vehicles per route
+    num_vehicles = random.randint(3, 5)
     vehicles = []
-    if user["vehicles"]:
-        vehicles = await db.vehicles.find({
-            "id": {"$in": user["vehicles"]}
-        }).to_list(100)
+    
+    for i in range(num_vehicles):
+        vehicle_id = f"VH{route_id}{i+1:03d}"
+        location = simulate_gps_tracking(vehicle_id)
+        vehicles.append({
+            "vehicle_id": vehicle_id,
+            "location": location,
+            "occupancy": random.randint(10, 45),
+            "next_stop": random.choice(["Yaoundé", "Douala", "Bafoussam", "Bamenda"]),
+            "eta": f"{random.randint(1, 4)}h{random.randint(0, 59):02d}min"
+        })
+    
+    return {"route_id": route_id, "vehicles": vehicles}
+
+@api_router.post("/courier/book")
+async def book_courier_service(courier: CourierService):
+    """Book courier/parcel delivery service"""
+    
+    # Calculate price based on weight, distance, and urgency
+    base_price = 2000  # Base price in FCFA
+    weight_price = courier.weight_kg * 500
+    urgent_multiplier = 1.5 if courier.urgent else 1.0
+    insurance_price = (courier.declared_value * 0.02) if courier.insurance else 0
+    
+    total_price = int((base_price + weight_price + insurance_price) * urgent_multiplier)
+    courier.price = total_price
+    
+    # Save to database
+    await db.courier_services.insert_one(courier.dict())
     
     return {
-        "user": user,
-        "documents": documents,
-        "vehicles": vehicles
+        "courier_id": courier.id,
+        "tracking_number": courier.tracking_number,
+        "total_price": total_price,
+        "estimated_delivery": "24-48 heures" if not courier.urgent else "6-12 heures",
+        "status": "pending",
+        "message": f"Service courrier réservé avec succès. Code de suivi: {courier.tracking_number}"
     }
 
-@api_router.post("/admin/approve-user")
-async def approve_user(user_id: str, admin_id: str, notes: Optional[str] = None):
-    """Approve user registration"""
+@api_router.get("/courier/track/{tracking_number}")
+async def track_courier(tracking_number: str):
+    """Track courier package"""
+    courier = await db.courier_services.find_one({"tracking_number": tracking_number})
     
-    user = await db.users.find_one({"id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    if not courier:
+        raise HTTPException(status_code=404, detail="Numéro de suivi introuvable")
     
-    # Update user status
-    await db.users.update_one(
-        {"id": user_id},
-        {
-            "$set": {
-                "registration_status": "approved",
-                "validation_notes": notes,
-                "validated_by": admin_id,
-                "validated_at": datetime.utcnow(),
-                "profile_complete": True
-            }
-        }
-    )
+    # Simulate tracking updates
+    statuses = ["pending", "collected", "in_transit", "delivered"]
+    current_status_index = statuses.index(courier.get("status", "pending"))
     
-    # Log admin action
-    admin_action = AdminAction(
-        admin_id=admin_id,
-        action_type="approve_user",
-        target_id=user_id,
-        notes=notes
-    )
-    await db.admin_actions.insert_one(admin_action.dict())
-    
-    # Auto-approve user's documents and vehicles
-    await db.documents.update_many(
-        {"user_id": user_id},
-        {
-            "$set": {
-                "validation_status": "approved",
-                "validated_by": admin_id,
-                "validated_at": datetime.utcnow()
-            }
-        }
-    )
-    
-    await db.vehicles.update_many(
-        {"owner_id": user_id},
-        {
-            "$set": {
-                "status": "approved",
-                "validation_notes": "Auto-approved with user"
-            }
-        }
-    )
+    tracking_history = []
+    for i, status in enumerate(statuses[:current_status_index + 1]):
+        tracking_history.append({
+            "status": status,
+            "description": {
+                "pending": "Colis en attente de collecte",
+                "collected": "Colis collecté et en préparation",
+                "in_transit": "Colis en transit vers la destination",
+                "delivered": "Colis livré avec succès"
+            }[status],
+            "timestamp": datetime.utcnow() - timedelta(hours=24-i*8)
+        })
     
     return {
-        "success": True,
-        "message": f"User {user['first_name']} {user['last_name']} approved successfully"
+        "tracking_number": tracking_number,
+        "current_status": courier["status"],
+        "origin": courier["origin"],
+        "destination": courier["destination"],
+        "recipient": courier["recipient_name"],
+        "tracking_history": tracking_history
     }
 
-@api_router.post("/admin/reject-user")
-async def reject_user(user_id: str, admin_id: str, reason: str):
-    """Reject user registration"""
+@api_router.post("/booking/enhanced")
+async def create_enhanced_booking(booking_data: dict):
+    """Create enhanced booking with all Connect237 features"""
     
-    user = await db.users.find_one({"id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    user_id = booking_data.get("user_id")
+    agency_id = booking_data.get("agency_id")
+    route_details = booking_data.get("route_details", {})
+    passenger_count = booking_data.get("passenger_count", 1)
+    custom_count = booking_data.get("custom_passenger_count")
     
-    await db.users.update_one(
-        {"id": user_id},
-        {
-            "$set": {
-                "registration_status": "rejected",
-                "validation_notes": reason,
-                "validated_by": admin_id,
-                "validated_at": datetime.utcnow()
-            }
+    # Use custom count if provided
+    final_passenger_count = custom_count if custom_count else passenger_count
+    
+    # Calculate pricing
+    base_price = route_details.get("price", 5000)
+    total_base_price = base_price * final_passenger_count
+    
+    # Payment method processing
+    payment_method = booking_data.get("payment_method", {})
+    reservation_fee = 500  # Always 500 FCFA for reservation
+    
+    if payment_method.get("type") == "reservation":
+        payment_status = "reservation"
+        amount_to_pay_now = reservation_fee
+    else:
+        payment_status = "completed"
+        amount_to_pay_now = total_base_price
+    
+    # Create booking
+    booking = EnhancedBooking(
+        user_id=user_id,
+        route_id=route_details.get("id", "route_default"),
+        agency_id=agency_id,
+        passenger_count=final_passenger_count,
+        custom_passenger_count=custom_count,
+        departure_date=booking_data.get("departure_date"),
+        departure_time=booking_data.get("departure_time"),
+        pickup_location=booking_data.get("pickup_location", {}),
+        dropoff_location=booking_data.get("dropoff_location", {}),
+        base_price=base_price,
+        total_price=total_base_price,
+        payment_method=PaymentMethod(**payment_method),
+        payment_status=payment_status,
+        courier_services=booking_data.get("courier_services", []),
+        special_requests=booking_data.get("special_requests", "")
+    )
+    
+    # Generate QR code
+    booking.qr_code = f"C237_{booking.booking_reference}"
+    
+    # Save to database
+    await db.enhanced_bookings.insert_one(booking.dict())
+    
+    # Return payment information
+    payment_info = {
+        "booking_id": booking.id,
+        "booking_reference": booking.booking_reference,
+        "amount_to_pay_now": amount_to_pay_now,
+        "payment_status": payment_status,
+        "qr_code": booking.qr_code
+    }
+    
+    # Add payment provider specific info
+    if payment_method.get("type") == "mobile_money":
+        provider = payment_method.get("provider", "MTN")
+        merchant_codes = {
+            "MTN": "237001",
+            "ORANGE": "237002"
         }
-    )
-    
-    # Log admin action
-    admin_action = AdminAction(
-        admin_id=admin_id,
-        action_type="reject_user",
-        target_id=user_id,
-        notes=reason
-    )
-    await db.admin_actions.insert_one(admin_action.dict())
-    
-    return {
-        "success": True,
-        "message": f"User registration rejected: {reason}"
-    }
-
-@api_router.get("/admin/dashboard")
-async def get_admin_dashboard():
-    """Get admin dashboard statistics"""
-    
-    # Count users by status
-    user_stats = {}
-    for status in ["pending_validation", "approved", "rejected"]:
-        count = await db.users.count_documents({"registration_status": status})
-        user_stats[status] = count
-    
-    # Count by user type
-    type_stats = {}
-    for user_type in ["client", "agency", "individual_transport", "occasional_transport"]:
-        count = await db.users.count_documents({"user_type": user_type})
-        type_stats[user_type] = count
-    
-    # Recent registrations
-    recent_users = await db.users.find({}).sort("created_at", -1).limit(10).to_list(10)
-    
-    # Pending documents
-    pending_docs = await db.documents.count_documents({"validation_status": "pending"})
-    
-    return {
-        "user_statistics": user_stats,
-        "type_statistics": type_stats,
-        "recent_registrations": recent_users,
-        "pending_documents": pending_docs,
-        "total_users": sum(type_stats.values())
-    }
-
-# === PUBLIC ENDPOINTS ===
-
-@api_router.get("/users/profile/{user_id}")
-async def get_user_profile(user_id: str):
-    """Get user profile (public info only)"""
-    
-    user = await db.users.find_one({"id": user_id})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Return only safe fields
-    safe_profile = {
-        "id": user["id"],
-        "first_name": user["first_name"],
-        "last_name": user["last_name"],
-        "user_type": user["user_type"],
-        "registration_status": user["registration_status"],
-        "profile_complete": user.get("profile_complete", False)
-    }
-    
-    if user["user_type"] == "agency":
-        safe_profile["agency_name"] = user.get("agency_name")
-    
-    return safe_profile
-
-@api_router.get("/providers/approved")
-async def get_approved_providers():
-    """Get approved transport providers for public display"""
-    
-    providers = await db.users.find({
-        "user_type": {"$in": ["agency", "individual_transport", "occasional_transport"]},
-        "registration_status": "approved"
-    }).to_list(100)
-    
-    # Get their vehicles and routes
-    for provider in providers:
-        if provider["vehicles"]:
-            vehicles = await db.vehicles.find({
-                "id": {"$in": provider["vehicles"]},
-                "status": "approved"
-            }).to_list(100)
-            provider["approved_vehicles"] = vehicles
         
-        # Get routes (to be implemented)
-        provider["active_routes"] = []
+        payment_info.update({
+            "merchant_code": merchant_codes.get(provider, "237001"),
+            "provider": provider,
+            "ussd_code": "*126#" if provider == "MTN" else "#150#",
+            "instructions": f"Composez {payment_info['ussd_code']} et suivez les instructions. Code marchand: {payment_info['merchant_code']}"
+        })
     
-    return {"approved_providers": providers}
+    return payment_info
+
+@api_router.get("/payment/calculator")
+async def payment_calculator(
+    base_price: int = Query(...),
+    passenger_count: int = Query(1),
+    custom_count: Optional[int] = Query(None),
+    courier_services: int = Query(0),
+    payment_type: str = Query("full")
+):
+    """Calculate total payment amount"""
+    
+    final_count = custom_count if custom_count else passenger_count
+    subtotal = base_price * final_count
+    
+    # Add courier services cost
+    courier_cost = courier_services * 2000
+    
+    # Calculate totals
+    total_full_payment = subtotal + courier_cost
+    reservation_fee = 500
+    remaining_amount = total_full_payment - reservation_fee
+    
+    return {
+        "passenger_count": final_count,
+        "base_price_per_person": base_price,
+        "subtotal": subtotal,
+        "courier_services_cost": courier_cost,
+        "total_amount": total_full_payment,
+        "reservation_fee": reservation_fee,
+        "remaining_amount": remaining_amount,
+        "payment_breakdown": {
+            "now": reservation_fee if payment_type == "reservation" else total_full_payment,
+            "later": remaining_amount if payment_type == "reservation" else 0
+        }
+    }
+
+@api_router.get("/contact/support")
+async def get_support_contacts():
+    """Get support contact information"""
+    return {
+        "whatsapp": {
+            "number": "+237699000000",
+            "link": "https://wa.me/237699000000",
+            "available": "24/7"
+        },
+        "email": {
+            "address": "support@connect237.cm",
+            "response_time": "2-4 heures"
+        },
+        "call_center": {
+            "number": "+237677000000",
+            "hours": "06:00 - 22:00",
+            "languages": ["Français", "English"]
+        },
+        "emergency": {
+            "number": "+237699999999",
+            "available": "24/7",
+            "services": ["Urgences voyageurs", "Assistance technique"]
+        }
+    }
+
+@api_router.get("/cities/enhanced")
+async def get_enhanced_cities():
+    """Get enhanced cities with weather and attractions"""
+    enhanced_cities = []
+    
+    for city in ENHANCED_CAMEROON_CITIES:
+        if city["major"]:
+            weather = generate_weather_data(city["name"], city["region"])
+            attractions = [attr for attr in CAMEROON_TOURIST_ATTRACTIONS if attr["city"] == city["name"]]
+            
+            enhanced_city = {
+                **city,
+                "current_weather": weather.dict(),
+                "attractions": attractions,
+                "agencies_count": len([a for a in CAMEROON_TRANSPORT_AGENCIES if city["name"] in a.get("routes_served", [])])
+            }
+            enhanced_cities.append(enhanced_city)
+    
+    return {"cities": enhanced_cities}
 
 # Include router
 app.include_router(api_router)
@@ -730,10 +745,7 @@ app.add_middleware(
 )
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
