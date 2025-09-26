@@ -270,6 +270,17 @@ function Connect237App() {
     }
   };
 
+  const loadUserBookings = async () => {
+    try {
+      setBookings([
+        { id: "1", route: "Yaoundé → Douala", date: "2023-12-15", status: "confirmed", price: 5000 },
+        { id: "2", route: "Douala → Bafoussam", date: "2023-12-20", status: "pending", price: 4500 }
+      ]);
+    } catch (error) {
+      console.error("Error loading user bookings:", error);
+    }
+  };
+
   const loadCourierCarriers = async () => {
     try {
       const response = await axios.get(`${API}/courier-carriers`);
@@ -283,9 +294,6 @@ function Connect237App() {
         { name: "Speed Courier", vehicle_type: "van", rating: 4.3, coverage_areas: ["Yaoundé", "Bertoua"] }
       ]);
     }
-  };
-    // Mock user bookings
-    setBookings([]);
   };
 
   const calculatePayment = async () => {
