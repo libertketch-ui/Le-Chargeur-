@@ -909,9 +909,22 @@ async def get_admin_dashboard():
             courier_deliveries=total_courier
         )
         
-        # Get recent activities
-        recent_bookings = await db.bookings.find().sort("created_at", -1).limit(5).to_list(length=None)
-        recent_registrations = await db.user_registrations.find().sort("created_at", -1).limit(5).to_list(length=None)
+        # Get recent activities (safe for JSON serialization)
+        recent_bookings_raw = await db.bookings.find().sort("created_at", -1).limit(5).to_list(length=None)
+        recent_registrations_raw = await db.user_registrations.find().sort("created_at", -1).limit(5).to_list(length=None)
+        
+        # Convert ObjectIds to strings and prepare for JSON serialization
+        recent_bookings = []
+        for booking in recent_bookings_raw:
+            if "_id" in booking:
+                del booking["_id"]  # Remove ObjectId field
+            recent_bookings.append(booking)
+            
+        recent_registrations = []
+        for registration in recent_registrations_raw:
+            if "_id" in registration:
+                del registration["_id"]  # Remove ObjectId field
+            recent_registrations.append(registration)
         
         # System health indicators
         system_health = {
