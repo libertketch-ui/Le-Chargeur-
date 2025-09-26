@@ -93,7 +93,8 @@ import {
   MinusCircle,
   Timer,
   AlertTriangle,
-  Info
+  Info,
+  Building
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
