@@ -158,15 +158,18 @@ backend:
 
   - task: "Courier/Parcel Delivery API"
     implemented: true
-    working: false
+    working: true
     file: "server.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
         comment: "Pydantic validation error - Field required. Needs investigation and fix"
+      - working: true
+        agent: "main"
+        comment: "FIXED: Corrected CourierService model by adding default value for price field. API now working correctly."
 
   - task: "Enhanced Booking System API"
     implemented: true
