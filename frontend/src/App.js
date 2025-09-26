@@ -1015,7 +1015,7 @@ function Connect237App() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      🏢 Agence de Transport
+                      🏢 {language === "fr" ? "Agence de Transport" : "Transportation Agency"}
                     </label>
                     <select 
                       value={selectedAgency}
