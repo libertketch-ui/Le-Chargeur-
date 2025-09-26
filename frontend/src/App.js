@@ -1035,7 +1035,7 @@ function Connect237App() {
                   
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      👤 Nombre de passagers
+                      👤 {language === "fr" ? "Nombre de passagers" : "Number of passengers"}
                     </label>
                     <div className="flex items-center gap-3">
                       <Button
