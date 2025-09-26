@@ -226,7 +226,8 @@ function Connect237App() {
         loadAgencies(),
         loadWeatherData(),
         loadAttractions(),
-        loadUserBookings()
+        loadUserBookings(),
+        loadCourierCarriers()
       ]);
     } catch (error) {
       console.error("Error loading initial data:", error);
