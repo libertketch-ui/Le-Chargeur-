@@ -2059,9 +2059,11 @@ function Connect237App() {
                 <Card className="bg-gradient-to-r from-green-50 to-red-50 border-0">
                   <CardContent className="p-6 text-center">
                     <Connect237Logo size="small" language={language} />
-                    <h4 className="font-bold text-lg mt-4 mb-2">Merci de faire confiance à Connect237 !</h4>
+                    <h4 className="font-bold text-lg mt-4 mb-2">
+                      {language === "fr" ? "Merci de faire confiance à Connect237 !" : "Thank you for trusting Connect237!"}
+                    </h4>
                     <p className="text-gray-600">
-                      Ensemble, nous connectons le Cameroun 🇨🇲
+                      {language === "fr" ? "Ensemble, nous connectons le Cameroun 🇨🇲" : "Together, we connect Cameroon 🇨🇲"}
                     </p>
                   </CardContent>
                 </Card>
