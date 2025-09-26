@@ -101,7 +101,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // Connect237 Logo Component
-const Connect237Logo = ({ size = "normal" }) => {
+const Connect237Logo = ({ size = "normal", language = "fr" }) => {
   const logoSizes = {
     small: { container: "w-8 h-8", text: "text-lg" },
     normal: { container: "w-12 h-12", text: "text-2xl" },
@@ -121,7 +121,9 @@ const Connect237Logo = ({ size = "normal" }) => {
         <h1 className={`${text} font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent`}>
           Connect237
         </h1>
-        <p className="text-xs text-gray-600 font-semibold">Transport & Courrier</p>
+        <p className="text-xs text-gray-600 font-semibold">
+          {language === "fr" ? "Transport & Courrier" : "Transport & Courier"}
+        </p>
       </div>
     </div>
   );
