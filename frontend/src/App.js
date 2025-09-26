@@ -1190,30 +1190,48 @@ function Connect237App() {
                       </Card>
                     </div>
 
-                    {/* Wallet Payment Option */}
-                    {paymentForm.type === "account_credit" && (
-                      <Card className="bg-gradient-to-r from-green-50 to-yellow-50 border-2 border-green-200">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-green-700">Paiement par portefeuille</h4>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setActiveTab("profile");
-                                setShowWallet(true);
-                              }}
-                            >
-                              Voir portefeuille
-                            </Button>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-2">Solde disponible: <strong>12,500 FCFA</strong></p>
-                          <p className="text-xs text-green-600">✅ Solde suffisant pour cette réservation</p>
-                        </CardContent>
-                      </Card>
+                    {/* Mobile Money Provider Selection */}
+                    {paymentForm.type === "mobile_money" && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <Card 
+                          className={`cursor-pointer transition-all ${
+                            paymentForm.provider === "MTN" ? 'ring-2 ring-yellow-500 bg-yellow-50' : 'hover:shadow-md'
+                          }`}
+                          onClick={() => setPaymentForm({...paymentForm, provider: "MTN"})}
+                        >
+                          <CardContent className="p-4 text-center">
+                            <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                              <span className="text-white font-bold text-lg">MTN</span>
+                            </div>
+                            <h4 className="font-semibold text-yellow-700">MTN Mobile Money</h4>
+                            <p className="text-xs text-gray-600 mt-1">Code USSD: *126#</p>
+                            <div className="text-xs text-yellow-600 mt-2 font-semibold">
+                              🇨🇲 MTN Cameroun
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card 
+                          className={`cursor-pointer transition-all ${
+                            paymentForm.provider === "ORANGE" ? 'ring-2 ring-orange-500 bg-orange-50' : 'hover:shadow-md'
+                          }`}
+                          onClick={() => setPaymentForm({...paymentForm, provider: "ORANGE"})}
+                        >
+                          <CardContent className="p-4 text-center">
+                            <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                              <span className="text-white font-bold text-sm">ORANGE</span>
+                            </div>
+                            <h4 className="font-semibold text-orange-700">Orange Money</h4>
+                            <p className="text-xs text-gray-600 mt-1">Code USSD: #150#</p>
+                            <div className="text-xs text-orange-600 mt-2 font-semibold">
+                              🇨🇲 Orange Cameroun
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
                     )}
 
-                    {/* On-site Payment Info */}
+                    {/* Paiement sur place en option secondaire */}
                     {paymentForm.type === "on_site" && (
                       <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
                         <CardContent className="p-4">
