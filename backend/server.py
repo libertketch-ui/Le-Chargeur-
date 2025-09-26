@@ -480,17 +480,6 @@ async def get_premium_agencies():
     premium_agencies = [agency for agency in CAMEROON_TRANSPORT_AGENCIES if agency.get("premium_partner", False)]
     return {"premium_agencies": premium_agencies}
 
-@api_router.get("/weather/{city}")
-async def get_city_weather(city: str):
-    """Get real-time weather for a city"""
-    city_info = next((c for c in ENHANCED_CAMEROON_CITIES if c["name"].lower() == city.lower()), None)
-    
-    if not city_info:
-        raise HTTPException(status_code=404, detail="City not found")
-    
-    weather = generate_weather_data(city_info["name"], city_info["region"])
-    return weather
-
 @api_router.get("/weather/cities")
 async def get_all_weather():
     """Get weather for all major cities"""
@@ -504,6 +493,17 @@ async def get_all_weather():
         return {"weather_data": weather_data}
     except Exception as e:
         return {"error": str(e), "cities_count": len(ENHANCED_CAMEROON_CITIES)}
+
+@api_router.get("/weather/{city}")
+async def get_city_weather(city: str):
+    """Get real-time weather for a city"""
+    city_info = next((c for c in ENHANCED_CAMEROON_CITIES if c["name"].lower() == city.lower()), None)
+    
+    if not city_info:
+        raise HTTPException(status_code=404, detail="City not found")
+    
+    weather = generate_weather_data(city_info["name"], city_info["region"])
+    return weather
 
 @api_router.get("/attractions")
 async def get_tourist_attractions():
