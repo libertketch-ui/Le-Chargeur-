@@ -2225,7 +2225,9 @@ function Connect237App() {
             <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">Inscription Connect237</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {language === "fr" ? "Inscription Connect237" : "Connect237 Registration"}
+                  </h2>
                   <Button 
                     variant="ghost" 
                     onClick={() => setShowRegistration(false)}
@@ -2239,6 +2241,46 @@ function Connect237App() {
             </div>
           </div>
         )}
+
+        {/* Footer with KetchFlex Transit Signature */}
+        <div className="mt-12 py-6 border-t-2 border-green-200">
+          <div className="text-center">
+            <div className="mb-3">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-red-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">K</span>
+                </div>
+                <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">
+                  KetchFlex Transit
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm">
+                {language === "fr" ? "Propulsé par KetchFlex Transit • Connectons le Cameroun ensemble" : "Powered by KetchFlex Transit • Connecting Cameroon together"}
+              </p>
+            </div>
+            <div className="text-xs text-gray-500 space-y-1">
+              <div>
+                {language === "fr" 
+                  ? "© 2025 KetchFlex Transit. Tous droits réservés." 
+                  : "© 2025 KetchFlex Transit. All rights reserved."
+                }
+              </div>
+              <div>
+                {language === "fr" 
+                  ? "Développé le 26 septembre 2025 • Version 1.0" 
+                  : "Developed on September 26, 2025 • Version 1.0"
+                }
+              </div>
+              <div className="flex items-center justify-center gap-4 mt-2">
+                <span className="text-green-600">🇨🇲</span>
+                <span>Connect237</span>
+                <span className="text-red-600">•</span>
+                <span>KetchFlex Transit</span>
+                <span className="text-yellow-600">★</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       
       <Toaster />
