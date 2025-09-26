@@ -1,796 +1,793 @@
 {
-  "timestamp": "2025-09-25T23:06:55.727488",
-  "total_tests": 13,
-  "passed_tests": 10,
-  "success_rate": 76.92307692307693,
+  "timestamp": "2025-09-26T01:39:27.583548",
+  "total_tests": 12,
+  "passed_tests": 9,
+  "success_rate": 75.0,
   "test_details": [
     {
       "test": "API Health Check",
       "success": true,
       "details": "",
       "response_data": {
-        "message": "BusConnect Cameroun API - FlixBus Style",
-        "version": "1.0"
+        "app": "Connect237 - Ultimate Cameroon Transport Platform",
+        "version": "1.0.0",
+        "features": [
+          "Real-time Vehicle Tracking",
+          "Weather Integration",
+          "Tourist Attractions",
+          "Courier Services",
+          "Enhanced Payment System",
+          "Custom Passenger Count",
+          "Pickup Location Selection",
+          "Reservation System",
+          "Multi-Agency Support"
+        ],
+        "contact": {
+          "whatsapp": "+237699000000",
+          "email": "support@connect237.cm",
+          "phone": "+237677000000"
+        }
       }
     },
     {
-      "test": "Get Cities",
+      "test": "POST /api/parcel-delivery",
+      "success": true,
+      "details": "Created parcel delivery: C237779858",
+      "response_data": {
+        "parcel_id": "eb137991-4f63-4c8e-8c0d-288acd0b94e7",
+        "tracking_number": "C237779858",
+        "total_price": 4250,
+        "estimated_delivery": "24-48 heures",
+        "status": "pending",
+        "message": "Service de livraison cr\u00e9\u00e9 avec succ\u00e8s. Code: C237779858"
+      }
+    },
+    {
+      "test": "GET /api/routes/search-smart-ai",
+      "success": true,
+      "details": "Found 5 routes, 0 suggestions",
+      "response_data": {
+        "success": true,
+        "results": {
+          "query": "yaound\u00e9 douala",
+          "suggestions": [],
+          "routes": [
+            {
+              "agency": "Express Union",
+              "route": "Yaound\u00e9-Douala",
+              "price": 7282,
+              "duration": "7 heures",
+              "departure_times": [
+                "06:00",
+                "09:00",
+                "12:00",
+                "15:00",
+                "18:00"
+              ],
+              "vehicle_type": "Bus climatis\u00e9",
+              "rating": 4.5
+            },
+            {
+              "agency": "Touristique Express",
+              "route": "Yaound\u00e9-Douala",
+              "price": 7540,
+              "duration": "7 heures",
+              "departure_times": [
+                "06:00",
+                "09:00",
+                "12:00",
+                "15:00",
+                "18:00"
+              ],
+              "vehicle_type": "Bus climatis\u00e9",
+              "rating": 4.3
+            },
+            {
+              "agency": "Binam Voyages",
+              "route": "Yaound\u00e9-Douala",
+              "price": 6675,
+              "duration": "3 heures",
+              "departure_times": [
+                "06:00",
+                "09:00",
+                "12:00",
+                "15:00",
+                "18:00"
+              ],
+              "vehicle_type": "Bus climatis\u00e9",
+              "rating": 4.4
+            },
+            {
+              "agency": "Guaranti Express",
+              "route": "Douala-Yaound\u00e9",
+              "price": 4032,
+              "duration": "6 heures",
+              "departure_times": [
+                "06:00",
+                "09:00",
+                "12:00",
+                "15:00",
+                "18:00"
+              ],
+              "vehicle_type": "Bus climatis\u00e9",
+              "rating": 4.6
+            },
+            {
+              "agency": "Transcam Transport",
+              "route": "Yaound\u00e9-Douala",
+              "price": 4343,
+              "duration": "6 heures",
+              "departure_times": [
+                "06:00",
+                "09:00",
+                "12:00",
+                "15:00",
+                "18:00"
+              ],
+              "vehicle_type": "Bus climatis\u00e9",
+              "rating": 4.3
+            }
+          ],
+          "smart_recommendations": [
+            {
+              "route": "Yaound\u00e9 - Douala",
+              "popularity": 95,
+              "avg_price": 4500
+            },
+            {
+              "route": "Douala - Bafoussam",
+              "popularity": 88,
+              "avg_price": 3500
+            },
+            {
+              "route": "Yaound\u00e9 - Bamenda",
+              "popularity": 82,
+              "avg_price": 6000
+            },
+            {
+              "route": "Douala - Bertoua",
+              "popularity": 75,
+              "avg_price": 7500
+            }
+          ],
+          "ai_insights": [
+            "Meilleure p\u00e9riode pour voyager: Matin (06h00-09h00)",
+            "Prix moyen pour 2 passager(s): 4403 FCFA",
+            "Dur\u00e9e estim\u00e9e du trajet: 5 heures"
+          ]
+        },
+        "total_found": 5
+      }
+    },
+    {
+      "test": "GET /api/admin/dashboard",
       "success": false,
-      "details": "Only 62 cities found, expected 120+",
+      "details": "Status: 500, Response: Internal Server Error",
+      "response_data": {}
+    },
+    {
+      "test": "POST /api/courier/book",
+      "success": true,
+      "details": "Courier booked: C237682190",
+      "response_data": {
+        "courier_id": "b3d0721b-a13a-4270-b00d-49d5d511eec9",
+        "tracking_number": "C237682190",
+        "total_price": 4125,
+        "estimated_delivery": "6-12 heures",
+        "status": "pending",
+        "message": "Service courrier r\u00e9serv\u00e9 avec succ\u00e8s. Code de suivi: C237682190"
+      }
+    },
+    {
+      "test": "POST /api/booking/enhanced",
+      "success": false,
+      "details": "Status: 500, Response: Internal Server Error",
+      "response_data": {}
+    },
+    {
+      "test": "GET /api/cities/enhanced",
+      "success": true,
+      "details": "Found 15 enhanced cities with weather: True, attractions: True",
       "response_data": {
         "cities": [
           {
             "name": "Yaound\u00e9",
             "region": "Centre",
             "lat": 3.8667,
-            "lng": 11.5167
-          },
-          {
-            "name": "Mbalmayo",
-            "region": "Centre",
-            "lat": 3.5167,
-            "lng": 11.5
-          },
-          {
-            "name": "Akonolinga",
-            "region": "Centre",
-            "lat": 3.7667,
-            "lng": 12.25
-          },
-          {
-            "name": "Bafia",
-            "region": "Centre",
-            "lat": 4.75,
-            "lng": 11.2333
-          },
-          {
-            "name": "Mfou",
-            "region": "Centre",
-            "lat": 3.7167,
-            "lng": 11.6833
-          },
-          {
-            "name": "Obala",
-            "region": "Centre",
-            "lat": 4.1667,
-            "lng": 11.5333
-          },
-          {
-            "name": "Ntui",
-            "region": "Centre",
-            "lat": 4.8167,
-            "lng": 11.6333
-          },
-          {
-            "name": "Monat\u00e9l\u00e9",
-            "region": "Centre",
-            "lat": 3.7,
-            "lng": 11.3667
+            "lng": 11.5167,
+            "major": true,
+            "airport": true,
+            "population": 4500000,
+            "current_weather": {
+              "city": "Yaound\u00e9",
+              "temperature": 23.8,
+              "description": "Pluie l\u00e9g\u00e8re",
+              "humidity": 49,
+              "wind_speed": 9.3,
+              "icon": "\ud83c\udf26\ufe0f",
+              "timestamp": "2025-09-26T01:39:27.382042"
+            },
+            "attractions": [
+              {
+                "name": "March\u00e9 Central de Yaound\u00e9",
+                "city": "Yaound\u00e9",
+                "region": "Centre",
+                "description": "March\u00e9 traditionnel color\u00e9 avec artisanat local",
+                "image_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600",
+                "category": "cultural",
+                "rating": 4.2,
+                "coordinates": {
+                  "lat": 3.848,
+                  "lng": 11.5021
+                }
+              }
+            ],
+            "agencies_count": 0
           },
           {
             "name": "Douala",
             "region": "Littoral",
             "lat": 4.0611,
-            "lng": 9.7067
-          },
-          {
-            "name": "Ed\u00e9a",
-            "region": "Littoral",
-            "lat": 3.7833,
-            "lng": 10.1333
-          },
-          {
-            "name": "Nkongsamba",
-            "region": "Littoral",
-            "lat": 4.95,
-            "lng": 9.9333
-          },
-          {
-            "name": "Loum",
-            "region": "Littoral",
-            "lat": 4.7167,
-            "lng": 9.7333
-          },
-          {
-            "name": "Mbanga",
-            "region": "Littoral",
-            "lat": 4.4833,
-            "lng": 9.5667
-          },
-          {
-            "name": "Manjo",
-            "region": "Littoral",
-            "lat": 4.8167,
-            "lng": 9.8333
-          },
-          {
-            "name": "Dizangu\u00e9",
-            "region": "Littoral",
-            "lat": 3.6833,
-            "lng": 10.6167
+            "lng": 9.7067,
+            "major": true,
+            "airport": true,
+            "population": 3700000,
+            "current_weather": {
+              "city": "Douala",
+              "temperature": 29.8,
+              "description": "Orageux",
+              "humidity": 46,
+              "wind_speed": 22.9,
+              "icon": "\u26c8\ufe0f",
+              "timestamp": "2025-09-26T01:39:27.382100"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
             "name": "Bafoussam",
             "region": "Ouest",
             "lat": 5.4667,
-            "lng": 10.4167
-          },
-          {
-            "name": "Dschang",
-            "region": "Ouest",
-            "lat": 5.45,
-            "lng": 10.05
-          },
-          {
-            "name": "Mbouda",
-            "region": "Ouest",
-            "lat": 5.6167,
-            "lng": 10.25
-          },
-          {
-            "name": "Bandjoun",
-            "region": "Ouest",
-            "lat": 5.3667,
-            "lng": 10.4
-          },
-          {
-            "name": "Bangangt\u00e9",
-            "region": "Ouest",
-            "lat": 5.15,
-            "lng": 10.5167
-          },
-          {
-            "name": "Foumban",
-            "region": "Ouest",
-            "lat": 5.7167,
-            "lng": 10.9
-          },
-          {
-            "name": "K\u00e9kem",
-            "region": "Ouest",
-            "lat": 5.35,
-            "lng": 10.0833
-          },
-          {
-            "name": "Bafang",
-            "region": "Ouest",
-            "lat": 5.1667,
-            "lng": 10.1833
+            "lng": 10.4167,
+            "major": true,
+            "airport": true,
+            "population": 450000,
+            "current_weather": {
+              "city": "Bafoussam",
+              "temperature": 22.2,
+              "description": "Partiellement nuageux",
+              "humidity": 65,
+              "wind_speed": 6.9,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:39:27.382117"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
             "name": "Bamenda",
             "region": "Nord-Ouest",
             "lat": 5.9667,
-            "lng": 10.1667
-          },
-          {
-            "name": "Kumbo",
-            "region": "Nord-Ouest",
-            "lat": 6.2,
-            "lng": 10.6833
-          },
-          {
-            "name": "Wum",
-            "region": "Nord-Ouest",
-            "lat": 6.3833,
-            "lng": 10.0667
-          },
-          {
-            "name": "Ndop",
-            "region": "Nord-Ouest",
-            "lat": 6.0167,
-            "lng": 10.45
-          },
-          {
-            "name": "Mbengwi",
-            "region": "Nord-Ouest",
-            "lat": 6.1667,
-            "lng": 9.9333
-          },
-          {
-            "name": "Fundong",
-            "region": "Nord-Ouest",
-            "lat": 6.2333,
-            "lng": 10.2833
-          },
-          {
-            "name": "Bu\u00e9a",
-            "region": "Sud-Ouest",
-            "lat": 4.15,
-            "lng": 9.2833
-          },
-          {
-            "name": "Limbe",
-            "region": "Sud-Ouest",
-            "lat": 4.0167,
-            "lng": 9.2
-          },
-          {
-            "name": "Kumba",
-            "region": "Sud-Ouest",
-            "lat": 4.6333,
-            "lng": 9.45
-          },
-          {
-            "name": "Tiko",
-            "region": "Sud-Ouest",
-            "lat": 4.0667,
-            "lng": 9.3667
-          },
-          {
-            "name": "Mamf\u00e9",
-            "region": "Sud-Ouest",
-            "lat": 5.7667,
-            "lng": 9.3
-          },
-          {
-            "name": "Tombel",
-            "region": "Sud-Ouest",
-            "lat": 4.6167,
-            "lng": 9.6
-          },
-          {
-            "name": "Bangem",
-            "region": "Sud-Ouest",
-            "lat": 4.8167,
-            "lng": 9.7667
-          },
-          {
-            "name": "Ebolowa",
-            "region": "Sud",
-            "lat": 2.9167,
-            "lng": 11.15
-          },
-          {
-            "name": "Kribi",
-            "region": "Sud",
-            "lat": 2.9333,
-            "lng": 9.9167
-          },
-          {
-            "name": "Sangm\u00e9lima",
-            "region": "Sud",
-            "lat": 2.9167,
-            "lng": 11.9833
-          },
-          {
-            "name": "Ambam",
-            "region": "Sud",
-            "lat": 2.3833,
-            "lng": 11.2667
-          },
-          {
-            "name": "Campo",
-            "region": "Sud",
-            "lat": 2.3667,
-            "lng": 9.8167
-          },
-          {
-            "name": "Lolodorf",
-            "region": "Sud",
-            "lat": 3.2333,
-            "lng": 10.7333
+            "lng": 10.1667,
+            "major": true,
+            "airport": true,
+            "population": 500000,
+            "current_weather": {
+              "city": "Bamenda",
+              "temperature": 25.3,
+              "description": "Partiellement nuageux",
+              "humidity": 40,
+              "wind_speed": 22.7,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:39:27.382132"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
             "name": "Bertoua",
             "region": "Est",
             "lat": 4.5833,
-            "lng": 13.6833
-          },
-          {
-            "name": "Batouri",
-            "region": "Est",
-            "lat": 4.4333,
-            "lng": 14.3667
-          },
-          {
-            "name": "Yokadouma",
-            "region": "Est",
-            "lat": 3.5167,
-            "lng": 15.0833
-          },
-          {
-            "name": "Abong-Mbang",
-            "region": "Est",
-            "lat": 3.9833,
-            "lng": 13.1833
-          },
-          {
-            "name": "Doum\u00e9",
-            "region": "Est",
-            "lat": 4.2333,
-            "lng": 13.15
-          },
-          {
-            "name": "Ngaound\u00e9r\u00e9",
-            "region": "Adamaoua",
-            "lat": 7.3167,
-            "lng": 13.5833
-          },
-          {
-            "name": "Meiganga",
-            "region": "Adamaoua",
-            "lat": 6.5167,
-            "lng": 14.2833
-          },
-          {
-            "name": "Tibati",
-            "region": "Adamaoua",
-            "lat": 6.4667,
-            "lng": 12.6167
-          },
-          {
-            "name": "Banyo",
-            "region": "Adamaoua",
-            "lat": 6.75,
-            "lng": 11.8167
-          },
-          {
-            "name": "Tign\u00e8re",
-            "region": "Adamaoua",
-            "lat": 7.3667,
-            "lng": 12.65
+            "lng": 13.6833,
+            "major": true,
+            "airport": true,
+            "population": 300000,
+            "current_weather": {
+              "city": "Bertoua",
+              "temperature": 24.9,
+              "description": "Pluie l\u00e9g\u00e8re",
+              "humidity": 82,
+              "wind_speed": 23.8,
+              "icon": "\ud83c\udf26\ufe0f",
+              "timestamp": "2025-09-26T01:39:27.382147"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
             "name": "Garoua",
             "region": "Nord",
             "lat": 9.3,
-            "lng": 13.4
+            "lng": 13.4,
+            "major": true,
+            "airport": true,
+            "population": 450000,
+            "current_weather": {
+              "city": "Garoua",
+              "temperature": 32.7,
+              "description": "Orageux",
+              "humidity": 54,
+              "wind_speed": 14.1,
+              "icon": "\u26c8\ufe0f",
+              "timestamp": "2025-09-26T01:39:27.382159"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
             "name": "Maroua",
             "region": "Nord",
             "lat": 10.5833,
-            "lng": 14.3167
+            "lng": 14.3167,
+            "major": true,
+            "airport": true,
+            "population": 400000,
+            "current_weather": {
+              "city": "Maroua",
+              "temperature": 33.8,
+              "description": "Ensoleill\u00e9",
+              "humidity": 70,
+              "wind_speed": 19.0,
+              "icon": "\u2600\ufe0f",
+              "timestamp": "2025-09-26T01:39:27.382171"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
-            "name": "Guider",
-            "region": "Nord",
-            "lat": 9.9333,
-            "lng": 13.95
+            "name": "Ngaound\u00e9r\u00e9",
+            "region": "Adamaoua",
+            "lat": 7.3167,
+            "lng": 13.5833,
+            "major": true,
+            "airport": true,
+            "population": 300000,
+            "current_weather": {
+              "city": "Ngaound\u00e9r\u00e9",
+              "temperature": 24.5,
+              "description": "Partiellement nuageux",
+              "humidity": 80,
+              "wind_speed": 12.5,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:39:27.382188"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
-            "name": "Mokolo",
-            "region": "Nord",
-            "lat": 10.7333,
-            "lng": 13.8
+            "name": "Kribi",
+            "region": "Sud",
+            "lat": 2.9333,
+            "lng": 9.9167,
+            "major": true,
+            "airport": false,
+            "population": 70000,
+            "current_weather": {
+              "city": "Kribi",
+              "temperature": 22.8,
+              "description": "Partiellement nuageux",
+              "humidity": 57,
+              "wind_speed": 10.3,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:39:27.382202"
+            },
+            "attractions": [
+              {
+                "name": "Chutes de la Lob\u00e9",
+                "city": "Kribi",
+                "region": "Sud",
+                "description": "Cascades spectaculaires se jetant directement dans l'oc\u00e9an",
+                "image_url": "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600",
+                "category": "nature",
+                "rating": 4.7,
+                "coordinates": {
+                  "lat": 2.8833,
+                  "lng": 9.9167
+                }
+              }
+            ],
+            "agencies_count": 0
           },
           {
-            "name": "Yagoua",
-            "region": "Nord",
-            "lat": 10.3333,
-            "lng": 15.2333
+            "name": "Limbe",
+            "region": "Sud-Ouest",
+            "lat": 4.0167,
+            "lng": 9.2,
+            "major": true,
+            "airport": false,
+            "population": 120000,
+            "current_weather": {
+              "city": "Limbe",
+              "temperature": 26.1,
+              "description": "Partiellement nuageux",
+              "humidity": 84,
+              "wind_speed": 21.1,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:39:27.382221"
+            },
+            "attractions": [
+              {
+                "name": "Plages de Limbe",
+                "city": "Limbe",
+                "region": "Sud-Ouest",
+                "description": "Plages de sable noir volcanique avec vue sur le mont Cameroun",
+                "image_url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600",
+                "category": "nature",
+                "rating": 4.3,
+                "coordinates": {
+                  "lat": 4.0167,
+                  "lng": 9.2
+                }
+              }
+            ],
+            "agencies_count": 0
           },
           {
-            "name": "Ka\u00e9l\u00e9",
-            "region": "Nord",
-            "lat": 10.1,
-            "lng": 14.45
+            "name": "Bu\u00e9a",
+            "region": "Sud-Ouest",
+            "lat": 4.15,
+            "lng": 9.2833,
+            "major": true,
+            "airport": false,
+            "population": 200000,
+            "current_weather": {
+              "city": "Bu\u00e9a",
+              "temperature": 27.2,
+              "description": "Orageux",
+              "humidity": 85,
+              "wind_speed": 7.7,
+              "icon": "\u26c8\ufe0f",
+              "timestamp": "2025-09-26T01:39:27.382231"
+            },
+            "attractions": [
+              {
+                "name": "Mont Cameroun",
+                "city": "Bu\u00e9a",
+                "region": "Sud-Ouest",
+                "description": "Plus haute montagne d'Afrique de l'Ouest avec vue spectaculaire",
+                "image_url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600",
+                "category": "nature",
+                "rating": 4.8,
+                "coordinates": {
+                  "lat": 4.2175,
+                  "lng": 9.1708
+                }
+              }
+            ],
+            "agencies_count": 0
           },
           {
-            "name": "Kousseri",
-            "region": "Extr\u00eame-Nord",
-            "lat": 12.0833,
-            "lng": 15.0333
+            "name": "Kumba",
+            "region": "Sud-Ouest",
+            "lat": 4.6333,
+            "lng": 9.45,
+            "major": true,
+            "airport": false,
+            "population": 150000,
+            "current_weather": {
+              "city": "Kumba",
+              "temperature": 27.1,
+              "description": "Pluie l\u00e9g\u00e8re",
+              "humidity": 86,
+              "wind_speed": 13.1,
+              "icon": "\ud83c\udf26\ufe0f",
+              "timestamp": "2025-09-26T01:39:27.382242"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
-            "name": "Mora",
-            "region": "Extr\u00eame-Nord",
-            "lat": 11.05,
-            "lng": 14.1333
+            "name": "Ebolowa",
+            "region": "Sud",
+            "lat": 2.9167,
+            "lng": 11.15,
+            "major": true,
+            "airport": false,
+            "population": 80000,
+            "current_weather": {
+              "city": "Ebolowa",
+              "temperature": 25.1,
+              "description": "Partiellement nuageux",
+              "humidity": 78,
+              "wind_speed": 6.1,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:39:27.382260"
+            },
+            "attractions": [],
+            "agencies_count": 0
           },
           {
-            "name": "Waza",
-            "region": "Extr\u00eame-Nord",
-            "lat": 11.3833,
-            "lng": 14.6333
+            "name": "Foumban",
+            "region": "Ouest",
+            "lat": 5.7167,
+            "lng": 10.9,
+            "major": true,
+            "airport": false,
+            "population": 120000,
+            "current_weather": {
+              "city": "Foumban",
+              "temperature": 24.7,
+              "description": "Partiellement nuageux",
+              "humidity": 68,
+              "wind_speed": 8.0,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:39:27.382271"
+            },
+            "attractions": [
+              {
+                "name": "Palais des Rois Bamoun",
+                "city": "Foumban",
+                "region": "Ouest",
+                "description": "Palais royal historique avec mus\u00e9e et architecture traditionnelle",
+                "image_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600",
+                "category": "cultural",
+                "rating": 4.5,
+                "coordinates": {
+                  "lat": 5.7167,
+                  "lng": 10.9
+                }
+              }
+            ],
+            "agencies_count": 0
           },
           {
-            "name": "Kolofata",
-            "region": "Extr\u00eame-Nord",
-            "lat": 10.9667,
-            "lng": 14.3
+            "name": "Dschang",
+            "region": "Ouest",
+            "lat": 5.45,
+            "lng": 10.05,
+            "major": true,
+            "airport": false,
+            "population": 100000,
+            "current_weather": {
+              "city": "Dschang",
+              "temperature": 18.5,
+              "description": "Partiellement nuageux",
+              "humidity": 47,
+              "wind_speed": 24.7,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:39:27.382281"
+            },
+            "attractions": [],
+            "agencies_count": 0
           }
         ]
       }
     },
     {
-      "test": "Search Routes",
+      "test": "GET /api/agencies",
       "success": true,
-      "details": "Found 3 routes",
+      "details": "Found 8 agencies including: Express Union, Touristique Express, Binam Voyages",
       "response_data": {
-        "routes": [
+        "agencies": [
           {
-            "id": "4c54289b-73b2-4c52-8973-6633b84459b3",
-            "origin": "Yaound\u00e9",
-            "destination": "Douala",
-            "departure_time": "09:15",
-            "arrival_time": "13:05",
-            "duration": "4h50min",
-            "price": 14874,
-            "company": "Touristique Express",
-            "available_seats": 33,
-            "total_seats": 45,
-            "bus_type": "Standard",
-            "amenities": [
-              "Collations",
-              "WiFi",
-              "Prises USB",
-              "AC"
+            "name": "Express Union",
+            "registration_number": "RC/YDE/2010/B/1234",
+            "headquarters": "Douala",
+            "phone": "+237699123456",
+            "email": "contact@expressunion.cm",
+            "website": "www.expressunion.cm",
+            "founded_year": 1995,
+            "fleet_size": 200,
+            "routes_served": [
+              "Yaound\u00e9-Douala",
+              "Douala-Bafoussam",
+              "Yaound\u00e9-Bamenda",
+              "Douala-Bertoua"
             ],
-            "distance_km": 201
+            "services": [
+              "passenger",
+              "cargo",
+              "courier"
+            ],
+            "rating": 4.5,
+            "logo_url": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=200",
+            "premium_partner": true
           },
           {
-            "id": "b3a49934-b3f3-42bf-acf3-40705899e2c5",
-            "origin": "Yaound\u00e9",
-            "destination": "Douala",
-            "departure_time": "11:00",
-            "arrival_time": "16:10",
-            "duration": "5h10min",
-            "price": 15075,
-            "company": "Express Union",
-            "available_seats": 35,
-            "total_seats": 45,
-            "bus_type": "Luxury",
-            "amenities": [
-              "Collations",
-              "Toilettes",
-              "WiFi",
-              "Prises USB"
+            "name": "Touristique Express",
+            "registration_number": "RC/YDE/2008/A/5678",
+            "headquarters": "Yaound\u00e9",
+            "phone": "+237677234567",
+            "email": "info@touristiqueexpress.cm",
+            "founded_year": 1990,
+            "fleet_size": 150,
+            "routes_served": [
+              "Yaound\u00e9-Douala",
+              "Yaound\u00e9-Bafoussam",
+              "Yaound\u00e9-Bertoua"
             ],
-            "distance_km": 201
+            "services": [
+              "passenger",
+              "courier"
+            ],
+            "rating": 4.3,
+            "logo_url": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=200",
+            "premium_partner": true
           },
           {
-            "id": "87de971b-4b66-4965-9bda-ba21f4e0978d",
-            "origin": "Yaound\u00e9",
-            "destination": "Douala",
-            "departure_time": "19:15",
-            "arrival_time": "00:09",
-            "duration": "5h54min",
-            "price": 13065,
-            "company": "Musango Transport",
-            "available_seats": 21,
-            "total_seats": 45,
-            "bus_type": "VIP",
-            "amenities": [
-              "AC",
-              "Prises USB"
+            "name": "Central Voyages",
+            "registration_number": "RC/BFM/2005/C/9012",
+            "headquarters": "Bafoussam",
+            "phone": "+237655345678",
+            "founded_year": 2000,
+            "fleet_size": 120,
+            "routes_served": [
+              "Bafoussam-Yaound\u00e9",
+              "Bafoussam-Douala",
+              "Bafoussam-Bamenda"
             ],
-            "distance_km": 201
-          }
-        ],
-        "total": 3
-      }
-    },
-    {
-      "test": "Popular Routes",
-      "success": true,
-      "details": "Found 6 popular routes",
-      "response_data": {
-        "popular_routes": [
-          {
-            "id": "651f1e7b-a94c-474b-afdb-93e17e9b6a7a",
-            "origin": "Yaound\u00e9",
-            "destination": "Douala",
-            "departure_time": "07:00",
-            "arrival_time": "12:47",
-            "duration": "5h47min",
-            "price": 9648,
-            "company": "Transcam Transport",
-            "available_seats": 29,
-            "total_seats": 45,
-            "bus_type": "VIP",
-            "amenities": [
-              "T\u00e9l\u00e9vision",
-              "Prises USB",
-              "WiFi"
+            "services": [
+              "passenger",
+              "cargo"
             ],
-            "distance_km": 201
+            "rating": 4.2,
+            "logo_url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200",
+            "premium_partner": false
           },
           {
-            "id": "fba1c4fc-1c40-4f68-b058-f40d34c0cc01",
-            "origin": "Douala",
-            "destination": "Bafoussam",
-            "departure_time": "07:15",
-            "arrival_time": "11:19",
-            "duration": "4h04min",
-            "price": 10440,
-            "company": "Express Union",
-            "available_seats": 22,
-            "total_seats": 45,
-            "bus_type": "Standard",
-            "amenities": [
-              "WiFi",
-              "AC",
-              "Prises USB",
-              "T\u00e9l\u00e9vision"
+            "name": "Binam Voyages",
+            "registration_number": "RC/YDE/2012/B/3456",
+            "headquarters": "Yaound\u00e9",
+            "phone": "+237699456789",
+            "founded_year": 2003,
+            "fleet_size": 100,
+            "routes_served": [
+              "Yaound\u00e9-Douala",
+              "Yaound\u00e9-Ngaound\u00e9r\u00e9",
+              "Yaound\u00e9-Bertoua"
             ],
-            "distance_km": 174
+            "services": [
+              "passenger",
+              "courier"
+            ],
+            "rating": 4.4,
+            "logo_url": "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=200",
+            "premium_partner": true
           },
           {
-            "id": "582966ba-e238-4d1f-9dee-3313f0be53a0",
-            "origin": "Yaound\u00e9",
-            "destination": "Bamenda",
-            "departure_time": "20:30",
-            "arrival_time": "03:46",
-            "duration": "7h16min",
-            "price": 16066,
-            "company": "Touristique Express",
-            "available_seats": 34,
-            "total_seats": 45,
-            "bus_type": "Standard",
-            "amenities": [
-              "AC",
-              "Collations",
-              "Toilettes",
-              "T\u00e9l\u00e9vision"
+            "name": "Guaranti Express",
+            "registration_number": "RC/DLA/2007/A/7890",
+            "headquarters": "Douala",
+            "phone": "+237677567890",
+            "founded_year": 1998,
+            "fleet_size": 80,
+            "routes_served": [
+              "Douala-Yaound\u00e9",
+              "Douala-Bafoussam",
+              "Douala-Limbe"
             ],
-            "distance_km": 277
+            "services": [
+              "passenger",
+              "cargo",
+              "courier"
+            ],
+            "rating": 4.6,
+            "logo_url": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=200",
+            "premium_partner": true
           },
           {
-            "id": "2c72a134-2ac9-4d66-947a-767aadc90525",
-            "origin": "Douala",
-            "destination": "Bu\u00e9a",
-            "departure_time": "10:30",
-            "arrival_time": "12:03",
-            "duration": "2h33min",
-            "price": 2679,
-            "company": "Central Voyages",
-            "available_seats": 32,
-            "total_seats": 45,
-            "bus_type": "Luxury",
-            "amenities": [
-              "Collations",
-              "WiFi"
+            "name": "Vatican Transport",
+            "registration_number": "RC/BDA/2009/C/2468",
+            "headquarters": "Bamenda",
+            "phone": "+237655678901",
+            "founded_year": 2001,
+            "fleet_size": 90,
+            "routes_served": [
+              "Bamenda-Yaound\u00e9",
+              "Bamenda-Douala",
+              "Bamenda-Bafoussam"
             ],
-            "distance_km": 47
+            "services": [
+              "passenger",
+              "cargo"
+            ],
+            "rating": 4.1,
+            "logo_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=200",
+            "premium_partner": false
           },
           {
-            "id": "fb734b97-fc32-4936-bb09-2fc8c9902042",
-            "origin": "Yaound\u00e9",
-            "destination": "Bertoua",
-            "departure_time": "16:30",
-            "arrival_time": "22:21",
-            "duration": "6h51min",
-            "price": 13662,
-            "company": "Touristique Express",
-            "available_seats": 17,
-            "total_seats": 45,
-            "bus_type": "Luxury",
-            "amenities": [
-              "AC",
-              "Prises USB",
-              "T\u00e9l\u00e9vision",
-              "Collations"
+            "name": "Musango Transport",
+            "registration_number": "RC/GRA/2011/B/1357",
+            "headquarters": "Garoua",
+            "phone": "+237699789012",
+            "founded_year": 2004,
+            "fleet_size": 110,
+            "routes_served": [
+              "Garoua-Yaound\u00e9",
+              "Garoua-Douala",
+              "Garoua-Ngaound\u00e9r\u00e9"
             ],
-            "distance_km": 253
+            "services": [
+              "passenger",
+              "cargo",
+              "courier"
+            ],
+            "rating": 4.0,
+            "logo_url": "https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=200",
+            "premium_partner": false
           },
           {
-            "id": "a8ca5f20-b45a-42e5-b0cb-f8a8bcacba17",
-            "origin": "Garoua",
-            "destination": "Ngaound\u00e9r\u00e9",
-            "departure_time": "11:00",
-            "arrival_time": "16:40",
-            "duration": "5h40min",
-            "price": 13260,
-            "company": "Central Voyages",
-            "available_seats": 20,
-            "total_seats": 45,
-            "bus_type": "Luxury",
-            "amenities": [
-              "WiFi",
-              "Collations"
+            "name": "Transcam Transport",
+            "registration_number": "RC/YDE/2013/A/9753",
+            "headquarters": "Yaound\u00e9",
+            "phone": "+237677890123",
+            "founded_year": 2006,
+            "fleet_size": 95,
+            "routes_served": [
+              "Yaound\u00e9-Douala",
+              "Yaound\u00e9-Ebolowa",
+              "Yaound\u00e9-Sangm\u00e9lima"
             ],
-            "distance_km": 221
+            "services": [
+              "passenger",
+              "courier"
+            ],
+            "rating": 4.3,
+            "logo_url": "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=200",
+            "premium_partner": true
           }
         ]
       }
     },
     {
-      "test": "Create User",
+      "test": "GET /api/weather/all",
+      "success": false,
+      "details": "Status: 404, Error: City not found",
+      "response_data": {}
+    },
+    {
+      "test": "POST /api/registration/multi-level",
       "success": true,
-      "details": "Created user with ID: aafb8da8-57fa-4e0f-ae3e-175ab5deb641",
+      "details": "Registration created: 37280d7f-448b-4956-a5d0-b33cc6390900",
       "response_data": {
-        "id": "aafb8da8-57fa-4e0f-ae3e-175ab5deb641",
-        "email": "test_1758841615@busconnect.cm",
-        "phone": "+237123456789",
-        "first_name": "Jean",
-        "last_name": "Dupont",
-        "user_type": "client",
+        "registration_id": "37280d7f-448b-4956-a5d0-b33cc6390900",
         "status": "pending",
-        "documents": [],
-        "created_at": "2025-09-25T23:06:55.379004"
-      }
-    },
-    {
-      "test": "Get User",
-      "success": false,
-      "details": "Status: 500",
-      "response_data": {}
-    },
-    {
-      "test": "Baggage Options",
-      "success": true,
-      "details": "Found baggage types: ['carry_on', 'checked', 'extra', 'bike', 'sports']",
-      "response_data": {
-        "baggage_options": [
-          {
-            "type": "carry_on",
-            "name": "Bagage \u00e0 main",
-            "description": "8kg max, 42x32x25cm",
-            "price": 0,
-            "icon": "backpack",
-            "included": true
-          },
-          {
-            "type": "checked",
-            "name": "Bagage soute",
-            "description": "20kg max, 80x60x40cm",
-            "price": 0,
-            "icon": "suitcase",
-            "included": true
-          },
-          {
-            "type": "extra",
-            "name": "Bagage suppl\u00e9mentaire",
-            "description": "20kg max, dimensions standard",
-            "price": 2500,
-            "icon": "plus",
-            "included": false
-          },
-          {
-            "type": "bike",
-            "name": "Transport v\u00e9lo",
-            "description": "V\u00e9lo standard, bien emball\u00e9",
-            "price": 3000,
-            "icon": "bike",
-            "included": false
-          },
-          {
-            "type": "sports",
-            "name": "\u00c9quipement sportif",
-            "description": "25kg max, \u00e9quipement sp\u00e9cialis\u00e9",
-            "price": 4000,
-            "icon": "dumbbell",
-            "included": false
-          }
-        ]
-      }
-    },
-    {
-      "test": "Get Offers",
-      "success": true,
-      "details": "Found 3 offers",
-      "response_data": {
-        "offers": [
-          {
-            "id": "6aedc8c5-dfde-43a3-b65c-660b6104f268",
-            "title": "Offre Weekend",
-            "description": "15% de r\u00e9duction sur tous les trajets du weekend",
-            "discount_percent": 15,
-            "code": "WEEKEND15",
-            "valid_until": "2025-12-31",
-            "type": "weekend_special",
-            "image_url": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400"
-          },
-          {
-            "id": "497489e6-2083-4479-a70c-c123608fa1d5",
-            "title": "Cashback Fid\u00e9lit\u00e9",
-            "description": "Apr\u00e8s 5 voyages, recevez 2500 FCFA de cashback",
-            "cashback_amount": 2500,
-            "required_trips": 5,
-            "type": "cashback",
-            "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400"
-          },
-          {
-            "id": "56f0a0fb-0085-4c06-883e-7c067b4f1951",
-            "title": "Compensation Carbone",
-            "description": "Voyagez \u00e9co-responsable pour seulement 500 FCFA",
-            "carbon_price": 500,
-            "type": "carbon_offset",
-            "image_url": "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e5?w=400"
-          }
-        ]
-      }
-    },
-    {
-      "test": "Promo Codes",
-      "success": true,
-      "details": "Found promo codes: ['BIENVENUE20', 'WEEKEND15', 'ETUDIANT10', 'FIDELITE']",
-      "response_data": {
-        "promo_codes": [
-          {
-            "code": "BIENVENUE20",
-            "discount_percent": 20,
-            "valid_until": "2025-12-31",
-            "description": "20% de r\u00e9duction pour les nouveaux clients"
-          },
-          {
-            "code": "WEEKEND15",
-            "discount_percent": 15,
-            "valid_until": "2025-12-31",
-            "description": "15% de r\u00e9duction pour les voyages du weekend"
-          },
-          {
-            "code": "ETUDIANT10",
-            "discount_percent": 10,
-            "valid_until": "2025-12-31",
-            "description": "10% de r\u00e9duction pour les \u00e9tudiants"
-          },
-          {
-            "code": "FIDELITE",
-            "discount_percent": 25,
-            "valid_until": "2025-12-31",
-            "description": "25% de r\u00e9duction pour clients fid\u00e8les"
-          }
-        ]
-      }
-    },
-    {
-      "test": "Validate Promo Code",
-      "success": true,
-      "details": "Promo validation: {'valid': True, 'discount_percent': 15, 'description': '15% de r\u00e9duction pour les voyages du weekend'}",
-      "response_data": {
-        "valid": true,
-        "discount_percent": 15,
-        "description": "15% de r\u00e9duction pour les voyages du weekend"
-      }
-    },
-    {
-      "test": "Create Booking",
-      "success": true,
-      "details": "Created booking: BC415610",
-      "response_data": {
-        "id": "2b8c40ad-2c79-4182-9527-0ec37ed1795f",
-        "user_id": "aafb8da8-57fa-4e0f-ae3e-175ab5deb641",
-        "route_id": "test-route-123",
-        "passenger_count": 2,
-        "seat_numbers": [
-          "1A",
-          "1B"
+        "message": "Inscription client enregistr\u00e9e. V\u00e9rification en cours.",
+        "next_steps": [
+          "V\u00e9rification des documents par l'\u00e9quipe administrative",
+          "Validation des informations personnelles",
+          "Notification de statut par SMS/Email"
         ],
-        "baggage": [
-          {
-            "type": "extra",
-            "quantity": 1,
-            "price": 2500
-          }
-        ],
-        "promo_code": "WEEKEND15",
-        "carbon_offset": true,
-        "total_price": 28050,
-        "status": "confirmed",
-        "booking_reference": "BC415610",
-        "created_at": "2025-09-25T23:06:55.650889",
-        "qr_code": "QR_BC415610"
+        "estimated_processing_time": "2-5 jours ouvrables"
       }
     },
     {
-      "test": "Get User Bookings",
-      "success": false,
-      "details": "Status: 500",
-      "response_data": {}
+      "test": "GET /api/registration/status/{id}",
+      "success": true,
+      "details": "Registration status: pending",
+      "response_data": {
+        "registration_id": "37280d7f-448b-4956-a5d0-b33cc6390900",
+        "status": "pending",
+        "user_type": "client",
+        "created_at": "2025-09-26T01:39:27.495000",
+        "verified_at": null,
+        "admin_comments": "",
+        "documents_status": {
+          "total_documents": 1,
+          "verified_documents": 0
+        }
+      }
     },
     {
-      "test": "Track Booking",
+      "test": "POST /api/admin/verify-registration/{id}",
       "success": true,
-      "details": "Tracking data: boarding at Yaound\u00e9",
+      "details": "Registration approveed, status: verified",
       "response_data": {
-        "booking_reference": "BC415610",
-        "status": "boarding",
-        "current_location": "Yaound\u00e9",
-        "next_stops": [
-          "Douala",
-          "Yaound\u00e9"
-        ],
-        "estimated_arrival": "18:58",
-        "delay_minutes": 23,
-        "distance_remaining_km": 190,
-        "live_updates": [
-          "Bus parti \u00e0 l'heure de Yaound\u00e9",
-          "Arr\u00eat \u00e0 Mbalmayo - 5 min",
-          "Trafic fluide vers Ed\u00e9a"
-        ]
+        "registration_id": "37280d7f-448b-4956-a5d0-b33cc6390900",
+        "action": "approve",
+        "new_status": "verified",
+        "admin_comments": "Documents v\u00e9rifi\u00e9s et approuv\u00e9s",
+        "message": "Inscription approveed successfully"
       }
     }
   ]
