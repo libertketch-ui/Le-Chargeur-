@@ -1141,20 +1141,45 @@ function Connect237App() {
                           <span>Nombre de passagers:</span>
                           <span className="font-semibold">{calculator.passenger_count}</span>
                         </div>
+                        
+                        {/* Afficher la taxe colis si applicable */}
+                        {calculator.package_tax > 0 && (
+                          <div className="flex justify-between text-orange-600">
+                            <span>Taxe colis (13%):</span>
+                            <span className="font-semibold">{formatPrice(calculator.package_tax)} FCFA</span>
+                          </div>
+                        )}
+                        
                         <div className="flex justify-between text-lg font-bold border-t pt-2">
                           <span>Total:</span>
                           <span className="text-green-600">{formatPrice(calculator.total_amount)} FCFA</span>
                         </div>
+                        
+                        {/* Nouvelle section de réservation */}
                         <div className="bg-blue-50 p-2 rounded text-xs">
+                          <div className="text-blue-700 font-semibold mb-1">
+                            📋 Nouvelle règle de réservation:
+                          </div>
                           <div className="flex justify-between">
-                            <span>Réservation (maintenant):</span>
-                            <span className="font-semibold">{formatPrice(calculator.reservation_fee)} FCFA</span>
+                            <span>Réservation ({calculator.passenger_count} × 500 FCFA):</span>
+                            <span className="font-semibold text-blue-600">{formatPrice(calculator.reservation_fee)} FCFA</span>
                           </div>
                           <div className="flex justify-between">
                             <span>Solde (sur place):</span>
                             <span className="font-semibold">{formatPrice(calculator.remaining_amount)} FCFA</span>
                           </div>
                         </div>
+                        
+                        {/* Afficher les détails de calcul si disponibles */}
+                        {calculator.calculation_details && (
+                          <div className="bg-green-50 p-2 rounded text-xs">
+                            <div className="text-green-700 font-semibold">Formule de calcul:</div>
+                            <div>{calculator.calculation_details.formula_reservation}</div>
+                            {calculator.calculation_details.formula_package && (
+                              <div className="text-orange-700">{calculator.calculation_details.formula_package}</div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
                   </CardContent>
