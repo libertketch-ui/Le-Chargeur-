@@ -2047,6 +2047,22 @@ async def get_policy_by_type(document_type: str):
         
     return {"policy": policy}
 
+@api_router.get("/administrative-structure")
+async def get_administrative_structure():
+    """Get complete administrative structure: Region → Department → Chef-lieu"""
+    return {"structure": CAMEROON_ADMINISTRATIVE_STRUCTURE}
+
+@api_router.get("/departments/{region}")
+async def get_departments_by_region(region: str):
+    """Get departments of a specific region"""
+    if region not in CAMEROON_ADMINISTRATIVE_STRUCTURE:
+        raise HTTPException(status_code=404, detail="Region not found")
+    
+    return {
+        "region": region,
+        "departments": CAMEROON_ADMINISTRATIVE_STRUCTURE[region]["departments"]
+    }
+
 # Include router
 app.include_router(api_router)
 
