@@ -675,23 +675,101 @@ CAMEROON_TOURIST_ATTRACTIONS = [
     }
 ]
 
-# Enhanced Cameroon Cities with Weather Simulation
+# Enhanced Cities, Villages and Localities in Cameroon  
 ENHANCED_CAMEROON_CITIES = [
-    {"name": "Yaoundé", "region": "Centre", "lat": 3.8667, "lng": 11.5167, "major": True, "airport": True, "population": 4500000},
-    {"name": "Douala", "region": "Littoral", "lat": 4.0611, "lng": 9.7067, "major": True, "airport": True, "population": 3700000},
-    {"name": "Bafoussam", "region": "Ouest", "lat": 5.4667, "lng": 10.4167, "major": True, "airport": True, "population": 450000},
-    {"name": "Bamenda", "region": "Nord-Ouest", "lat": 5.9667, "lng": 10.1667, "major": True, "airport": True, "population": 500000},
-    {"name": "Bertoua", "region": "Est", "lat": 4.5833, "lng": 13.6833, "major": True, "airport": True, "population": 300000},
-    {"name": "Garoua", "region": "Nord", "lat": 9.3000, "lng": 13.4000, "major": True, "airport": True, "population": 450000},
-    {"name": "Maroua", "region": "Nord", "lat": 10.5833, "lng": 14.3167, "major": True, "airport": True, "population": 400000},
-    {"name": "Ngaoundéré", "region": "Adamaoua", "lat": 7.3167, "lng": 13.5833, "major": True, "airport": True, "population": 300000},
-    {"name": "Kribi", "region": "Sud", "lat": 2.9333, "lng": 9.9167, "major": True, "airport": False, "population": 70000},
-    {"name": "Limbe", "region": "Sud-Ouest", "lat": 4.0167, "lng": 9.2000, "major": True, "airport": False, "population": 120000},
-    {"name": "Buéa", "region": "Sud-Ouest", "lat": 4.1500, "lng": 9.2833, "major": True, "airport": False, "population": 200000},
-    {"name": "Kumba", "region": "Sud-Ouest", "lat": 4.6333, "lng": 9.4500, "major": True, "airport": False, "population": 150000},
-    {"name": "Ebolowa", "region": "Sud", "lat": 2.9167, "lng": 11.1500, "major": True, "airport": False, "population": 80000},
-    {"name": "Foumban", "region": "Ouest", "lat": 5.7167, "lng": 10.9000, "major": True, "airport": False, "population": 120000},
-    {"name": "Dschang", "region": "Ouest", "lat": 5.4500, "lng": 10.0500, "major": True, "airport": False, "population": 100000}
+    # GRANDES VILLES PRINCIPALES
+    {"name": "Yaoundé", "region": "Centre", "lat": 3.8667, "lng": 11.5167, "major": True, "airport": True, "population": 4500000, "type": "capitale"},
+    {"name": "Douala", "region": "Littoral", "lat": 4.0611, "lng": 9.7067, "major": True, "airport": True, "population": 3700000, "type": "ville"},
+    {"name": "Bafoussam", "region": "Ouest", "lat": 5.4667, "lng": 10.4167, "major": True, "airport": True, "population": 450000, "type": "ville"},
+    {"name": "Bamenda", "region": "Nord-Ouest", "lat": 5.9667, "lng": 10.1667, "major": True, "airport": True, "population": 500000, "type": "ville"},
+    {"name": "Bertoua", "region": "Est", "lat": 4.5833, "lng": 13.6833, "major": True, "airport": True, "population": 300000, "type": "ville"},
+    {"name": "Garoua", "region": "Nord", "lat": 9.3000, "lng": 13.4000, "major": True, "airport": True, "population": 450000, "type": "ville"},
+    {"name": "Maroua", "region": "Extrême-Nord", "lat": 10.5833, "lng": 14.3167, "major": True, "airport": True, "population": 400000, "type": "ville"},
+    {"name": "Ngaoundéré", "region": "Adamaoua", "lat": 7.3167, "lng": 13.5833, "major": True, "airport": True, "population": 300000, "type": "ville"},
+    
+    # VILLES SECONDAIRES
+    {"name": "Kribi", "region": "Sud", "lat": 2.9333, "lng": 9.9167, "major": True, "airport": False, "population": 70000, "type": "ville"},
+    {"name": "Limbe", "region": "Sud-Ouest", "lat": 4.0167, "lng": 9.2000, "major": True, "airport": False, "population": 120000, "type": "ville"},
+    {"name": "Buéa", "region": "Sud-Ouest", "lat": 4.1500, "lng": 9.2833, "major": True, "airport": False, "population": 200000, "type": "ville"},
+    {"name": "Kumba", "region": "Sud-Ouest", "lat": 4.6333, "lng": 9.4500, "major": True, "airport": False, "population": 150000, "type": "ville"},
+    {"name": "Ebolowa", "region": "Sud", "lat": 2.9167, "lng": 11.1500, "major": True, "airport": False, "population": 80000, "type": "ville"},
+    {"name": "Foumban", "region": "Ouest", "lat": 5.7167, "lng": 10.9000, "major": True, "airport": False, "population": 120000, "type": "ville"},
+    {"name": "Dschang", "region": "Ouest", "lat": 5.4500, "lng": 10.0500, "major": True, "airport": False, "population": 100000, "type": "ville"},
+    
+    # RÉGION CENTRE - Localités et Villages
+    {"name": "Mbalmayo", "region": "Centre", "lat": 3.5167, "lng": 11.5000, "major": False, "airport": False, "population": 25000, "type": "commune"},
+    {"name": "Obala", "region": "Centre", "lat": 4.1667, "lng": 11.5333, "major": False, "airport": False, "population": 15000, "type": "commune"},
+    {"name": "Mfou", "region": "Centre", "lat": 3.7333, "lng": 11.6333, "major": False, "airport": False, "population": 8000, "type": "commune"},
+    {"name": "Soa", "region": "Centre", "lat": 3.9500, "lng": 11.3833, "major": False, "airport": False, "population": 12000, "type": "commune"},
+    {"name": "Ntui", "region": "Centre", "lat": 4.4333, "lng": 11.5833, "major": False, "airport": False, "population": 7000, "type": "commune"},
+    {"name": "Bafia", "region": "Centre", "lat": 4.7500, "lng": 11.2333, "major": False, "airport": False, "population": 18000, "type": "commune"},
+    {"name": "Nanga-Eboko", "region": "Centre", "lat": 4.6833, "lng": 12.3667, "major": False, "airport": False, "population": 9000, "type": "commune"},
+    
+    # RÉGION LITTORAL - Localités et Villages  
+    {"name": "Edéa", "region": "Littoral", "lat": 3.8000, "lng": 10.1333, "major": False, "airport": False, "population": 45000, "type": "commune"},
+    {"name": "Loum", "region": "Littoral", "lat": 4.7167, "lng": 9.7333, "major": False, "airport": False, "population": 30000, "type": "commune"},
+    {"name": "Nkongsamba", "region": "Littoral", "lat": 4.9500, "lng": 9.9333, "major": False, "airport": False, "population": 120000, "type": "commune"},
+    {"name": "Mbanga", "region": "Littoral", "lat": 4.4833, "lng": 9.5667, "major": False, "airport": False, "population": 25000, "type": "commune"},
+    {"name": "Manjo", "region": "Littoral", "lat": 4.6833, "lng": 9.8333, "major": False, "airport": False, "population": 15000, "type": "commune"},
+    {"name": "Yabassi", "region": "Littoral", "lat": 4.4500, "lng": 9.9667, "major": False, "airport": False, "population": 12000, "type": "commune"},
+    
+    # RÉGION OUEST - Localités et Villages
+    {"name": "Mbouda", "region": "Ouest", "lat": 5.6167, "lng": 10.2500, "major": False, "airport": False, "population": 35000, "type": "commune"},
+    {"name": "Bandjoun", "region": "Ouest", "lat": 5.3667, "lng": 10.4000, "major": False, "airport": False, "population": 20000, "type": "commune"},
+    {"name": "Bangangté", "region": "Ouest", "lat": 5.1500, "lng": 10.5167, "major": False, "airport": False, "population": 25000, "type": "commune"},
+    {"name": "Bafang", "region": "Ouest", "lat": 5.1667, "lng": 10.1833, "major": False, "airport": False, "population": 40000, "type": "commune"},
+    {"name": "Kékem", "region": "Ouest", "lat": 5.2167, "lng": 10.0667, "major": False, "airport": False, "population": 15000, "type": "commune"},
+    {"name": "Penka-Michel", "region": "Ouest", "lat": 5.4000, "lng": 10.1000, "major": False, "airport": False, "population": 8000, "type": "village"},
+    
+    # RÉGION NORD-OUEST - Localités et Villages
+    {"name": "Wum", "region": "Nord-Ouest", "lat": 6.3833, "lng": 10.0667, "major": False, "airport": False, "population": 15000, "type": "commune"},
+    {"name": "Fundong", "region": "Nord-Ouest", "lat": 6.2333, "lng": 10.2833, "major": False, "airport": False, "population": 12000, "type": "commune"},
+    {"name": "Mbengwi", "region": "Nord-Ouest", "lat": 6.1833, "lng": 9.7167, "major": False, "airport": False, "population": 18000, "type": "commune"},
+    {"name": "Ndop", "region": "Nord-Ouest", "lat": 6.0167, "lng": 10.4333, "major": False, "airport": False, "population": 10000, "type": "commune"},
+    {"name": "Kumbo", "region": "Nord-Ouest", "lat": 6.2000, "lng": 10.6667, "major": False, "airport": False, "population": 35000, "type": "commune"},
+    {"name": "Nkambe", "region": "Nord-Ouest", "lat": 6.5833, "lng": 10.6833, "major": False, "airport": False, "population": 20000, "type": "commune"},
+    
+    # RÉGION SUD-OUEST - Localités et Villages
+    {"name": "Mamfé", "region": "Sud-Ouest", "lat": 5.7667, "lng": 9.3167, "major": False, "airport": False, "population": 25000, "type": "commune"},
+    {"name": "Tiko", "region": "Sud-Ouest", "lat": 4.0667, "lng": 9.3600, "major": False, "airport": False, "population": 55000, "type": "commune"},
+    {"name": "Idenau", "region": "Sud-Ouest", "lat": 4.1167, "lng": 8.9833, "major": False, "airport": False, "population": 8000, "type": "commune"},
+    {"name": "Muyuka", "region": "Sud-Ouest", "lat": 4.3000, "lng": 9.4000, "major": False, "airport": False, "population": 12000, "type": "commune"},
+    {"name": "Tombel", "region": "Sud-Ouest", "lat": 4.6833, "lng": 9.6167, "major": False, "airport": False, "population": 15000, "type": "commune"},
+    
+    # RÉGION SUD - Localités et Villages
+    {"name": "Sangmélima", "region": "Sud", "lat": 2.9333, "lng": 11.9833, "major": False, "airport": False, "population": 18000, "type": "commune"},
+    {"name": "Ambam", "region": "Sud", "lat": 2.3833, "lng": 11.2667, "major": False, "airport": False, "population": 12000, "type": "commune"},
+    {"name": "Mvangan", "region": "Sud", "lat": 2.4667, "lng": 11.6167, "major": False, "airport": False, "population": 5000, "type": "commune"},
+    {"name": "Campo", "region": "Sud", "lat": 2.3667, "lng": 9.8167, "major": False, "airport": False, "population": 8000, "type": "commune"},
+    {"name": "Lolodorf", "region": "Sud", "lat": 3.2333, "lng": 10.7333, "major": False, "airport": False, "population": 7000, "type": "commune"},
+    
+    # RÉGION EST - Localités et Villages
+    {"name": "Batouri", "region": "Est", "lat": 4.4333, "lng": 14.3667, "major": False, "airport": False, "population": 25000, "type": "commune"},
+    {"name": "Yokadouma", "region": "Est", "lat": 3.5167, "lng": 15.0500, "major": False, "airport": False, "population": 30000, "type": "commune"},
+    {"name": "Abong-Mbang", "region": "Est", "lat": 3.9833, "lng": 13.1833, "major": False, "airport": False, "population": 18000, "type": "commune"},
+    {"name": "Doumé", "region": "Est", "lat": 4.2333, "lng": 13.4333, "major": False, "airport": False, "population": 8000, "type": "commune"},
+    {"name": "Moloundou", "region": "Est", "lat": 2.0333, "lng": 15.1833, "major": False, "airport": False, "population": 12000, "type": "commune"},
+    
+    # RÉGION ADAMAOUA - Localités et Villages
+    {"name": "Meiganga", "region": "Adamaoua", "lat": 6.5167, "lng": 14.3000, "major": False, "airport": False, "population": 20000, "type": "commune"},
+    {"name": "Tibati", "region": "Adamaoua", "lat": 6.4667, "lng": 12.6333, "major": False, "airport": False, "population": 15000, "type": "commune"},
+    {"name": "Banyo", "region": "Adamaoua", "lat": 6.7500, "lng": 11.8167, "major": False, "airport": False, "population": 18000, "type": "commune"},
+    {"name": "Tignère", "region": "Adamaoua", "lat": 7.3667, "lng": 12.6500, "major": False, "airport": False, "population": 25000, "type": "commune"},
+    
+    # RÉGION NORD - Localités et Villages  
+    {"name": "Poli", "region": "Nord", "lat": 8.4167, "lng": 13.2500, "major": False, "airport": False, "population": 15000, "type": "commune"},
+    {"name": "Rey", "region": "Nord", "lat": 9.1667, "lng": 12.1833, "major": False, "airport": False, "population": 12000, "type": "commune"},
+    {"name": "Tcholliré", "region": "Nord", "lat": 8.3833, "lng": 14.1167, "major": False, "airport": False, "population": 8000, "type": "commune"},
+    {"name": "Guider", "region": "Nord", "lat": 9.9333, "lng": 13.9500, "major": False, "airport": False, "population": 35000, "type": "commune"},
+    
+    # RÉGION EXTRÊME-NORD - Localités et Villages
+    {"name": "Kousseri", "region": "Extrême-Nord", "lat": 12.0833, "lng": 15.0333, "major": False, "airport": False, "population": 120000, "type": "commune"},
+    {"name": "Mokolo", "region": "Extrême-Nord", "lat": 10.7333, "lng": 13.8000, "major": False, "airport": False, "population": 45000, "type": "commune"},
+    {"name": "Mora", "region": "Extrême-Nord", "lat": 11.0500, "lng": 14.0833, "major": False, "airport": False, "population": 25000, "type": "commune"},
+    {"name": "Waza", "region": "Extrême-Nord", "lat": 11.3833, "lng": 14.6333, "major": False, "airport": False, "population": 8000, "type": "commune"},
+    {"name": "Yagoua", "region": "Extrême-Nord", "lat": 10.3333, "lng": 15.2333, "major": False, "airport": False, "population": 35000, "type": "commune"},
+    {"name": "Bourrah", "region": "Extrême-Nord", "lat": 10.4833, "lng": 14.4167, "major": False, "airport": False, "population": 5000, "type": "village"},
+    {"name": "Bogo", "region": "Extrême-Nord", "lat": 11.2667, "lng": 14.6000, "major": False, "airport": False, "population": 12000, "type": "commune"}
 ]
 
 # === UTILITY FUNCTIONS ===
