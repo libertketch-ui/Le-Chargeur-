@@ -494,13 +494,16 @@ async def get_city_weather(city: str):
 @api_router.get("/weather/all")
 async def get_all_weather():
     """Get weather for all major cities"""
-    weather_data = []
-    for city in ENHANCED_CAMEROON_CITIES:
-        if city["major"]:
-            weather = generate_weather_data(city["name"], city["region"])
-            weather_data.append(weather.dict())
-    
-    return {"weather_data": weather_data}
+    try:
+        weather_data = []
+        for city in ENHANCED_CAMEROON_CITIES:
+            if city["major"]:
+                weather = generate_weather_data(city["name"], city["region"])
+                weather_data.append(weather.dict())
+        
+        return {"weather_data": weather_data}
+    except Exception as e:
+        return {"error": str(e), "cities_count": len(ENHANCED_CAMEROON_CITIES)}
 
 @api_router.get("/attractions")
 async def get_tourist_attractions():
