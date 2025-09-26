@@ -931,7 +931,7 @@ CAMEROON_ADMINISTRATIVE_STRUCTURE = {
             {"name": "Garoua", "lat": 9.3000, "lng": 13.4000, "type": "chef-lieu"},
             {"name": "Poli", "lat": 8.4167, "lng": 13.2500, "type": "chef-lieu"},
             {"name": "Guider", "lat": 9.9333, "lng": 13.9500, "type": "chef-lieu"},
-            {"name": "Tcholliré", "lat": 8.3833, "lng": 14.1167, "type": "chef-lieu"}
+            {"name": "Tcholliré", "lat": 8.3833, "lng": 14.1833, "type": "chef-lieu"}
         ]
     },
     "Nord-Ouest": {
