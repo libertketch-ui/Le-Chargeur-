@@ -1168,17 +1168,24 @@ function Connect237App() {
                         </CardContent>
                       </Card>
 
-                      {/* Payment on Site Option */}
+                      {/* Mobile Money Options */}
                       <Card 
                         className={`cursor-pointer transition-all ${
-                          paymentForm.type === "on_site" ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md'
+                          paymentForm.type === "mobile_money" ? 'ring-2 ring-green-500 bg-green-50' : 'hover:shadow-md'
                         }`}
-                        onClick={() => setPaymentForm({...paymentForm, type: "on_site"})}
+                        onClick={() => setPaymentForm({...paymentForm, type: "mobile_money"})}
                       >
                         <CardContent className="p-4 text-center">
-                          <Banknote className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                          <h4 className="font-semibold">Paiement sur place</h4>
-                          <p className="text-xs text-gray-600">Réglez directement lors du voyage</p>
+                          <Smartphone className="w-8 h-8 text-green-600 mx-auto mb-3" />
+                          <h4 className="font-semibold">Mobile Money</h4>
+                          <div className="flex justify-center gap-2 mt-2">
+                            <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                              <span className="text-white font-bold text-xs">MTN</span>
+                            </div>
+                            <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                              <span className="text-white font-bold text-xs">OM</span>
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
                     </div>
