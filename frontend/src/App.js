@@ -1341,22 +1341,88 @@ function Connect237App() {
             </Card>
           </TabsContent>
 
-          {/* Tourism Tab */}
+          {/* Tourism Tab with Auto-rotating Carousel */}
           <TabsContent value="tourism" className="space-y-6">
+            
+            {/* Hero Carousel Section */}
+            {attractions.length > 0 && (
+              <Card className="overflow-hidden">
+                <div className="h-96 relative">
+                  <img 
+                    src={attractions[currentTourismSlide]?.image_url}
+                    alt={attractions[currentTourismSlide]?.name}
+                    className="w-full h-full object-cover transition-all duration-1000"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  
+                  {/* Site Information Overlay */}
+                  <div className="absolute bottom-6 left-6 text-white">
+                    <h2 className="text-3xl font-bold mb-2">
+                      {attractions[currentTourismSlide]?.name}
+                    </h2>
+                    <div className="flex items-center gap-2 mb-3">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-lg">{attractions[currentTourismSlide]?.city}, {attractions[currentTourismSlide]?.region}</span>
+                    </div>
+                    <p className="text-lg max-w-2xl">
+                      {attractions[currentTourismSlide]?.description}
+                    </p>
+                  </div>
+                  
+                  {/* Progress Indicators */}
+                  <div className="absolute bottom-6 right-6 flex gap-2">
+                    {attractions.map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          idx === currentTourismSlide ? 'bg-white' : 'bg-white/50'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* Navigation Arrows */}
+                  <button
+                    onClick={() => setCurrentTourismSlide((prev) => 
+                      prev === 0 ? attractions.length - 1 : prev - 1
+                    )}
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-all"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={() => setCurrentTourismSlide((prev) => 
+                      (prev + 1) % attractions.length
+                    )}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-all"
+                  >
+                    →
+                  </button>
+                </div>
+              </Card>
+            )}
+
+            {/* Traditional Grid View */}
             <Card>
               <CardHeader className="bg-gradient-to-r from-green-600 via-yellow-500 to-red-600 text-white">
                 <CardTitle className="flex items-center gap-2">
                   <Mountain className="w-5 h-5" />
-                  Découvrez les Merveilles du Cameroun
+                  Tous les Sites Touristiques du Cameroun
                 </CardTitle>
                 <CardDescription className="text-green-100">
-                  Les plus beaux sites touristiques à visiter
+                  Découvrez la richesse touristique de toutes les régions
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {attractions.map((attraction, idx) => (
-                    <Card key={idx} className="overflow-hidden hover:shadow-xl transition-all">
+                    <Card 
+                      key={idx} 
+                      className={`overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
+                        idx === currentTourismSlide ? 'ring-2 ring-green-500' : ''
+                      }`}
+                      onClick={() => setCurrentTourismSlide(idx)}
+                    >
                       <div className="h-48 relative">
                         <img 
                           src={attraction.image_url}
@@ -1374,19 +1440,23 @@ function Connect237App() {
                             {attraction.category}
                           </Badge>
                         </div>
+                        
+                        {/* Site Name Overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                          <h4 className="text-white font-bold text-sm">{attraction.name}</h4>
+                        </div>
                       </div>
-                      <CardContent className="p-6">
-                        <h3 className="font-bold text-lg mb-2">{attraction.name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
                           <MapPin className="w-4 h-4" />
                           {attraction.city}, {attraction.region}
                         </div>
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <p className="text-gray-600 text-xs line-clamp-2">
                           {attraction.description}
                         </p>
-                        <div className="flex gap-2">
-                          <Button size="sm" className="flex-1 bg-gradient-to-r from-green-500 to-red-500">
-                            <Navigation className="w-3 h-3 mr-2" />
+                        <div className="flex gap-2 mt-3">
+                          <Button size="sm" className="flex-1 bg-gradient-to-r from-green-500 to-red-500 text-xs">
+                            <Navigation className="w-3 h-3 mr-1" />
                             Itinéraire
                           </Button>
                           <Button variant="outline" size="sm">
