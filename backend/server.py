@@ -491,7 +491,7 @@ async def get_city_weather(city: str):
     weather = generate_weather_data(city_info["name"], city_info["region"])
     return weather
 
-@api_router.get("/weather/all")
+@api_router.get("/weather/cities")
 async def get_all_weather():
     """Get weather for all major cities"""
     try:
