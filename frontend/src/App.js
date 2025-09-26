@@ -1215,9 +1215,13 @@ function Connect237App() {
                       >
                         <CardContent className="p-4 text-center">
                           <Timer className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                          <h4 className="font-semibold">Réservation</h4>
-                          <p className="text-sm text-gray-600 mb-2">500 FCFA maintenant</p>
-                          <p className="text-xs text-gray-500">Solde 1h avant le voyage</p>
+                          <h4 className="font-semibold">
+                            {language === "fr" ? "Réservation" : "Reservation"}
+                          </h4>
+                          <p className="text-sm text-gray-600 mb-2">500 FCFA {language === "fr" ? "maintenant" : "now"}</p>
+                          <p className="text-xs text-gray-500">
+                            {language === "fr" ? "Solde 1h avant le voyage" : "Balance 1h before travel"}
+                          </p>
                         </CardContent>
                       </Card>
 
