@@ -476,6 +476,8 @@ function Connect237App() {
       available_seats: Math.floor(Math.random() * 30) + 5
     }));
   };
+
+  const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     toast.success("Copié dans le presse-papiers");
   };
