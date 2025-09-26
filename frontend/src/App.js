@@ -1212,15 +1212,22 @@ function Connect237App() {
                           <div className="space-y-2 text-sm">
                             <p className="flex items-center gap-2">
                               <CheckCircle className="w-4 h-4 text-green-600" />
-                              Réservation: {searchForm.passengers * 500} FCFA (maintenant)
+                              Réservation: {formatPrice(searchForm.passengers * 500)} FCFA (maintenant)
                             </p>
                             <p className="flex items-center gap-2">
                               <Clock className="w-4 h-4 text-orange-600" />
-                              Solde: {searchForm.passengers * 4500} FCFA (au départ)
+                              Solde: {formatPrice(searchForm.passengers * 4500)} FCFA (au départ)
                             </p>
                             <p className="text-xs text-gray-600">
                               💳 Modes acceptés sur place: Espèces, Mobile Money MTN/Orange, Cartes bancaires
                             </p>
+                            <div className="mt-2 p-2 bg-blue-50 rounded text-xs">
+                              <div className="font-semibold text-blue-700">Détail du calcul:</div>
+                              <div className="flex justify-between">
+                                <span>500 FCFA × {searchForm.passengers} passager(s):</span>
+                                <span className="font-bold">{formatPrice(searchForm.passengers * 500)} FCFA</span>
+                              </div>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
