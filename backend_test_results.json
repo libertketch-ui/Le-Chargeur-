@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-09-26T01:39:27.583548",
+  "timestamp": "2025-09-26T01:41:44.801299",
   "total_tests": 12,
-  "passed_tests": 9,
-  "success_rate": 75.0,
+  "passed_tests": 11,
+  "success_rate": 91.66666666666666,
   "test_details": [
     {
       "test": "API Health Check",
@@ -32,14 +32,14 @@
     {
       "test": "POST /api/parcel-delivery",
       "success": true,
-      "details": "Created parcel delivery: C237779858",
+      "details": "Created parcel delivery: C237311718",
       "response_data": {
-        "parcel_id": "eb137991-4f63-4c8e-8c0d-288acd0b94e7",
-        "tracking_number": "C237779858",
+        "parcel_id": "ba57d993-838c-4846-b146-4dac165e82ec",
+        "tracking_number": "C237311718",
         "total_price": 4250,
         "estimated_delivery": "24-48 heures",
         "status": "pending",
-        "message": "Service de livraison cr\u00e9\u00e9 avec succ\u00e8s. Code: C237779858"
+        "message": "Service de livraison cr\u00e9\u00e9 avec succ\u00e8s. Code: C237311718"
       }
     },
     {
@@ -55,8 +55,8 @@
             {
               "agency": "Express Union",
               "route": "Yaound\u00e9-Douala",
-              "price": 7282,
-              "duration": "7 heures",
+              "price": 6536,
+              "duration": "8 heures",
               "departure_times": [
                 "06:00",
                 "09:00",
@@ -70,8 +70,8 @@
             {
               "agency": "Touristique Express",
               "route": "Yaound\u00e9-Douala",
-              "price": 7540,
-              "duration": "7 heures",
+              "price": 4116,
+              "duration": "4 heures",
               "departure_times": [
                 "06:00",
                 "09:00",
@@ -85,8 +85,8 @@
             {
               "agency": "Binam Voyages",
               "route": "Yaound\u00e9-Douala",
-              "price": 6675,
-              "duration": "3 heures",
+              "price": 4512,
+              "duration": "8 heures",
               "departure_times": [
                 "06:00",
                 "09:00",
@@ -100,8 +100,8 @@
             {
               "agency": "Guaranti Express",
               "route": "Douala-Yaound\u00e9",
-              "price": 4032,
-              "duration": "6 heures",
+              "price": 5381,
+              "duration": "8 heures",
               "departure_times": [
                 "06:00",
                 "09:00",
@@ -115,8 +115,8 @@
             {
               "agency": "Transcam Transport",
               "route": "Yaound\u00e9-Douala",
-              "price": 4343,
-              "duration": "6 heures",
+              "price": 6845,
+              "duration": "8 heures",
               "departure_times": [
                 "06:00",
                 "09:00",
@@ -152,8 +152,8 @@
           ],
           "ai_insights": [
             "Meilleure p\u00e9riode pour voyager: Matin (06h00-09h00)",
-            "Prix moyen pour 2 passager(s): 4403 FCFA",
-            "Dur\u00e9e estim\u00e9e du trajet: 5 heures"
+            "Prix moyen pour 2 passager(s): 4459 FCFA",
+            "Dur\u00e9e estim\u00e9e du trajet: 4 heures"
           ]
         },
         "total_found": 5
@@ -161,28 +161,216 @@
     },
     {
       "test": "GET /api/admin/dashboard",
-      "success": false,
-      "details": "Status: 500, Response: Internal Server Error",
-      "response_data": {}
+      "success": true,
+      "details": "Dashboard loaded with 1 users, 0 pending",
+      "response_data": {
+        "dashboard_stats": {
+          "total_users": 1,
+          "pending_verifications": 0,
+          "total_bookings": 4,
+          "revenue_today": 84953,
+          "active_vehicles": 43,
+          "courier_deliveries": 1
+        },
+        "recent_activities": {
+          "bookings": [
+            {
+              "id": "050c69ff-23c1-41e1-9d01-a1f6a4e45f24",
+              "user_id": "user123",
+              "route_id": "route456",
+              "passenger_count": 2,
+              "seat_numbers": [
+                "1A",
+                "1B"
+              ],
+              "service_class": "premium",
+              "baggage": [
+                {
+                  "type": "extra",
+                  "quantity": 1,
+                  "price": 3000,
+                  "weight_kg": null,
+                  "dimensions": null,
+                  "insurance": true
+                },
+                {
+                  "type": "bike",
+                  "quantity": 1,
+                  "price": 4000,
+                  "weight_kg": null,
+                  "dimensions": null,
+                  "insurance": false
+                }
+              ],
+              "promo_code": "PREMIUM25",
+              "carbon_offset": true,
+              "total_price": 57000,
+              "status": "confirmed",
+              "booking_reference": "BC579019",
+              "qr_code": "QR_BC579019",
+              "booking_for_other": {
+                "passenger_name": "Marie Talla",
+                "passenger_phone": "+237655123456",
+                "relationship": "family",
+                "emergency_contact": null
+              },
+              "safety_preferences": {
+                "emergency_button": true,
+                "trip_sharing": true,
+                "audio_recording": false,
+                "driver_verification": true,
+                "real_time_monitoring": true
+              },
+              "scheduled_departure": null,
+              "is_advance_booking": false,
+              "insurance": true,
+              "special_requests": "Si\u00e8ge c\u00f4t\u00e9 fen\u00eatre si possible",
+              "rating": null,
+              "review": null,
+              "created_at": "2025-09-25T23:27:14.939000"
+            },
+            {
+              "id": "32c37269-c895-424a-9f75-f3dd91b8470a",
+              "user_id": "user123",
+              "route_id": "ed0fd427-ab2f-4c34-9afe-87607cedafb4",
+              "passenger_count": 2,
+              "seat_numbers": [
+                "1A",
+                "2A"
+              ],
+              "baggage": [
+                {
+                  "type": "extra",
+                  "quantity": 1,
+                  "price": 2500
+                }
+              ],
+              "promo_code": "WEEKEND15",
+              "carbon_offset": true,
+              "total_price": 28050,
+              "status": "confirmed",
+              "booking_reference": "BC535812",
+              "created_at": "2025-09-25T23:08:42.714000",
+              "qr_code": "QR_BC535812"
+            },
+            {
+              "id": "2b8c40ad-2c79-4182-9527-0ec37ed1795f",
+              "user_id": "aafb8da8-57fa-4e0f-ae3e-175ab5deb641",
+              "route_id": "test-route-123",
+              "passenger_count": 2,
+              "seat_numbers": [
+                "1A",
+                "1B"
+              ],
+              "baggage": [
+                {
+                  "type": "extra",
+                  "quantity": 1,
+                  "price": 2500
+                }
+              ],
+              "promo_code": "WEEKEND15",
+              "carbon_offset": true,
+              "total_price": 28050,
+              "status": "confirmed",
+              "booking_reference": "BC415610",
+              "created_at": "2025-09-25T23:06:55.650000",
+              "qr_code": "QR_BC415610"
+            },
+            {
+              "id": "73ffedfa-8851-483f-addc-09aaea14fcbe",
+              "user_id": "user123",
+              "route_id": "route456",
+              "passenger_count": 1,
+              "seat_numbers": [
+                "1A"
+              ],
+              "baggage": [
+                {
+                  "type": "carry_on",
+                  "quantity": 1,
+                  "price": 0
+                }
+              ],
+              "promo_code": "WEEKEND15",
+              "carbon_offset": true,
+              "total_price": 13175,
+              "status": "confirmed",
+              "booking_reference": "BC603411",
+              "created_at": "2025-09-25T23:04:58.737000",
+              "qr_code": "QR_BC603411"
+            }
+          ],
+          "registrations": [
+            {
+              "id": "37280d7f-448b-4956-a5d0-b33cc6390900",
+              "user_type": "client",
+              "personal_info": {
+                "name": "Paul Biya",
+                "email": "paul.biya@connect237.cm",
+                "phone": "+237699876543",
+                "address": "Etoudi, Yaound\u00e9",
+                "date_of_birth": "1990-05-15",
+                "id_number": "123456789"
+              },
+              "documents": [
+                {
+                  "type": "identity_card",
+                  "filename": "cni_paul_biya.jpg",
+                  "verified": false
+                }
+              ],
+              "verification_status": "verified",
+              "admin_comments": "Documents v\u00e9rifi\u00e9s et approuv\u00e9s",
+              "created_at": "2025-09-26T01:39:27.495000",
+              "verified_at": "2025-09-26T01:39:27.579000"
+            }
+          ]
+        },
+        "system_health": {
+          "api_status": "healthy",
+          "database_status": "connected",
+          "payment_system": "operational",
+          "sms_service": "operational",
+          "email_service": "operational"
+        },
+        "alerts": [
+          {
+            "type": "info",
+            "message": "0 nouvelles demandes d'inscription en attente",
+            "priority": "medium"
+          }
+        ]
+      }
     },
     {
       "test": "POST /api/courier/book",
       "success": true,
-      "details": "Courier booked: C237682190",
+      "details": "Courier booked: C237819533",
       "response_data": {
-        "courier_id": "b3d0721b-a13a-4270-b00d-49d5d511eec9",
-        "tracking_number": "C237682190",
+        "courier_id": "d9488e3e-73bd-46cf-9792-ca3b65ecf7bc",
+        "tracking_number": "C237819533",
         "total_price": 4125,
         "estimated_delivery": "6-12 heures",
         "status": "pending",
-        "message": "Service courrier r\u00e9serv\u00e9 avec succ\u00e8s. Code de suivi: C237682190"
+        "message": "Service courrier r\u00e9serv\u00e9 avec succ\u00e8s. Code de suivi: C237819533"
       }
     },
     {
       "test": "POST /api/booking/enhanced",
-      "success": false,
-      "details": "Status: 500, Response: Internal Server Error",
-      "response_data": {}
+      "success": true,
+      "details": "Enhanced booking created: C237983156",
+      "response_data": {
+        "booking_id": "d49f4524-b4b2-44ef-bd93-724fde78dbfa",
+        "booking_reference": "C237983156",
+        "amount_to_pay_now": 9000,
+        "payment_status": "completed",
+        "qr_code": "C237_C237983156",
+        "merchant_code": "237001",
+        "provider": "MTN",
+        "ussd_code": "*126#",
+        "instructions": "Composez *126# et suivez les instructions. Code marchand: 237001"
+      }
     },
     {
       "test": "GET /api/cities/enhanced",
@@ -200,12 +388,12 @@
             "population": 4500000,
             "current_weather": {
               "city": "Yaound\u00e9",
-              "temperature": 23.8,
-              "description": "Pluie l\u00e9g\u00e8re",
-              "humidity": 49,
-              "wind_speed": 9.3,
-              "icon": "\ud83c\udf26\ufe0f",
-              "timestamp": "2025-09-26T01:39:27.382042"
+              "temperature": 31.7,
+              "description": "Partiellement nuageux",
+              "humidity": 87,
+              "wind_speed": 13.2,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:41:44.522145"
             },
             "attractions": [
               {
@@ -234,12 +422,12 @@
             "population": 3700000,
             "current_weather": {
               "city": "Douala",
-              "temperature": 29.8,
-              "description": "Orageux",
-              "humidity": 46,
-              "wind_speed": 22.9,
-              "icon": "\u26c8\ufe0f",
-              "timestamp": "2025-09-26T01:39:27.382100"
+              "temperature": 26.4,
+              "description": "Nuageux",
+              "humidity": 66,
+              "wind_speed": 5.0,
+              "icon": "\u2601\ufe0f",
+              "timestamp": "2025-09-26T01:41:44.522188"
             },
             "attractions": [],
             "agencies_count": 0
@@ -254,12 +442,12 @@
             "population": 450000,
             "current_weather": {
               "city": "Bafoussam",
-              "temperature": 22.2,
-              "description": "Partiellement nuageux",
-              "humidity": 65,
-              "wind_speed": 6.9,
-              "icon": "\u26c5",
-              "timestamp": "2025-09-26T01:39:27.382117"
+              "temperature": 27.2,
+              "description": "Ensoleill\u00e9",
+              "humidity": 76,
+              "wind_speed": 22.2,
+              "icon": "\u2600\ufe0f",
+              "timestamp": "2025-09-26T01:41:44.522205"
             },
             "attractions": [],
             "agencies_count": 0
@@ -274,12 +462,12 @@
             "population": 500000,
             "current_weather": {
               "city": "Bamenda",
-              "temperature": 25.3,
-              "description": "Partiellement nuageux",
-              "humidity": 40,
-              "wind_speed": 22.7,
-              "icon": "\u26c5",
-              "timestamp": "2025-09-26T01:39:27.382132"
+              "temperature": 19.8,
+              "description": "Orageux",
+              "humidity": 67,
+              "wind_speed": 5.7,
+              "icon": "\u26c8\ufe0f",
+              "timestamp": "2025-09-26T01:41:44.522219"
             },
             "attractions": [],
             "agencies_count": 0
@@ -294,12 +482,12 @@
             "population": 300000,
             "current_weather": {
               "city": "Bertoua",
-              "temperature": 24.9,
-              "description": "Pluie l\u00e9g\u00e8re",
-              "humidity": 82,
-              "wind_speed": 23.8,
-              "icon": "\ud83c\udf26\ufe0f",
-              "timestamp": "2025-09-26T01:39:27.382147"
+              "temperature": 23.3,
+              "description": "Partiellement nuageux",
+              "humidity": 46,
+              "wind_speed": 23.2,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:41:44.522234"
             },
             "attractions": [],
             "agencies_count": 0
@@ -314,12 +502,12 @@
             "population": 450000,
             "current_weather": {
               "city": "Garoua",
-              "temperature": 32.7,
-              "description": "Orageux",
-              "humidity": 54,
-              "wind_speed": 14.1,
-              "icon": "\u26c8\ufe0f",
-              "timestamp": "2025-09-26T01:39:27.382159"
+              "temperature": 23.6,
+              "description": "Partiellement nuageux",
+              "humidity": 83,
+              "wind_speed": 9.5,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:41:44.522246"
             },
             "attractions": [],
             "agencies_count": 0
@@ -334,12 +522,12 @@
             "population": 400000,
             "current_weather": {
               "city": "Maroua",
-              "temperature": 33.8,
-              "description": "Ensoleill\u00e9",
-              "humidity": 70,
-              "wind_speed": 19.0,
-              "icon": "\u2600\ufe0f",
-              "timestamp": "2025-09-26T01:39:27.382171"
+              "temperature": 26.5,
+              "description": "Partiellement nuageux",
+              "humidity": 84,
+              "wind_speed": 18.9,
+              "icon": "\u26c5",
+              "timestamp": "2025-09-26T01:41:44.522257"
             },
             "attractions": [],
             "agencies_count": 0
@@ -354,12 +542,12 @@
             "population": 300000,
             "current_weather": {
               "city": "Ngaound\u00e9r\u00e9",
-              "temperature": 24.5,
+              "temperature": 25.0,
               "description": "Partiellement nuageux",
-              "humidity": 80,
-              "wind_speed": 12.5,
+              "humidity": 48,
+              "wind_speed": 12.9,
               "icon": "\u26c5",
-              "timestamp": "2025-09-26T01:39:27.382188"
+              "timestamp": "2025-09-26T01:41:44.522274"
             },
             "attractions": [],
             "agencies_count": 0
@@ -374,12 +562,12 @@
             "population": 70000,
             "current_weather": {
               "city": "Kribi",
-              "temperature": 22.8,
+              "temperature": 23.9,
               "description": "Partiellement nuageux",
-              "humidity": 57,
-              "wind_speed": 10.3,
+              "humidity": 80,
+              "wind_speed": 20.6,
               "icon": "\u26c5",
-              "timestamp": "2025-09-26T01:39:27.382202"
+              "timestamp": "2025-09-26T01:41:44.522287"
             },
             "attractions": [
               {
@@ -408,12 +596,12 @@
             "population": 120000,
             "current_weather": {
               "city": "Limbe",
-              "temperature": 26.1,
+              "temperature": 24.2,
               "description": "Partiellement nuageux",
-              "humidity": 84,
-              "wind_speed": 21.1,
+              "humidity": 85,
+              "wind_speed": 15.6,
               "icon": "\u26c5",
-              "timestamp": "2025-09-26T01:39:27.382221"
+              "timestamp": "2025-09-26T01:41:44.522307"
             },
             "attractions": [
               {
@@ -442,12 +630,12 @@
             "population": 200000,
             "current_weather": {
               "city": "Bu\u00e9a",
-              "temperature": 27.2,
-              "description": "Orageux",
-              "humidity": 85,
-              "wind_speed": 7.7,
-              "icon": "\u26c8\ufe0f",
-              "timestamp": "2025-09-26T01:39:27.382231"
+              "temperature": 27.9,
+              "description": "Nuageux",
+              "humidity": 61,
+              "wind_speed": 20.8,
+              "icon": "\u2601\ufe0f",
+              "timestamp": "2025-09-26T01:41:44.522317"
             },
             "attractions": [
               {
@@ -476,12 +664,12 @@
             "population": 150000,
             "current_weather": {
               "city": "Kumba",
-              "temperature": 27.1,
-              "description": "Pluie l\u00e9g\u00e8re",
-              "humidity": 86,
-              "wind_speed": 13.1,
-              "icon": "\ud83c\udf26\ufe0f",
-              "timestamp": "2025-09-26T01:39:27.382242"
+              "temperature": 24.2,
+              "description": "Ensoleill\u00e9",
+              "humidity": 57,
+              "wind_speed": 5.8,
+              "icon": "\u2600\ufe0f",
+              "timestamp": "2025-09-26T01:41:44.522327"
             },
             "attractions": [],
             "agencies_count": 0
@@ -496,12 +684,12 @@
             "population": 80000,
             "current_weather": {
               "city": "Ebolowa",
-              "temperature": 25.1,
-              "description": "Partiellement nuageux",
-              "humidity": 78,
-              "wind_speed": 6.1,
-              "icon": "\u26c5",
-              "timestamp": "2025-09-26T01:39:27.382260"
+              "temperature": 26.9,
+              "description": "Nuageux",
+              "humidity": 66,
+              "wind_speed": 23.9,
+              "icon": "\u2601\ufe0f",
+              "timestamp": "2025-09-26T01:41:44.522338"
             },
             "attractions": [],
             "agencies_count": 0
@@ -516,12 +704,12 @@
             "population": 120000,
             "current_weather": {
               "city": "Foumban",
-              "temperature": 24.7,
-              "description": "Partiellement nuageux",
-              "humidity": 68,
-              "wind_speed": 8.0,
-              "icon": "\u26c5",
-              "timestamp": "2025-09-26T01:39:27.382271"
+              "temperature": 18.1,
+              "description": "Pluie l\u00e9g\u00e8re",
+              "humidity": 57,
+              "wind_speed": 11.5,
+              "icon": "\ud83c\udf26\ufe0f",
+              "timestamp": "2025-09-26T01:41:44.522361"
             },
             "attractions": [
               {
@@ -550,12 +738,12 @@
             "population": 100000,
             "current_weather": {
               "city": "Dschang",
-              "temperature": 18.5,
-              "description": "Partiellement nuageux",
-              "humidity": 47,
-              "wind_speed": 24.7,
-              "icon": "\u26c5",
-              "timestamp": "2025-09-26T01:39:27.382281"
+              "temperature": 26.7,
+              "description": "Pluie l\u00e9g\u00e8re",
+              "humidity": 83,
+              "wind_speed": 14.6,
+              "icon": "\ud83c\udf26\ufe0f",
+              "timestamp": "2025-09-26T01:41:44.522371"
             },
             "attractions": [],
             "agencies_count": 0
@@ -748,9 +936,9 @@
     {
       "test": "POST /api/registration/multi-level",
       "success": true,
-      "details": "Registration created: 37280d7f-448b-4956-a5d0-b33cc6390900",
+      "details": "Registration created: 53396f02-c7bc-4b81-a0bd-485dc40c25a2",
       "response_data": {
-        "registration_id": "37280d7f-448b-4956-a5d0-b33cc6390900",
+        "registration_id": "53396f02-c7bc-4b81-a0bd-485dc40c25a2",
         "status": "pending",
         "message": "Inscription client enregistr\u00e9e. V\u00e9rification en cours.",
         "next_steps": [
@@ -766,10 +954,10 @@
       "success": true,
       "details": "Registration status: pending",
       "response_data": {
-        "registration_id": "37280d7f-448b-4956-a5d0-b33cc6390900",
+        "registration_id": "53396f02-c7bc-4b81-a0bd-485dc40c25a2",
         "status": "pending",
         "user_type": "client",
-        "created_at": "2025-09-26T01:39:27.495000",
+        "created_at": "2025-09-26T01:41:44.678000",
         "verified_at": null,
         "admin_comments": "",
         "documents_status": {
@@ -783,7 +971,7 @@
       "success": true,
       "details": "Registration approveed, status: verified",
       "response_data": {
-        "registration_id": "37280d7f-448b-4956-a5d0-b33cc6390900",
+        "registration_id": "53396f02-c7bc-4b81-a0bd-485dc40c25a2",
         "action": "approve",
         "new_status": "verified",
         "admin_comments": "Documents v\u00e9rifi\u00e9s et approuv\u00e9s",
