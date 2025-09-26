@@ -165,6 +165,57 @@ class AdminDashboardStats(BaseModel):
     active_vehicles: int
     courier_deliveries: int
 
+class Vehicle(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    agency_id: str
+    agency_name: str
+    model: str
+    brand: str
+    year: int
+    color: str
+    license_plate: str
+    capacity: int
+    vehicle_type: str  # "bus", "minibus", "car", "van"
+    status: str = "active"  # active, maintenance, inactive
+    driver_name: Optional[str] = None
+    driver_phone: Optional[str] = None
+    current_route: Optional[str] = None
+    gps_enabled: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    last_maintenance: Optional[datetime] = None
+
+class CourierCarrier(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    phone: str
+    email: Optional[str] = None
+    license_number: str
+    vehicle_type: str  # "moto", "car", "van", "truck"
+    coverage_areas: List[str]  # List of regions/cities they cover
+    rating: float = 4.0
+    active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class AppSettings(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    setting_key: str
+    setting_value: str
+    setting_type: str  # "text", "number", "boolean", "json"
+    description: str
+    updated_by: str  # admin user id
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class PolicyDocument(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    content: str
+    document_type: str  # "privacy", "terms", "conditions", "refund"
+    language: str = "fr"  # Default French
+    version: str = "1.0"
+    active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
 # === CAMEROON DATA ===
 
 # Agences de Transport Inter-urbain réelles du Cameroun - Toutes les 10 régions
