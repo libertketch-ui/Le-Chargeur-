@@ -1141,38 +1141,40 @@ function Connect237App() {
                     {calculator.visible && (
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span>Prix par personne:</span>
+                          <span>{language === "fr" ? "Prix par personne:" : "Price per person:"}</span>
                           <span className="font-semibold">{formatPrice(calculator.base_price_per_person || 5000)} FCFA</span>
                         </div>
                         <div className="flex justify-between">
-                          <span>Nombre de passagers:</span>
+                          <span>{language === "fr" ? "Nombre de passagers:" : "Number of passengers:"}</span>
                           <span className="font-semibold">{calculator.passenger_count}</span>
                         </div>
                         
                         {/* Afficher la taxe colis si applicable */}
                         {calculator.package_tax > 0 && (
                           <div className="flex justify-between text-orange-600">
-                            <span>Taxe colis (13%):</span>
+                            <span>{language === "fr" ? "Taxe colis (13%):" : "Package tax (13%):"}</span>
                             <span className="font-semibold">{formatPrice(calculator.package_tax)} FCFA</span>
                           </div>
                         )}
                         
                         <div className="flex justify-between text-lg font-bold border-t pt-2">
-                          <span>Total:</span>
+                          <span>{language === "fr" ? "Total:" : "Total:"}</span>
                           <span className="text-green-600">{formatPrice(calculator.total_amount)} FCFA</span>
                         </div>
                         
                         {/* Nouvelle section de réservation */}
                         <div className="bg-blue-50 p-2 rounded text-xs">
                           <div className="text-blue-700 font-semibold mb-1">
-                            📋 Nouvelle règle de réservation:
+                            📋 {language === "fr" ? "Nouvelle règle de réservation:" : "New reservation rule:"}
                           </div>
                           <div className="flex justify-between">
-                            <span>Réservation ({calculator.passenger_count} × 500 FCFA):</span>
+                            <span>
+                              {language === "fr" ? `Réservation (${calculator.passenger_count} × 500 FCFA):` : `Reservation (${calculator.passenger_count} × 500 FCFA):`}
+                            </span>
                             <span className="font-semibold text-blue-600">{formatPrice(calculator.reservation_fee)} FCFA</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Solde (sur place):</span>
+                            <span>{language === "fr" ? "Solde (sur place):" : "Balance (on-site):"}</span>
                             <span className="font-semibold">{formatPrice(calculator.remaining_amount)} FCFA</span>
                           </div>
                         </div>
@@ -1180,7 +1182,9 @@ function Connect237App() {
                         {/* Afficher les détails de calcul si disponibles */}
                         {calculator.calculation_details && (
                           <div className="bg-green-50 p-2 rounded text-xs">
-                            <div className="text-green-700 font-semibold">Formule de calcul:</div>
+                            <div className="text-green-700 font-semibold">
+                              {language === "fr" ? "Formule de calcul:" : "Calculation formula:"}
+                            </div>
                             <div>{calculator.calculation_details.formula_reservation}</div>
                             {calculator.calculation_details.formula_package && (
                               <div className="text-orange-700">{calculator.calculation_details.formula_package}</div>
