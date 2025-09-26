@@ -166,11 +166,11 @@ function Connect237App() {
 
   // Enhanced payment state
   const [paymentForm, setPaymentForm] = useState({
-    type: "mobile_money", // reservation, mobile_money, account_credit, voucher
-    provider: "MTN", // MTN, ORANGE
+    type: "reservation", // reservation, on_site, account_credit, voucher
+    provider: "ON_SITE", // ON_SITE, WALLET
     account_number: "",
     voucher_code: "",
-    reservation_only: false
+    reservation_only: true
   });
 
   // Calculator state
