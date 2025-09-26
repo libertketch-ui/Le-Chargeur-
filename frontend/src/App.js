@@ -1345,38 +1345,128 @@ function Connect237App() {
                   </div>
                 </div>
 
-                {/* Route Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Ville d'expédition</Label>
-                    <Select onValueChange={(value) => setCourierForm({...courierForm, origin: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Ville d'origine" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city) => (
-                          <SelectItem key={city.name} value={city.name}>
-                            {city.name} ({city.region})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                {/* 3-Level Courier Route Selection */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label className="text-sm font-bold text-yellow-700">📦 Expédition</Label>
+                    
+                    <div>
+                      <Label className="text-xs">Région d'expédition</Label>
+                      <Select onValueChange={(region) => {
+                        const departments = administrativeStructure[region]?.departments || {};
+                        // Store courier origin region departments for selection
+                        setCourierForm({...courierForm, origin_region: region, origin_department: "", origin: ""});
+                      }}>
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Région" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAvailableRegions().map((region) => (
+                            <SelectItem key={region} value={region}>
+                              🗺️ {region}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Département d'expédition</Label>
+                      <Select 
+                        onValueChange={(dept) => setCourierForm({...courierForm, origin_department: dept, origin: ""})}
+                        disabled={!courierForm.origin_region}
+                      >
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Département" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {courierForm.origin_region && Object.entries(administrativeStructure[courierForm.origin_region]?.departments || {}).map(([deptName]) => (
+                            <SelectItem key={deptName} value={deptName}>
+                              🏛️ {deptName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Chef-lieu d'expédition</Label>
+                      <Select 
+                        onValueChange={(value) => setCourierForm({...courierForm, origin: value})}
+                        disabled={!courierForm.origin_department}
+                      >
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Chef-lieu" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {courierForm.origin_department && (
+                            <SelectItem value={administrativeStructure[courierForm.origin_region]?.departments[courierForm.origin_department]?.chef_lieu}>
+                              🏛️ {administrativeStructure[courierForm.origin_region]?.departments[courierForm.origin_department]?.chef_lieu}
+                            </SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  <div>
-                    <Label>Ville de destination</Label>
-                    <Select onValueChange={(value) => setCourierForm({...courierForm, destination: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Ville de destination" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city) => (
-                          <SelectItem key={city.name} value={city.name}>
-                            {city.name} ({city.region})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="space-y-3">
+                    <Label className="text-sm font-bold text-orange-700">🎯 Destination</Label>
+                    
+                    <div>
+                      <Label className="text-xs">Région de destination</Label>
+                      <Select onValueChange={(region) => {
+                        setCourierForm({...courierForm, dest_region: region, dest_department: "", destination: ""});
+                      }}>
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Région" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAvailableRegions().map((region) => (
+                            <SelectItem key={region} value={region}>
+                              🗺️ {region}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Département de destination</Label>
+                      <Select 
+                        onValueChange={(dept) => setCourierForm({...courierForm, dest_department: dept, destination: ""})}
+                        disabled={!courierForm.dest_region}
+                      >
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Département" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {courierForm.dest_region && Object.entries(administrativeStructure[courierForm.dest_region]?.departments || {}).map(([deptName]) => (
+                            <SelectItem key={deptName} value={deptName}>
+                              🏛️ {deptName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Chef-lieu de destination</Label>
+                      <Select 
+                        onValueChange={(value) => setCourierForm({...courierForm, destination: value})}
+                        disabled={!courierForm.dest_department}
+                      >
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Chef-lieu" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {courierForm.dest_department && (
+                            <SelectItem value={administrativeStructure[courierForm.dest_region]?.departments[courierForm.dest_department]?.chef_lieu}>
+                              🏛️ {administrativeStructure[courierForm.dest_region]?.departments[courierForm.dest_department]?.chef_lieu}
+                            </SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
