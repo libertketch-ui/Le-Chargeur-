@@ -143,6 +143,12 @@ function Connect237App() {
   const [courierCarriers, setCourierCarriers] = useState([]);
   const [selectedAgency, setSelectedAgency] = useState("");
   const [selectedCarrier, setSelectedCarrier] = useState("");
+  const [selectedOriginRegion, setSelectedOriginRegion] = useState("");
+  const [selectedDestinationRegion, setSelectedDestinationRegion] = useState("");
+  const [availableOriginCities, setAvailableOriginCities] = useState([]);
+  const [availableDestinationCities, setAvailableDestinationCities] = useState([]);
+  const [routePricing, setRoutePricing] = useState([]);
+  const [showWallet, setShowWallet] = useState(false);
 
   // Enhanced search state
   const [searchForm, setSearchForm] = useState({
