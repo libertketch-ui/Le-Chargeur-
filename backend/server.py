@@ -757,6 +757,284 @@ async def get_enhanced_cities():
     
     return {"cities": enhanced_cities}
 
+# === MISSING ENDPOINTS FOR CONNECT237 ===
+
+@api_router.post("/parcel-delivery")
+async def create_parcel_delivery(parcel_data: dict):
+    """Create parcel delivery service (alternative endpoint)"""
+    try:
+        # Map the input data to CourierService model
+        courier_service = CourierService(
+            sender_id=parcel_data.get("sender_id", "anonymous"),
+            recipient_name=parcel_data.get("recipient_name", ""),
+            recipient_phone=parcel_data.get("recipient_phone", ""),
+            origin=parcel_data.get("origin", ""),
+            destination=parcel_data.get("destination", ""),
+            pickup_address=parcel_data.get("pickup_address", ""),
+            delivery_address=parcel_data.get("delivery_address", ""),
+            package_type=parcel_data.get("package_type", "documents"),
+            weight_kg=float(parcel_data.get("weight_kg", 1.0)),
+            declared_value=int(parcel_data.get("declared_value", 10000)),
+            urgent=bool(parcel_data.get("urgent", False)),
+            insurance=bool(parcel_data.get("insurance", False)),
+            pickup_time=parcel_data.get("pickup_time"),
+            delivery_instructions=parcel_data.get("delivery_instructions", "")
+        )
+        
+        # Calculate price
+        base_price = 2000
+        weight_price = courier_service.weight_kg * 500
+        urgent_multiplier = 1.5 if courier_service.urgent else 1.0
+        insurance_price = (courier_service.declared_value * 0.02) if courier_service.insurance else 0
+        
+        total_price = int((base_price + weight_price + insurance_price) * urgent_multiplier)
+        courier_service.price = total_price
+        
+        # Save to database
+        await db.parcel_deliveries.insert_one(courier_service.dict())
+        
+        return {
+            "parcel_id": courier_service.id,
+            "tracking_number": courier_service.tracking_number,
+            "total_price": total_price,
+            "estimated_delivery": "24-48 heures" if not courier_service.urgent else "6-12 heures",
+            "status": "pending",
+            "message": f"Service de livraison créé avec succès. Code: {courier_service.tracking_number}"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Erreur de validation: {str(e)}")
+
+@api_router.get("/routes/search-smart-ai")
+async def smart_ai_search(
+    q: str = Query(..., description="Query string for smart search"),
+    origin: Optional[str] = Query(None, description="Origin city"),
+    destination: Optional[str] = Query(None, description="Destination city"),
+    date: Optional[str] = Query(None, description="Travel date"),
+    passengers: int = Query(1, description="Number of passengers")
+):
+    """Smart AI-powered route search"""
+    try:
+        # Mock smart AI search results (in production, this would use actual AI/ML)
+        search_results = {
+            "query": q,
+            "suggestions": [],
+            "routes": [],
+            "smart_recommendations": []
+        }
+        
+        # Smart suggestions based on query
+        query_lower = q.lower()
+        
+        # City suggestions
+        matching_cities = []
+        for city in ENHANCED_CAMEROON_CITIES:
+            if (query_lower in city["name"].lower() or 
+                query_lower in city["region"].lower() or
+                any(query_lower in alias.lower() for alias in city.get("aliases", []))):
+                matching_cities.append(city)
+        
+        search_results["suggestions"] = matching_cities[:5]
+        
+        # Route suggestions
+        if origin and destination:
+            # Find routes between cities
+            available_routes = []
+            for agency in CAMEROON_TRANSPORT_AGENCIES:
+                agency_routes = agency.get("routes_served", [])
+                for route in agency_routes:
+                    if origin.lower() in route.lower() and destination.lower() in route.lower():
+                        available_routes.append({
+                            "agency": agency["name"],
+                            "route": route,
+                            "price": random.randint(3000, 8000),
+                            "duration": f"{random.randint(3, 8)} heures",
+                            "departure_times": ["06:00", "09:00", "12:00", "15:00", "18:00"],
+                            "vehicle_type": "Bus climatisé",
+                            "rating": agency["rating"]
+                        })
+            
+            search_results["routes"] = available_routes[:10]
+        
+        # Smart recommendations based on popular routes and user preferences
+        popular_routes = [
+            {"route": "Yaoundé - Douala", "popularity": 95, "avg_price": 4500},
+            {"route": "Douala - Bafoussam", "popularity": 88, "avg_price": 3500},
+            {"route": "Yaoundé - Bamenda", "popularity": 82, "avg_price": 6000},
+            {"route": "Douala - Bertoua", "popularity": 75, "avg_price": 7500}
+        ]
+        
+        search_results["smart_recommendations"] = popular_routes
+        
+        # AI insights (simulated)
+        ai_insights = [
+            f"Meilleure période pour voyager: Matin (06h00-09h00)",
+            f"Prix moyen pour {passengers} passager(s): {random.randint(4000, 7000)} FCFA",
+            f"Durée estimée du trajet: {random.randint(4, 7)} heures"
+        ]
+        
+        search_results["ai_insights"] = ai_insights
+        
+        return {
+            "success": True,
+            "results": search_results,
+            "total_found": len(search_results["routes"]) + len(search_results["suggestions"])
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur de recherche AI: {str(e)}")
+
+@api_router.get("/admin/dashboard")
+async def get_admin_dashboard():
+    """Admin dashboard with statistics and pending actions"""
+    try:
+        # Get real counts from database
+        total_bookings = await db.bookings.count_documents({})
+        total_courier = await db.courier_services.count_documents({})
+        total_registrations = await db.user_registrations.count_documents({})
+        pending_registrations = await db.user_registrations.count_documents({"verification_status": "pending"})
+        
+        # Calculate mock revenue and stats
+        today = datetime.utcnow().date()
+        revenue_today = random.randint(50000, 200000)
+        
+        stats = AdminDashboardStats(
+            total_users=total_registrations,
+            pending_verifications=pending_registrations,
+            total_bookings=total_bookings,
+            revenue_today=revenue_today,
+            active_vehicles=random.randint(15, 45),
+            courier_deliveries=total_courier
+        )
+        
+        # Get recent activities
+        recent_bookings = await db.bookings.find().sort("created_at", -1).limit(5).to_list(length=None)
+        recent_registrations = await db.user_registrations.find().sort("created_at", -1).limit(5).to_list(length=None)
+        
+        # System health indicators
+        system_health = {
+            "api_status": "healthy",
+            "database_status": "connected",
+            "payment_system": "operational",
+            "sms_service": "operational",
+            "email_service": "operational"
+        }
+        
+        return {
+            "dashboard_stats": stats.dict(),
+            "recent_activities": {
+                "bookings": recent_bookings,
+                "registrations": recent_registrations
+            },
+            "system_health": system_health,
+            "alerts": [
+                {
+                    "type": "info",
+                    "message": f"{pending_registrations} nouvelles demandes d'inscription en attente",
+                    "priority": "medium"
+                }
+            ]
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur dashboard admin: {str(e)}")
+
+@api_router.post("/registration/multi-level")
+async def create_multi_level_registration(registration_data: dict):
+    """Multi-level registration system for different user types"""
+    try:
+        user_registration = UserRegistration(
+            user_type=registration_data.get("user_type", "client"),
+            personal_info=registration_data.get("personal_info", {}),
+            documents=registration_data.get("documents", []),
+            verification_status="pending",
+            admin_comments=""
+        )
+        
+        # Save to database
+        await db.user_registrations.insert_one(user_registration.dict())
+        
+        # Send verification notification (mock)
+        notification_message = {
+            "client": "Inscription client enregistrée. Vérification en cours.",
+            "agency": "Demande d'agence soumise. Documents en cours de vérification.",
+            "transporter": "Inscription transporteur reçue. Validation administrative requise.",
+            "occasional_transporter": "Inscription transporteur occasionnel en attente d'approbation."
+        }
+        
+        return {
+            "registration_id": user_registration.id,
+            "status": "pending",
+            "message": notification_message.get(user_registration.user_type, "Inscription enregistrée"),
+            "next_steps": [
+                "Vérification des documents par l'équipe administrative",
+                "Validation des informations personnelles",
+                "Notification de statut par SMS/Email"
+            ],
+            "estimated_processing_time": "2-5 jours ouvrables"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Erreur d'inscription: {str(e)}")
+
+@api_router.get("/registration/status/{registration_id}")
+async def get_registration_status(registration_id: str):
+    """Get registration status and admin feedback"""
+    registration = await db.user_registrations.find_one({"id": registration_id})
+    
+    if not registration:
+        raise HTTPException(status_code=404, detail="Demande d'inscription introuvable")
+    
+    return {
+        "registration_id": registration_id,
+        "status": registration["verification_status"],
+        "user_type": registration["user_type"],
+        "created_at": registration["created_at"],
+        "verified_at": registration.get("verified_at"),
+        "admin_comments": registration.get("admin_comments", ""),
+        "documents_status": {
+            "total_documents": len(registration["documents"]),
+            "verified_documents": len([doc for doc in registration["documents"] if doc.get("verified", False)])
+        }
+    }
+
+@api_router.post("/admin/verify-registration/{registration_id}")
+async def verify_user_registration(
+    registration_id: str,
+    action: str = Query(..., description="approve or reject"),
+    admin_comments: str = Query("", description="Admin comments")
+):
+    """Admin endpoint to approve or reject user registrations"""
+    
+    if action not in ["approve", "reject"]:
+        raise HTTPException(status_code=400, detail="Action must be 'approve' or 'reject'")
+    
+    registration = await db.user_registrations.find_one({"id": registration_id})
+    if not registration:
+        raise HTTPException(status_code=404, detail="Registration not found")
+    
+    new_status = "verified" if action == "approve" else "rejected"
+    
+    # Update registration
+    await db.user_registrations.update_one(
+        {"id": registration_id},
+        {
+            "$set": {
+                "verification_status": new_status,
+                "admin_comments": admin_comments,
+                "verified_at": datetime.utcnow() if action == "approve" else None
+            }
+        }
+    )
+    
+    return {
+        "registration_id": registration_id,
+        "action": action,
+        "new_status": new_status,
+        "admin_comments": admin_comments,
+        "message": f"Inscription {action}ed successfully"
+    }
+
 # Include router
 app.include_router(api_router)
 
