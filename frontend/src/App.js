@@ -1131,10 +1131,10 @@ function Connect237App() {
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="font-semibold flex items-center gap-2">
                         <Calculator className="w-4 h-4" />
-                        Calculatrice de prix
+                        {language === "fr" ? "Calculatrice de prix" : "Price Calculator"}
                       </h4>
                       <Button onClick={calculatePayment} disabled={loading} size="sm">
-                        {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Calculer"}
+                        {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : (language === "fr" ? "Calculer" : "Calculate")}
                       </Button>
                     </div>
                     
