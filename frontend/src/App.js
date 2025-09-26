@@ -1080,7 +1080,7 @@ function Connect237App() {
                   </div>
                   
                   <div>
-                    <Label>Heure de départ (précise)</Label>
+                    <Label>{language === "fr" ? "Heure de départ (précise)" : "Departure time (precise)"}</Label>
                     <Input
                       type="time"
                       value={searchForm.departure_time}
