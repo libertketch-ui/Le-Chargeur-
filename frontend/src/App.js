@@ -454,61 +454,25 @@ function Connect237App() {
     }
   };
 
-  // Filter departments by region
+  // Filter cities by region (simplified - no departments)
   const handleOriginRegionChange = (region) => {
     setSelectedOriginRegion(region);
-    const departments = administrativeStructure[region]?.departments || {};
-    setAvailableOriginDepartments(Object.entries(departments));
-    setSelectedOriginDepartment("");
-    setAvailableOriginCities([]);
+    const regionCities = cities.filter(city => city.region === region);
+    setAvailableOriginCities(regionCities);
     setSearchForm(prev => ({ ...prev, origin: "" }));
   };
 
   const handleDestinationRegionChange = (region) => {
     setSelectedDestinationRegion(region);
-    const departments = administrativeStructure[region]?.departments || {};
-    setAvailableDestinationDepartments(Object.entries(departments));
-    setSelectedDestinationDepartment("");
-    setAvailableDestinationCities([]);
-    setSearchForm(prev => ({ ...prev, destination: "" }));
-  };
-
-  // Filter chef-lieux by department
-  const handleOriginDepartmentChange = (department) => {
-    setSelectedOriginDepartment(department);
-    const departmentInfo = administrativeStructure[selectedOriginRegion]?.departments[department];
-    if (departmentInfo) {
-      setAvailableOriginCities([{
-        name: departmentInfo.chef_lieu,
-        type: "chef-lieu",
-        department: department,
-        region: selectedOriginRegion,
-        lat: departmentInfo.lat,
-        lng: departmentInfo.lng
-      }]);
-    }
-    setSearchForm(prev => ({ ...prev, origin: "" }));
-  };
-
-  const handleDestinationDepartmentChange = (department) => {
-    setSelectedDestinationDepartment(department);
-    const departmentInfo = administrativeStructure[selectedDestinationRegion]?.departments[department];
-    if (departmentInfo) {
-      setAvailableDestinationCities([{
-        name: departmentInfo.chef_lieu,
-        type: "chef-lieu",
-        department: department,
-        region: selectedDestinationRegion,
-        lat: departmentInfo.lat,
-        lng: departmentInfo.lng
-      }]);
-    }
+    const regionCities = cities.filter(city => city.region === region);
+    setAvailableDestinationCities(regionCities);
     setSearchForm(prev => ({ ...prev, destination: "" }));
   };
 
   // Get available regions
   const getAvailableRegions = () => {
-    return Object.keys(administrativeStructure).sort();
+    const regions = [...new Set(cities.map(city => city.region))];
+    return regions.sort();
   };
 
   // Get route pricing for selected destination
