@@ -668,11 +668,13 @@ async def create_enhanced_booking(booking_data: dict):
             "ORANGE": "237002"
         }
         
+        ussd_code = "*126#" if provider == "MTN" else "#150#"
+        
         payment_info.update({
             "merchant_code": merchant_codes.get(provider, "237001"),
             "provider": provider,
-            "ussd_code": "*126#" if provider == "MTN" else "#150#",
-            "instructions": f"Composez {payment_info['ussd_code']} et suivez les instructions. Code marchand: {payment_info['merchant_code']}"
+            "ussd_code": ussd_code,
+            "instructions": f"Composez {ussd_code} et suivez les instructions. Code marchand: {merchant_codes.get(provider, '237001')}"
         })
     
     return payment_info
