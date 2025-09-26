@@ -846,6 +846,61 @@ function Connect237App() {
                   </div>
                 </div>
 
+                {/* Real-time Pricing Display */}
+                {routePricing.length > 0 && (
+                  <Card className="border-2 border-green-200 bg-green-50">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-green-700">
+                        <Bus className="w-5 h-5" />
+                        Transporteurs Disponibles pour {searchForm.origin} → {searchForm.destination}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {routePricing.map((agency, idx) => (
+                          <Card key={idx} className="hover:shadow-lg transition-all border border-gray-200">
+                            <CardContent className="p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <h4 className="font-bold text-sm">{agency.name}</h4>
+                                <Badge variant="outline" className="text-xs">
+                                  {agency.rating}⭐
+                                </Badge>
+                              </div>
+                              <div className="space-y-1 text-xs">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Prix:</span>
+                                  <span className="font-bold text-green-600">{formatPrice(agency.price)} FCFA</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Sièges:</span>
+                                  <span className="text-orange-600">{agency.available_seats} disponibles</span>
+                                </div>
+                                <div className="text-gray-600">
+                                  <span>Horaires: </span>
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {agency.departure_times.slice(0, 3).map((time, timeIdx) => (
+                                      <Badge key={timeIdx} variant="secondary" className="text-xs px-1 py-0">
+                                        {time}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                              <Button 
+                                size="sm" 
+                                className="w-full mt-3 bg-green-600 hover:bg-green-700"
+                                onClick={() => setSelectedAgency(agency.name)}
+                              >
+                                Sélectionner
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Agency Selection and Passenger Count */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
