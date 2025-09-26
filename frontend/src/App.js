@@ -440,25 +440,70 @@ function Connect237App() {
     return new Intl.NumberFormat('fr-FR').format(price);
   };
 
-  // Filter cities by region
+  const loadAdministrativeStructure = async () => {
+    try {
+      const response = await axios.get(`${API}/administrative-structure`);
+      setAdministrativeStructure(response.data.structure || {});
+    } catch (error) {
+      console.error("Error loading administrative structure:", error);
+    }
+  };
+
+  // Filter departments by region
   const handleOriginRegionChange = (region) => {
     setSelectedOriginRegion(region);
-    const regionCities = cities.filter(city => city.region === region);
-    setAvailableOriginCities(regionCities);
-    setSearchForm(prev => ({ ...prev, origin: "" })); // Reset city selection
+    const departments = administrativeStructure[region]?.departments || {};
+    setAvailableOriginDepartments(Object.entries(departments));
+    setSelectedOriginDepartment("");
+    setAvailableOriginCities([]);
+    setSearchForm(prev => ({ ...prev, origin: "" }));
   };
 
   const handleDestinationRegionChange = (region) => {
     setSelectedDestinationRegion(region);
-    const regionCities = cities.filter(city => city.region === region);
-    setAvailableDestinationCities(regionCities);
-    setSearchForm(prev => ({ ...prev, destination: "" })); // Reset city selection
+    const departments = administrativeStructure[region]?.departments || {};
+    setAvailableDestinationDepartments(Object.entries(departments));
+    setSelectedDestinationDepartment("");
+    setAvailableDestinationCities([]);
+    setSearchForm(prev => ({ ...prev, destination: "" }));
+  };
+
+  // Filter chef-lieux by department
+  const handleOriginDepartmentChange = (department) => {
+    setSelectedOriginDepartment(department);
+    const departmentInfo = administrativeStructure[selectedOriginRegion]?.departments[department];
+    if (departmentInfo) {
+      setAvailableOriginCities([{
+        name: departmentInfo.chef_lieu,
+        type: "chef-lieu",
+        department: department,
+        region: selectedOriginRegion,
+        lat: departmentInfo.lat,
+        lng: departmentInfo.lng
+      }]);
+    }
+    setSearchForm(prev => ({ ...prev, origin: "" }));
+  };
+
+  const handleDestinationDepartmentChange = (department) => {
+    setSelectedDestinationDepartment(department);
+    const departmentInfo = administrativeStructure[selectedDestinationRegion]?.departments[department];
+    if (departmentInfo) {
+      setAvailableDestinationCities([{
+        name: departmentInfo.chef_lieu,
+        type: "chef-lieu",
+        department: department,
+        region: selectedDestinationRegion,
+        lat: departmentInfo.lat,
+        lng: departmentInfo.lng
+      }]);
+    }
+    setSearchForm(prev => ({ ...prev, destination: "" }));
   };
 
   // Get available regions
   const getAvailableRegions = () => {
-    const regions = [...new Set(cities.map(city => city.region))];
-    return regions.sort();
+    return Object.keys(administrativeStructure).sort();
   };
 
   // Get route pricing for selected destination
