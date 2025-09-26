@@ -182,6 +182,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Enhanced booking with payment integration working"
+      - working: true
+        agent: "main"
+        comment: "FIXED: Resolved KeyError issue in payment_info generation by properly handling USSD codes and merchant codes."
 
   - task: "GPS Tracking API"
     implemented: true
