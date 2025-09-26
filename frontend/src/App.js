@@ -1070,7 +1070,7 @@ function Connect237App() {
                 {/* Date and Time Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label>Date de départ</Label>
+                    <Label>{language === "fr" ? "Date de départ" : "Departure date"}</Label>
                     <Input
                       type="date"
                       value={searchForm.departure_date}
