@@ -479,6 +479,183 @@ class Connect237APITester:
             self.log_test("POST /api/admin/verify-registration/{id}", False, f"Error: {str(e)}")
             return False, {}
 
+    def test_administrative_structure(self):
+        """Test GET /api/administrative-structure - PRIORITY HIGH (NEW FEATURE)"""
+        try:
+            response = requests.get(f"{self.api_url}/administrative-structure", timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                regions = data.get('regions', {})
+                success = len(regions) > 0
+                
+                if success:
+                    # Check for the expected 10 regions
+                    expected_regions = [
+                        "Adamaoua", "Centre", "Est", "Extrême-Nord", "Littoral", 
+                        "Nord", "Nord-Ouest", "Ouest", "Sud", "Sud-Ouest"
+                    ]
+                    found_regions = list(regions.keys())
+                    missing_regions = [r for r in expected_regions if r not in found_regions]
+                    extra_regions = [r for r in found_regions if r not in expected_regions]
+                    
+                    if len(found_regions) == 10 and not missing_regions:
+                        # Count total chef-lieux
+                        total_cities = sum(len(region_data.get('cities', [])) for region_data in regions.values())
+                        details = f"✅ Found all 10 regions with {total_cities} chef-lieux total"
+                    else:
+                        success = False
+                        details = f"❌ Expected 10 regions, found {len(found_regions)}. Missing: {missing_regions}, Extra: {extra_regions}"
+                else:
+                    details = "No regions found in response"
+            else:
+                try:
+                    error_data = response.json()
+                    details = f"Status: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    details = f"Status: {response.status_code}, Response: {response.text[:200]}"
+                data = {}
+            
+            self.log_test("GET /api/administrative-structure", success, details, data)
+            return success, data
+        except Exception as e:
+            self.log_test("GET /api/administrative-structure", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_cities_by_region(self):
+        """Test GET /api/cities/{region} - PRIORITY HIGH (NEW FEATURE)"""
+        try:
+            # Test Centre region specifically as mentioned in requirements
+            region = "Centre"
+            response = requests.get(f"{self.api_url}/cities/{region}", timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                cities = data.get('cities', [])
+                region_name = data.get('region', '')
+                
+                success = len(cities) > 0 and region_name == region
+                
+                if success:
+                    # Check for expected chef-lieux in Centre region
+                    expected_cities = ["Yaoundé", "Bafia", "Mfou", "Nanga-Eboko", "Monatele", "Ntui", "Ngoumou", "Éséka", "Akonolinga", "Mbalmayo"]
+                    city_names = [city.get('name', '') for city in cities]
+                    found_expected = [name for name in expected_cities if name in city_names]
+                    
+                    details = f"✅ Centre region: {len(cities)} chef-lieux found, including: {', '.join(found_expected[:5])}"
+                    if len(found_expected) < 8:  # Should have most expected cities
+                        details += f" (Missing some expected cities)"
+                else:
+                    details = f"No cities found for region {region}"
+            else:
+                try:
+                    error_data = response.json()
+                    details = f"Status: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    details = f"Status: {response.status_code}, Response: {response.text[:200]}"
+                data = {}
+            
+            self.log_test(f"GET /api/cities/{region}", success, details, data)
+            return success, data
+        except Exception as e:
+            self.log_test(f"GET /api/cities/{region}", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_payment_calculator_new_features(self):
+        """Test GET /api/payment/calculator - PRIORITY HIGH (UPDATED FEATURE)"""
+        try:
+            # Test the specific scenario from requirements:
+            # base_price=5000, passenger_count=3, package_value=20000
+            # Expected: reservation=1500 FCFA (3×500), package_tax=2600 FCFA (20000×13%)
+            params = {
+                "base_price": 5000,
+                "passenger_count": 3,
+                "package_value": 20000,
+                "courier_services": 1
+            }
+            
+            response = requests.get(f"{self.api_url}/payment/calculator", params=params, timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                
+                # Check required fields
+                required_fields = [
+                    'passenger_count', 'total_reservation_fee', 'package_tax_13_percent', 
+                    'total_amount', 'payment_breakdown'
+                ]
+                success = all(field in data for field in required_fields)
+                
+                if success:
+                    # Verify calculations
+                    passenger_count = data.get('passenger_count', 0)
+                    reservation_fee = data.get('total_reservation_fee', 0)
+                    package_tax = data.get('package_tax_13_percent', 0)
+                    
+                    # Expected calculations
+                    expected_reservation = 3 * 500  # 1500 FCFA
+                    expected_package_tax = int(20000 * 0.13)  # 2600 FCFA
+                    
+                    reservation_correct = reservation_fee == expected_reservation
+                    package_tax_correct = package_tax == expected_package_tax
+                    passenger_count_correct = passenger_count == 3
+                    
+                    if reservation_correct and package_tax_correct and passenger_count_correct:
+                        details = f"✅ Calculations correct: {passenger_count} passengers, reservation={reservation_fee} FCFA, package_tax={package_tax} FCFA"
+                    else:
+                        success = False
+                        details = f"❌ Calculation errors: reservation={reservation_fee} (expected {expected_reservation}), package_tax={package_tax} (expected {expected_package_tax})"
+                else:
+                    details = "Missing required fields in response"
+            else:
+                try:
+                    error_data = response.json()
+                    details = f"Status: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    details = f"Status: {response.status_code}, Response: {response.text[:200]}"
+                data = {}
+            
+            self.log_test("GET /api/payment/calculator (New Features)", success, details, data)
+            return success, data
+        except Exception as e:
+            self.log_test("GET /api/payment/calculator (New Features)", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_cities_region_integration(self):
+        """Test multiple regions to verify integration - PRIORITY HIGH"""
+        try:
+            test_regions = ["Adamaoua", "Littoral", "Nord-Ouest", "Sud"]
+            all_success = True
+            total_cities = 0
+            region_results = []
+            
+            for region in test_regions:
+                response = requests.get(f"{self.api_url}/cities/{region}", timeout=10)
+                if response.status_code == 200:
+                    data = response.json()
+                    cities = data.get('cities', [])
+                    city_count = len(cities)
+                    total_cities += city_count
+                    region_results.append(f"{region}: {city_count} cities")
+                else:
+                    all_success = False
+                    region_results.append(f"{region}: ERROR")
+            
+            if all_success and total_cities > 0:
+                details = f"✅ All {len(test_regions)} regions accessible. Total cities: {total_cities}. " + ", ".join(region_results)
+            else:
+                all_success = False
+                details = f"❌ Some regions failed. Results: " + ", ".join(region_results)
+            
+            self.log_test("Multiple Regions Integration Test", all_success, details, {"total_cities": total_cities, "regions_tested": len(test_regions)})
+            return all_success, {"total_cities": total_cities}
+        except Exception as e:
+            self.log_test("Multiple Regions Integration Test", False, f"Error: {str(e)}")
+            return False, {}
+
     def run_priority_tests(self):
         """Run high priority tests first"""
         print("🚨 PRIORITY HIGH - Previously failing endpoints:")
