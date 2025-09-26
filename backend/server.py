@@ -1495,6 +1495,220 @@ async def verify_user_registration(
         "message": f"Inscription {action}ed successfully"
     }
 
+# === ADVANCED ADMIN ENDPOINTS ===
+
+@api_router.post("/admin/vehicles")
+async def add_vehicle(vehicle_data: dict):
+    """Admin endpoint to add new vehicles"""
+    try:
+        vehicle = Vehicle(
+            agency_id=vehicle_data.get("agency_id"),
+            agency_name=vehicle_data.get("agency_name"),
+            model=vehicle_data.get("model"),
+            brand=vehicle_data.get("brand"),
+            year=int(vehicle_data.get("year")),
+            color=vehicle_data.get("color"),
+            license_plate=vehicle_data.get("license_plate"),
+            capacity=int(vehicle_data.get("capacity")),
+            vehicle_type=vehicle_data.get("vehicle_type"),
+            driver_name=vehicle_data.get("driver_name", ""),
+            driver_phone=vehicle_data.get("driver_phone", ""),
+            current_route=vehicle_data.get("current_route", ""),
+        )
+        
+        # Save to database
+        await db.vehicles.insert_one(vehicle.dict())
+        
+        return {
+            "vehicle_id": vehicle.id,
+            "message": "Véhicule ajouté avec succès",
+            "vehicle": vehicle.dict()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Erreur lors de l'ajout du véhicule: {str(e)}")
+
+@api_router.get("/admin/vehicles")
+async def get_all_vehicles():
+    """Get all vehicles with pagination"""
+    vehicles = await db.vehicles.find().to_list(length=None)
+    
+    # Clean ObjectId for JSON serialization
+    for vehicle in vehicles:
+        if "_id" in vehicle:
+            del vehicle["_id"]
+            
+    return {
+        "vehicles": vehicles,
+        "total": len(vehicles)
+    }
+
+@api_router.put("/admin/vehicles/{vehicle_id}")
+async def update_vehicle(vehicle_id: str, vehicle_data: dict):
+    """Update vehicle information"""
+    vehicle = await db.vehicles.find_one({"id": vehicle_id})
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+    
+    # Update vehicle data
+    update_data = {
+        "model": vehicle_data.get("model", vehicle["model"]),
+        "brand": vehicle_data.get("brand", vehicle["brand"]),
+        "year": int(vehicle_data.get("year", vehicle["year"])),
+        "color": vehicle_data.get("color", vehicle["color"]),
+        "license_plate": vehicle_data.get("license_plate", vehicle["license_plate"]),
+        "capacity": int(vehicle_data.get("capacity", vehicle["capacity"])),
+        "status": vehicle_data.get("status", vehicle["status"]),
+        "driver_name": vehicle_data.get("driver_name", vehicle.get("driver_name", "")),
+        "driver_phone": vehicle_data.get("driver_phone", vehicle.get("driver_phone", "")),
+        "current_route": vehicle_data.get("current_route", vehicle.get("current_route", "")),
+    }
+    
+    await db.vehicles.update_one(
+        {"id": vehicle_id},
+        {"$set": update_data}
+    )
+    
+    return {
+        "vehicle_id": vehicle_id,
+        "message": "Véhicule mis à jour avec succès",
+        "updated_data": update_data
+    }
+
+@api_router.delete("/admin/vehicles/{vehicle_id}")
+async def delete_vehicle(vehicle_id: str):
+    """Delete a vehicle"""
+    result = await db.vehicles.delete_one({"id": vehicle_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+    
+    return {"message": "Véhicule supprimé avec succès"}
+
+@api_router.post("/admin/courier-carriers")
+async def add_courier_carrier(carrier_data: dict):
+    """Admin endpoint to add courier carriers"""
+    try:
+        carrier = CourierCarrier(
+            name=carrier_data.get("name"),
+            phone=carrier_data.get("phone"),
+            email=carrier_data.get("email", ""),
+            license_number=carrier_data.get("license_number"),
+            vehicle_type=carrier_data.get("vehicle_type"),
+            coverage_areas=carrier_data.get("coverage_areas", []),
+            rating=float(carrier_data.get("rating", 4.0))
+        )
+        
+        await db.courier_carriers.insert_one(carrier.dict())
+        
+        return {
+            "carrier_id": carrier.id,
+            "message": "Transporteur de colis ajouté avec succès",
+            "carrier": carrier.dict()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Erreur: {str(e)}")
+
+@api_router.get("/courier-carriers")
+async def get_courier_carriers():
+    """Get all active courier carriers"""
+    carriers = await db.courier_carriers.find({"active": True}).to_list(length=None)
+    
+    for carrier in carriers:
+        if "_id" in carrier:
+            del carrier["_id"]
+            
+    return {"carriers": carriers}
+
+@api_router.post("/admin/app-settings")
+async def update_app_setting(setting_data: dict):
+    """Admin endpoint to update app settings"""
+    try:
+        setting = AppSettings(
+            setting_key=setting_data.get("setting_key"),
+            setting_value=setting_data.get("setting_value"),
+            setting_type=setting_data.get("setting_type", "text"),
+            description=setting_data.get("description", ""),
+            updated_by=setting_data.get("admin_id", "admin")
+        )
+        
+        # Update or insert setting
+        await db.app_settings.update_one(
+            {"setting_key": setting.setting_key},
+            {"$set": setting.dict()},
+            upsert=True
+        )
+        
+        return {
+            "message": "Paramètre mis à jour avec succès",
+            "setting": setting.dict()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Erreur: {str(e)}")
+
+@api_router.get("/admin/app-settings")
+async def get_app_settings():
+    """Get all app settings"""
+    settings = await db.app_settings.find().to_list(length=None)
+    
+    for setting in settings:
+        if "_id" in setting:
+            del setting["_id"]
+            
+    return {"settings": settings}
+
+@api_router.post("/admin/policies")
+async def create_policy_document(policy_data: dict):
+    """Admin endpoint to create/update policy documents"""
+    try:
+        policy = PolicyDocument(
+            title=policy_data.get("title"),
+            content=policy_data.get("content"),
+            document_type=policy_data.get("document_type"),
+            language=policy_data.get("language", "fr"),
+            version=policy_data.get("version", "1.0")
+        )
+        
+        await db.policy_documents.insert_one(policy.dict())
+        
+        return {
+            "policy_id": policy.id,
+            "message": "Document de politique créé avec succès",
+            "policy": policy.dict()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Erreur: {str(e)}")
+
+@api_router.get("/policies")
+async def get_policies():
+    """Get all active policy documents"""
+    policies = await db.policy_documents.find({"active": True}).to_list(length=None)
+    
+    for policy in policies:
+        if "_id" in policy:
+            del policy["_id"]
+            
+    return {"policies": policies}
+
+@api_router.get("/policies/{document_type}")
+async def get_policy_by_type(document_type: str):
+    """Get specific policy document by type"""
+    policy = await db.policy_documents.find_one({
+        "document_type": document_type,
+        "active": True
+    })
+    
+    if not policy:
+        raise HTTPException(status_code=404, detail="Policy document not found")
+    
+    if "_id" in policy:
+        del policy["_id"]
+        
+    return {"policy": policy}
+
 # Include router
 app.include_router(api_router)
 
