@@ -270,7 +270,20 @@ function Connect237App() {
     }
   };
 
-  const loadUserBookings = async () => {
+  const loadCourierCarriers = async () => {
+    try {
+      const response = await axios.get(`${API}/courier-carriers`);
+      setCourierCarriers(response.data.carriers || []);
+    } catch (error) {
+      console.error("Error loading courier carriers:", error);
+      // Default carriers if API fails
+      setCourierCarriers([
+        { name: "Moto Express", vehicle_type: "moto", rating: 4.2, coverage_areas: ["Yaoundé", "Douala"] },
+        { name: "City Delivery", vehicle_type: "car", rating: 4.0, coverage_areas: ["Douala", "Bafoussam"] },
+        { name: "Speed Courier", vehicle_type: "van", rating: 4.3, coverage_areas: ["Yaoundé", "Bertoua"] }
+      ]);
+    }
+  };
     // Mock user bookings
     setBookings([]);
   };
