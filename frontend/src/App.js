@@ -234,7 +234,7 @@ function Connect237App() {
 
   const loadWeatherData = async () => {
     try {
-      const response = await axios.get(`${API}/weather/all`);
+      const response = await axios.get(`${API}/weather/cities`);
       setWeatherData(response.data.weather_data);
     } catch (error) {
       console.error("Error loading weather:", error);
