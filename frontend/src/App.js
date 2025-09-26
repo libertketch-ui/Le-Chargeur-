@@ -1092,7 +1092,7 @@ function Connect237App() {
                 {/* Additional Information */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    ℹ️ Informations additionnelles (optionnel)
+                    ℹ️ {language === "fr" ? "Informations additionnelles (optionnel)" : "Additional information (optional)"}
                   </label>
                   <textarea
                     value={searchForm.additional_info || ''}
