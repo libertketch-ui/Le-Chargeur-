@@ -1815,6 +1815,153 @@ function Connect237App() {
                 </Card>
               </CardContent>
             </Card>
+            </>
+            ) : (
+            /* Wallet Content */
+            <>
+              <Card>
+                <CardHeader className="bg-gradient-to-r from-green-500 to-yellow-500 text-white">
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5" />
+                    Mon Portefeuille Connect237
+                  </CardTitle>
+                  <CardDescription className="text-green-100">
+                    Gérez vos paiements et réservations
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6 p-6">
+                  
+                  {/* Wallet Balance */}
+                  <Card className="bg-gradient-to-r from-green-600 to-red-600 text-white">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="text-2xl font-bold">Solde disponible</h3>
+                          <p className="text-4xl font-bold mt-2">12,500 FCFA</p>
+                          <p className="text-green-100 text-sm mt-1">Dernière mise à jour: aujourd'hui</p>
+                        </div>
+                        <div className="text-6xl opacity-20">
+                          💳
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Quick Actions */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Button className="flex items-center gap-2 h-16 bg-green-600 hover:bg-green-700">
+                      <Plus className="w-5 h-5" />
+                      Recharger
+                    </Button>
+                    <Button variant="outline" className="flex items-center gap-2 h-16">
+                      <Send className="w-5 h-5" />
+                      Transférer
+                    </Button>
+                    <Button variant="outline" className="flex items-center gap-2 h-16">
+                      <Download className="w-5 h-5" />
+                      Historique
+                    </Button>
+                  </div>
+
+                  {/* Payment Methods */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <PaymentCard className="w-5 h-5" />
+                        Modes de paiement
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center text-white font-bold">
+                              MTN
+                            </div>
+                            <div>
+                              <p className="font-semibold">MTN Mobile Money</p>
+                              <p className="text-sm text-gray-600">+237 6XX XXX XXX</p>
+                            </div>
+                          </div>
+                          <Badge className="bg-green-100 text-green-800">Vérifié</Badge>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center text-white font-bold">
+                              OM
+                            </div>
+                            <div>
+                              <p className="font-semibold">Orange Money</p>
+                              <p className="text-sm text-gray-600">+237 6XX XXX XXX</p>
+                            </div>
+                          </div>
+                          <Badge variant="outline">Non vérifié</Badge>
+                        </div>
+
+                        <Button variant="outline" className="w-full flex items-center gap-2">
+                          <Plus className="w-4 h-4" />
+                          Ajouter un mode de paiement
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Recent Transactions */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Receipt className="w-5 h-5" />
+                        Transactions récentes
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 border-b">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                              <Minus className="w-4 h-4 text-red-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold">Réservation Yaoundé-Douala</p>
+                              <p className="text-sm text-gray-600">Aujourd'hui, 14:30</p>
+                            </div>
+                          </div>
+                          <span className="text-red-600 font-bold">-500 FCFA</span>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 border-b">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                              <Plus className="w-4 h-4 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold">Rechargement portefeuille</p>
+                              <p className="text-sm text-gray-600">Hier, 09:15</p>
+                            </div>
+                          </div>
+                          <span className="text-green-600 font-bold">+10,000 FCFA</span>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                              <Package className="w-4 h-4 text-orange-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold">Envoi colis Douala-Bafoussam</p>
+                              <p className="text-sm text-gray-600">Il y a 2 jours</p>
+                            </div>
+                          </div>
+                          <span className="text-red-600 font-bold">-3,000 FCFA</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </CardContent>
+              </Card>
+            </>
+            )}
           </TabsContent>
         </Tabs>
 
