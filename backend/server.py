@@ -1469,32 +1469,48 @@ async def payment_calculator(
     passenger_count: int = Query(1),
     custom_count: Optional[int] = Query(None),
     courier_services: int = Query(0),
+    package_value: int = Query(0),  # Valeur du colis en FCFA
     payment_type: str = Query("full")
 ):
-    """Calculate total payment amount"""
+    """Calculate total payment amount with updated rules"""
     
     final_count = custom_count if custom_count else passenger_count
     subtotal = base_price * final_count
     
-    # Add courier services cost
-    courier_cost = courier_services * 2000
+    # Nouvelle règle: 500 FCFA de réservation par passager
+    reservation_fee_per_passenger = 500
+    total_reservation_fee = reservation_fee_per_passenger * final_count
+    
+    # Add courier services cost with 13% of package value
+    courier_base_cost = courier_services * 2000
+    package_tax = int(package_value * 0.13) if package_value > 0 else 0
+    total_courier_cost = courier_base_cost + package_tax
     
     # Calculate totals
-    total_full_payment = subtotal + courier_cost
-    reservation_fee = 500
-    remaining_amount = total_full_payment - reservation_fee
+    total_full_payment = subtotal + total_courier_cost
+    remaining_amount = total_full_payment - total_reservation_fee
     
     return {
         "passenger_count": final_count,
         "base_price_per_person": base_price,
         "subtotal": subtotal,
-        "courier_services_cost": courier_cost,
+        "courier_services_count": courier_services,
+        "courier_base_cost": courier_base_cost,
+        "package_value": package_value,
+        "package_tax_13_percent": package_tax,
+        "total_courier_cost": total_courier_cost,
+        "reservation_fee_per_passenger": reservation_fee_per_passenger,
+        "total_reservation_fee": total_reservation_fee,
         "total_amount": total_full_payment,
-        "reservation_fee": reservation_fee,
         "remaining_amount": remaining_amount,
         "payment_breakdown": {
-            "now": reservation_fee if payment_type == "reservation" else total_full_payment,
-            "later": remaining_amount if payment_type == "reservation" else 0
+            "reservation_now": total_reservation_fee,
+            "balance_later": remaining_amount,
+            "full_payment": total_full_payment
+        },
+        "calculation_details": {
+            "formula_reservation": f"{final_count} passagers × {reservation_fee_per_passenger} FCFA = {total_reservation_fee} FCFA",
+            "formula_package": f"{package_value} FCFA × 13% = {package_tax} FCFA" if package_value > 0 else "Aucun colis"
         }
     }
 
