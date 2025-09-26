@@ -1488,6 +1488,27 @@ function Connect237App() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Registration System Modal */}
+        {showRegistration && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800">Inscription Connect237</h2>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setShowRegistration(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    ✕
+                  </Button>
+                </div>
+                <RegistrationSystem />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       
       <Toaster />
