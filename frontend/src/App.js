@@ -546,7 +546,7 @@ function Connect237App() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex-1"></div>
             <div className="flex items-center justify-center">
-              <Connect237Logo size="large" />
+              <Connect237Logo size="large" language={language} />
             </div>
             
             {/* Language Selector */}
