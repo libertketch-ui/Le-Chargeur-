@@ -733,54 +733,116 @@ function Connect237App() {
               </CardHeader>
               <CardContent className="p-8 space-y-6">
                 
-                {/* Route Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Ville de départ</Label>
-                    <Select onValueChange={(value) => setSearchForm({...searchForm, origin: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez la ville de départ" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city) => (
-                          <SelectItem key={city.name} value={city.name}>
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              {city.name} ({city.region})
-                              {city.current_weather && (
-                                <span className="text-xs text-blue-600">
-                                  {city.current_weather.temperature}°C
-                                </span>
-                              )}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                {/* Hierarchical Route Selection */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <Label className="text-lg font-bold text-green-700">🌍 Point de Départ</Label>
+                    
+                    {/* Origin Region Selection */}
+                    <div>
+                      <Label>Région de départ</Label>
+                      <Select onValueChange={handleOriginRegionChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choisissez d'abord la région" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAvailableRegions().map((region) => (
+                            <SelectItem key={region} value={region}>
+                              🗺️ {region}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Origin City Selection */}
+                    <div>
+                      <Label>Ville/Arrondissement de départ</Label>
+                      <Select 
+                        onValueChange={(value) => {
+                          setSearchForm({...searchForm, origin: value});
+                          if (searchForm.destination) {
+                            const pricing = getRoutePricing(value, searchForm.destination);
+                            setRoutePricing(pricing);
+                          }
+                        }}
+                        disabled={!selectedOriginRegion}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={selectedOriginRegion ? "Sélectionnez la ville/arrondissement" : "Choisissez d'abord une région"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableOriginCities.map((city) => (
+                            <SelectItem key={city.name} value={city.name}>
+                              <div className="flex items-center gap-2">
+                                <MapPin className="w-4 h-4" />
+                                {city.name} ({city.type})
+                                {city.current_weather && (
+                                  <span className="text-xs text-blue-600">
+                                    {city.current_weather.temperature}°C
+                                  </span>
+                                )}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  <div>
-                    <Label>Ville d'arrivée</Label>
-                    <Select onValueChange={(value) => setSearchForm({...searchForm, destination: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez la ville d'arrivée" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((city) => (
-                          <SelectItem key={city.name} value={city.name}>
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              {city.name} ({city.region})
-                              {city.current_weather && (
-                                <span className="text-xs text-blue-600">
-                                  {city.current_weather.temperature}°C
-                                </span>
-                              )}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="space-y-4">
+                    <Label className="text-lg font-bold text-red-700">🎯 Destination</Label>
+                    
+                    {/* Destination Region Selection */}
+                    <div>
+                      <Label>Région d'arrivée</Label>
+                      <Select onValueChange={handleDestinationRegionChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choisissez d'abord la région" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAvailableRegions().map((region) => (
+                            <SelectItem key={region} value={region}>
+                              🗺️ {region}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Destination City Selection */}
+                    <div>
+                      <Label>Ville/Arrondissement d'arrivée</Label>
+                      <Select 
+                        onValueChange={(value) => {
+                          setSearchForm({...searchForm, destination: value});
+                          if (searchForm.origin) {
+                            const pricing = getRoutePricing(searchForm.origin, value);
+                            setRoutePricing(pricing);
+                          }
+                        }}
+                        disabled={!selectedDestinationRegion}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={selectedDestinationRegion ? "Sélectionnez la ville/arrondissement" : "Choisissez d'abord une région"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableDestinationCities.map((city) => (
+                            <SelectItem key={city.name} value={city.name}>
+                              <div className="flex items-center gap-2">
+                                <MapPin className="w-4 h-4" />
+                                {city.name} ({city.type})
+                                {city.current_weather && (
+                                  <span className="text-xs text-blue-600">
+                                    {city.current_weather.temperature}°C
+                                  </span>
+                                )}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
