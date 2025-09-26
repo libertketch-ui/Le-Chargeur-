@@ -820,7 +820,95 @@ ENHANCED_CAMEROON_CITIES = [
     {"name": "Waza", "region": "Extrême-Nord", "lat": 11.3833, "lng": 14.6333, "major": False, "airport": False, "population": 8000, "type": "commune"},
     {"name": "Yagoua", "region": "Extrême-Nord", "lat": 10.3333, "lng": 15.2333, "major": False, "airport": False, "population": 35000, "type": "commune"},
     {"name": "Bourrah", "region": "Extrême-Nord", "lat": 10.4833, "lng": 14.4167, "major": False, "airport": False, "population": 5000, "type": "village"},
-    {"name": "Bogo", "region": "Extrême-Nord", "lat": 11.2667, "lng": 14.6000, "major": False, "airport": False, "population": 12000, "type": "commune"}
+    {"name": "Bogo", "region": "Extrême-Nord", "lat": 11.2667, "lng": 14.6000, "major": False, "airport": False, "population": 12000, "type": "commune"},
+
+    # CHEFS-LIEUX D'ARRONDISSEMENTS SUPPLÉMENTAIRES
+    
+    # RÉGION CENTRE - Arrondissements
+    {"name": "Akono", "region": "Centre", "lat": 3.5000, "lng": 11.4000, "major": False, "airport": False, "population": 6000, "type": "arrondissement"},
+    {"name": "Akonolinga", "region": "Centre", "lat": 3.7833, "lng": 12.2500, "major": False, "airport": False, "population": 12000, "type": "arrondissement"},
+    {"name": "Ayos", "region": "Centre", "lat": 3.9167, "lng": 12.5500, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+    {"name": "Biyem-Assi", "region": "Centre", "lat": 3.8500, "lng": 11.4833, "major": False, "airport": False, "population": 15000, "type": "arrondissement"},
+    {"name": "Eseka", "region": "Centre", "lat": 3.6500, "lng": 10.7667, "major": False, "airport": False, "population": 20000, "type": "arrondissement"},
+    {"name": "Evodoula", "region": "Centre", "lat": 4.3833, "lng": 11.8167, "major": False, "airport": False, "population": 5000, "type": "arrondissement"},
+    {"name": "Makak", "region": "Centre", "lat": 3.4833, "lng": 11.8833, "major": False, "airport": False, "population": 7000, "type": "arrondissement"},
+    {"name": "Mbangassina", "region": "Centre", "lat": 4.5833, "lng": 11.5500, "major": False, "airport": False, "population": 6000, "type": "arrondissement"},
+
+    # RÉGION LITTORAL - Arrondissements
+    {"name": "Dibombari", "region": "Littoral", "lat": 4.0833, "lng": 9.7000, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+    {"name": "Ekangte", "region": "Littoral", "lat": 4.7000, "lng": 9.8000, "major": False, "airport": False, "population": 5000, "type": "arrondissement"},
+    {"name": "Kekem", "region": "Littoral", "lat": 5.2167, "lng": 10.0667, "major": False, "airport": False, "population": 12000, "type": "arrondissement"},
+    {"name": "Melong", "region": "Littoral", "lat": 5.1167, "lng": 9.9500, "major": False, "airport": False, "population": 18000, "type": "arrondissement"},
+    {"name": "Njombe-Penja", "region": "Littoral", "lat": 4.6167, "lng": 9.6500, "major": False, "airport": False, "population": 15000, "type": "arrondissement"},
+    {"name": "Penja", "region": "Littoral", "lat": 4.6167, "lng": 9.6500, "major": False, "airport": False, "population": 10000, "type": "arrondissement"},
+
+    # RÉGION OUEST - Arrondissements
+    {"name": "Baham", "region": "Ouest", "lat": 5.3167, "lng": 10.3167, "major": False, "airport": False, "population": 12000, "type": "arrondissement"},
+    {"name": "Batié", "region": "Ouest", "lat": 5.2833, "lng": 10.2833, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+    {"name": "Galim", "region": "Ouest", "lat": 5.6500, "lng": 10.8167, "major": False, "airport": False, "population": 6000, "type": "arrondissement"},
+    {"name": "Kouoptamo", "region": "Ouest", "lat": 5.2000, "lng": 10.0500, "major": False, "airport": False, "population": 7000, "type": "arrondissement"},
+    {"name": "Magba", "region": "Ouest", "lat": 5.7500, "lng": 10.8500, "major": False, "airport": False, "population": 5000, "type": "arrondissement"},
+    {"name": "Penka-Michel", "region": "Ouest", "lat": 5.4000, "lng": 10.1000, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+
+    # RÉGION SUD-OUEST - Arrondissements
+    {"name": "Akwaya", "region": "Sud-Ouest", "lat": 6.2833, "lng": 9.1333, "major": False, "airport": False, "population": 4000, "type": "arrondissement"},
+    {"name": "Bangem", "region": "Sud-Ouest", "lat": 5.1167, "lng": 9.7833, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+    {"name": "Dikome-Balue", "region": "Sud-Ouest", "lat": 4.2000, "lng": 8.9167, "major": False, "airport": False, "population": 6000, "type": "arrondissement"},
+    {"name": "Fontem", "region": "Sud-Ouest", "lat": 5.4000, "lng": 9.9000, "major": False, "airport": False, "population": 5000, "type": "arrondissement"},
+    {"name": "Konye", "region": "Sud-Ouest", "lat": 4.8333, "lng": 9.2500, "major": False, "airport": False, "population": 7000, "type": "arrondissement"},
+    {"name": "Nguti", "region": "Sud-Ouest", "lat": 5.4167, "lng": 9.4833, "major": False, "airport": False, "population": 9000, "type": "arrondissement"},
+
+    # RÉGION SUD - Arrondissements
+    {"name": "Bengbis", "region": "Sud", "lat": 2.8500, "lng": 12.4000, "major": False, "airport": False, "population": 7000, "type": "arrondissement"},
+    {"name": "Biwong-Bane", "region": "Sud", "lat": 2.6167, "lng": 10.4167, "major": False, "airport": False, "population": 4000, "type": "arrondissement"},
+    {"name": "Dja", "region": "Sud", "lat": 3.1500, "lng": 12.7000, "major": False, "airport": False, "population": 3000, "type": "arrondissement"},
+    {"name": "Ebolowa I", "region": "Sud", "lat": 2.9167, "lng": 11.1500, "major": False, "airport": False, "population": 40000, "type": "arrondissement"},
+    {"name": "Ebolowa II", "region": "Sud", "lat": 2.9000, "lng": 11.1333, "major": False, "airport": False, "population": 25000, "type": "arrondissement"},
+    {"name": "Ma'an", "region": "Sud", "lat": 2.3667, "lng": 10.3167, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+
+    # RÉGION EST - Arrondissements
+    {"name": "Belabo", "region": "Est", "lat": 4.9333, "lng": 13.3000, "major": False, "airport": False, "population": 12000, "type": "arrondissement"},
+    {"name": "Bétare-Oya", "region": "Est", "lat": 5.6000, "lng": 14.0833, "major": False, "airport": False, "population": 15000, "type": "arrondissement"},
+    {"name": "Diang", "region": "Est", "lat": 4.2000, "lng": 13.8000, "major": False, "airport": False, "population": 6000, "type": "arrondissement"},
+    {"name": "Garoua-Boulaï", "region": "Est", "lat": 5.8000, "lng": 14.5333, "major": False, "airport": False, "population": 18000, "type": "arrondissement"},
+    {"name": "Kenzou", "region": "Est", "lat": 4.7500, "lng": 13.9167, "major": False, "airport": False, "population": 5000, "type": "arrondissement"},
+    {"name": "Lomié", "region": "Est", "lat": 3.1833, "lng": 13.6333, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+
+    # RÉGION ADAMAOUA - Arrondissements
+    {"name": "Belel", "region": "Adamaoua", "lat": 7.9333, "lng": 14.4167, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+    {"name": "Kontcha", "region": "Adamaoua", "lat": 8.2000, "lng": 12.2333, "major": False, "airport": False, "population": 12000, "type": "arrondissement"},
+    {"name": "Mayo-Baleo", "region": "Adamaoua", "lat": 7.7500, "lng": 12.8167, "major": False, "airport": False, "population": 6000, "type": "arrondissement"},
+    {"name": "Nganha", "region": "Adamaoua", "lat": 6.8833, "lng": 15.3167, "major": False, "airport": False, "population": 4000, "type": "arrondissement"},
+    {"name": "Ngaoundal", "region": "Adamaoua", "lat": 6.5000, "lng": 13.2767, "major": False, "airport": False, "population": 10000, "type": "arrondissement"},
+    {"name": "Dir", "region": "Adamaoua", "lat": 7.1500, "lng": 13.1833, "major": False, "airport": False, "population": 7000, "type": "arrondissement"},
+
+    # RÉGION NORD - Arrondissements  
+    {"name": "Bibemi", "region": "Nord", "lat": 9.3500, "lng": 12.8167, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+    {"name": "Demsa", "region": "Nord", "lat": 9.5500, "lng": 13.6500, "major": False, "airport": False, "population": 10000, "type": "arrondissement"},
+    {"name": "Figuil", "region": "Nord", "lat": 9.7500, "lng": 13.9667, "major": False, "airport": False, "population": 18000, "type": "arrondissement"},
+    {"name": "Lagdo", "region": "Nord", "lat": 9.0667, "lng": 13.7333, "major": False, "airport": False, "population": 12000, "type": "arrondissement"},
+    {"name": "Mayo-Oulo", "region": "Nord", "lat": 8.9000, "lng": 13.2000, "major": False, "airport": False, "population": 6000, "type": "arrondissement"},
+    {"name": "Pitoa", "region": "Nord", "lat": 9.3833, "lng": 13.5167, "major": False, "airport": False, "population": 15000, "type": "arrondissement"},
+
+    # RÉGION NORD-OUEST - Arrondissements
+    {"name": "Ako", "region": "Nord-Ouest", "lat": 6.4167, "lng": 9.9833, "major": False, "airport": False, "population": 7000, "type": "arrondissement"},
+    {"name": "Bafut", "region": "Nord-Ouest", "lat": 6.1000, "lng": 10.1167, "major": False, "airport": False, "population": 25000, "type": "arrondissement"},
+    {"name": "Jakiri", "region": "Nord-Ouest", "lat": 6.3833, "lng": 10.4333, "major": False, "airport": False, "population": 14000, "type": "arrondissement"},
+    {"name": "Misaje", "region": "Nord-Ouest", "lat": 6.6167, "lng": 9.9000, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+    {"name": "Oku", "region": "Nord-Ouest", "lat": 6.2500, "lng": 10.4667, "major": False, "airport": False, "population": 18000, "type": "arrondissement"},
+    {"name": "Santa", "region": "Nord-Ouest", "lat": 5.9167, "lng": 10.1667, "major": False, "airport": False, "population": 20000, "type": "arrondissement"},
+
+    # RÉGION EXTRÊME-NORD - Arrondissements additionnels
+    {"name": "Dargala", "region": "Extrême-Nord", "lat": 10.7167, "lng": 13.6833, "major": False, "airport": False, "population": 6000, "type": "arrondissement"},
+    {"name": "Dziguilao", "region": "Extrême-Nord", "lat": 10.4167, "lng": 14.9667, "major": False, "airport": False, "population": 4000, "type": "arrondissement"},
+    {"name": "Guidiguis", "region": "Extrême-Nord", "lat": 10.4833, "lng": 14.9167, "major": False, "airport": False, "population": 8000, "type": "arrondissement"},
+    {"name": "Hina", "region": "Extrême-Nord", "lat": 11.1833, "lng": 13.9833, "major": False, "airport": False, "population": 5000, "type": "arrondissement"},
+    {"name": "Kaélé", "region": "Extrême-Nord", "lat": 10.1000, "lng": 14.4667, "major": False, "airport": False, "population": 32000, "type": "arrondissement"},
+    {"name": "Kar-Hay", "region": "Extrême-Nord", "lat": 10.2000, "lng": 14.3833, "major": False, "airport": False, "population": 7000, "type": "arrondissement"},
+    {"name": "Kolofata", "region": "Extrême-Nord", "lat": 11.0667, "lng": 14.2667, "major": False, "airport": False, "population": 15000, "type": "arrondissement"},
+    {"name": "Logone-Birni", "region": "Extrême-Nord", "lat": 12.1167, "lng": 14.9667, "major": False, "airport": False, "population": 20000, "type": "arrondissement"},
+    {"name": "Maga", "region": "Extrême-Nord", "lat": 10.9167, "lng": 15.2000, "major": False, "airport": False, "population": 25000, "type": "arrondissement"},
+    {"name": "Meri", "region": "Extrême-Nord", "lat": 10.6167, "lng": 14.2500, "major": False, "airport": False, "population": 12000, "type": "arrondissement"}
 ]
 
 # === UTILITY FUNCTIONS ===
