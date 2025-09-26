@@ -1232,14 +1232,18 @@ function Connect237App() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Card 
                         className={`cursor-pointer transition-all ${
-                          paymentForm.type === "account_credit" ? 'ring-2 ring-purple-500 bg-purple-50' : 'hover:shadow-md'
+                          paymentForm.type === "on_site" ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md'
                         }`}
-                        onClick={() => setPaymentForm({...paymentForm, type: "account_credit"})}
+                        onClick={() => setPaymentForm({...paymentForm, type: "on_site"})}
                       >
                         <CardContent className="p-4 text-center">
-                          <PaymentCard className="w-8 h-8 text-purple-600 mx-auto mb-3" />
-                          <h4 className="font-semibold">Crédit Compte</h4>
-                          <p className="text-sm text-gray-600">Solde disponible</p>
+                          <Banknote className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+                          <h4 className="font-semibold">
+                            {language === "fr" ? "Paiement sur place" : "Payment on site"}
+                          </h4>
+                          <p className="text-xs text-gray-600">
+                            {language === "fr" ? "Réglez 1h avant le départ" : "Pay 1h before departure"}
+                          </p>
                         </CardContent>
                       </Card>
 
