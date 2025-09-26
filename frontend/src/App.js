@@ -651,7 +651,7 @@ function Connect237App() {
               className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-red-500 data-[state=active]:text-white rounded-xl transition-all"
             >
               <User className="w-4 h-4" />
-              <span className="hidden md:inline">Profil</span>
+              <span className="hidden md:inline">{language === "fr" ? "Profil" : "Profile"}</span>
             </TabsTrigger>
           </TabsList>
 
