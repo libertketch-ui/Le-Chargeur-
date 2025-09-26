@@ -938,21 +938,21 @@ CAMEROON_ADMINISTRATIVE_STRUCTURE = {
         "cities": [
             {"name": "Fundong", "lat": 6.2333, "lng": 10.2833, "type": "chef-lieu"},
             {"name": "Kumbo", "lat": 6.2000, "lng": 10.6667, "type": "chef-lieu"},
-            {"name": "Nkambé", "lat": 6.5833, "lng": 10.6833, "type": "chef-lieu"},
+            {"name": "Nkambé", "lat": 6.5833, "lng": 11.0167, "type": "chef-lieu"},
             {"name": "Wum", "lat": 6.3833, "lng": 10.0667, "type": "chef-lieu"},
-            {"name": "Bamenda", "lat": 5.9667, "lng": 10.1667, "type": "chef-lieu"},
-            {"name": "Mbengwi", "lat": 6.1833, "lng": 9.7167, "type": "chef-lieu"},
-            {"name": "Ndop", "lat": 6.0167, "lng": 10.4333, "type": "chef-lieu"}
+            {"name": "Bamenda", "lat": 5.9597, "lng": 10.1431, "type": "chef-lieu"},
+            {"name": "Mbengwi", "lat": 6.1667, "lng": 9.7833, "type": "chef-lieu"},
+            {"name": "Ndop", "lat": 6.0000, "lng": 10.4167, "type": "chef-lieu"}
         ]
     },
     "Ouest": {
         "cities": [
             {"name": "Mbouda", "lat": 5.6167, "lng": 10.2500, "type": "chef-lieu"},
-            {"name": "Bafang", "lat": 5.1667, "lng": 10.1833, "type": "chef-lieu"},
-            {"name": "Baham", "lat": 5.3167, "lng": 10.3167, "type": "chef-lieu"},
-            {"name": "Bandjoun", "lat": 5.3667, "lng": 10.4000, "type": "chef-lieu"},
+            {"name": "Bafang", "lat": 5.1500, "lng": 10.1833, "type": "chef-lieu"},
+            {"name": "Baham", "lat": 5.3667, "lng": 10.3833, "type": "chef-lieu"},
+            {"name": "Bandjoun", "lat": 5.3667, "lng": 10.4167, "type": "chef-lieu"},
             {"name": "Dschang", "lat": 5.4500, "lng": 10.0500, "type": "chef-lieu"},
-            {"name": "Bafoussam", "lat": 5.4667, "lng": 10.4167, "type": "chef-lieu"},
+            {"name": "Bafoussam", "lat": 5.4731, "lng": 10.4206, "type": "chef-lieu"},
             {"name": "Bangangté", "lat": 5.1500, "lng": 10.5167, "type": "chef-lieu"},
             {"name": "Foumban", "lat": 5.7167, "lng": 10.9000, "type": "chef-lieu"}
         ]
