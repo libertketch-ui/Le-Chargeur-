@@ -824,9 +824,11 @@ function Connect237App() {
           <TabsContent value="search" className="space-y-6">
             <Card className="shadow-2xl">
               <CardHeader className="bg-gradient-to-r from-green-500 to-red-500 text-white">
-                <CardTitle>Réservation de Transport</CardTitle>
+                <CardTitle>
+                  {language === "fr" ? "Réservation de Transport" : "Transportation Booking"}
+                </CardTitle>
                 <CardDescription className="text-green-100">
-                  Recherche avancée avec sélection du point de prise en charge
+                  {language === "fr" ? "Recherche avancée avec sélection du point de prise en charge" : "Advanced search with pickup location selection"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-8 space-y-6">
