@@ -875,7 +875,7 @@ CAMEROON_TOURIST_ATTRACTIONS = [
     }
 ]
 
-# Structure administrative complète du Cameroun : Région → Département → Chef-lieu
+# Structure administrative officielle du Cameroun : 58 départements et chefs-lieux
 CAMEROON_ADMINISTRATIVE_STRUCTURE = {
     "Adamaoua": {
         "departments": {
@@ -889,14 +889,15 @@ CAMEROON_ADMINISTRATIVE_STRUCTURE = {
     "Centre": {
         "departments": {
             "Haute-Sanaga": {"chef_lieu": "Nanga-Eboko", "lat": 4.6833, "lng": 12.3667},
-            "Lekié": {"chef_lieu": "Monatélé", "lat": 4.1167, "lng": 11.3667},
+            "Lekié": {"chef_lieu": "Monatele", "lat": 4.1167, "lng": 11.3667},
             "Mbam-et-Inoubou": {"chef_lieu": "Bafia", "lat": 4.7500, "lng": 11.2333},
             "Mbam-et-Kim": {"chef_lieu": "Ntui", "lat": 4.4333, "lng": 11.5833},
             "Méfou-et-Afamba": {"chef_lieu": "Mfou", "lat": 3.7333, "lng": 11.6333},
+            "Méfou-et-Akono": {"chef_lieu": "Ngoumou", "lat": 3.6000, "lng": 11.4500},
             "Mfoundi": {"chef_lieu": "Yaoundé", "lat": 3.8667, "lng": 11.5167},
-            "Mfoumou": {"chef_lieu": "Akonolinga", "lat": 3.7833, "lng": 12.2500},
-            "Nyong-et-Kéllé": {"chef_lieu": "Eséka", "lat": 3.6500, "lng": 10.7667},
-            "Nyong-et-Mfoumou": {"chef_lieu": "Mbalmayo", "lat": 3.5167, "lng": 11.5000}
+            "Nyong-et-Kellé": {"chef_lieu": "Éséka", "lat": 3.6500, "lng": 10.7667},
+            "Nyong-et-Mfoumou": {"chef_lieu": "Akonolinga", "lat": 3.7833, "lng": 12.2500},
+            "Nyong-et-So'o": {"chef_lieu": "Mbalmayo", "lat": 3.5167, "lng": 11.5000}
         }
     },
     "Est": {
@@ -904,56 +905,56 @@ CAMEROON_ADMINISTRATIVE_STRUCTURE = {
             "Boumba-et-Ngoko": {"chef_lieu": "Yokadouma", "lat": 3.5167, "lng": 15.0500},
             "Haut-Nyong": {"chef_lieu": "Abong-Mbang", "lat": 3.9833, "lng": 13.1833},
             "Kadey": {"chef_lieu": "Batouri", "lat": 4.4333, "lng": 14.3667},
-            "Lom-et-Djerem": {"chef_lieu": "Bertoua", "lat": 4.5833, "lng": 13.6833}
+            "Lom-et-Djérem": {"chef_lieu": "Bertoua", "lat": 4.5833, "lng": 13.6833}
         }
     },
     "Extrême-Nord": {
         "departments": {
             "Diamaré": {"chef_lieu": "Maroua", "lat": 10.5833, "lng": 14.3167},
-            "Logone-et-Chari": {"chef_lieu": "Kousseri", "lat": 12.0833, "lng": 15.0333},
-            "Mayo-Tsanaga": {"chef_lieu": "Mokolo", "lat": 10.7333, "lng": 13.8000},
+            "Logone-et-Chari": {"chef_lieu": "Kousséri", "lat": 12.0833, "lng": 15.0333},
             "Mayo-Danay": {"chef_lieu": "Yagoua", "lat": 10.3333, "lng": 15.2333},
+            "Mayo-Kani": {"chef_lieu": "Kaélé", "lat": 10.1000, "lng": 14.4667},
             "Mayo-Sava": {"chef_lieu": "Mora", "lat": 11.0500, "lng": 14.0833},
-            "Mayo-Kani": {"chef_lieu": "Kaélé", "lat": 10.1000, "lng": 14.4667}
+            "Mayo-Tsanaga": {"chef_lieu": "Mokolo", "lat": 10.7333, "lng": 13.8000}
         }
     },
     "Littoral": {
         "departments": {
-            "Wouri": {"chef_lieu": "Douala", "lat": 4.0611, "lng": 9.7067},
             "Moungo": {"chef_lieu": "Nkongsamba", "lat": 4.9500, "lng": 9.9333},
-            "Sanaga-Maritime": {"chef_lieu": "Edéa", "lat": 3.8000, "lng": 10.1333},
-            "Nkam": {"chef_lieu": "Yabassi", "lat": 4.4500, "lng": 9.9667}
+            "Nkam": {"chef_lieu": "Yabassi", "lat": 4.4500, "lng": 9.9667},
+            "Sanaga-Maritime": {"chef_lieu": "Édéa", "lat": 3.8000, "lng": 10.1333},
+            "Wouri": {"chef_lieu": "Douala", "lat": 4.0611, "lng": 9.7067}
         }
     },
     "Nord": {
         "departments": {
             "Bénoué": {"chef_lieu": "Garoua", "lat": 9.3000, "lng": 13.4000},
             "Faro": {"chef_lieu": "Poli", "lat": 8.4167, "lng": 13.2500},
-            "Mayo-Rey": {"chef_lieu": "Tcholliré", "lat": 8.3833, "lng": 14.1167},
-            "Mayo-Louti": {"chef_lieu": "Guider", "lat": 9.9333, "lng": 13.9500}
+            "Mayo-Louti": {"chef_lieu": "Guider", "lat": 9.9333, "lng": 13.9500},
+            "Mayo-Rey": {"chef_lieu": "Tcholliré", "lat": 8.3833, "lng": 14.1167}
         }
     },
     "Nord-Ouest": {
         "departments": {
+            "Boyo": {"chef_lieu": "Fundong", "lat": 6.2333, "lng": 10.2833},
             "Bui": {"chef_lieu": "Kumbo", "lat": 6.2000, "lng": 10.6667},
-            "Donga-Mantung": {"chef_lieu": "Nkambe", "lat": 6.5833, "lng": 10.6833},
+            "Donga-Mantung": {"chef_lieu": "Nkambé", "lat": 6.5833, "lng": 10.6833},
             "Menchum": {"chef_lieu": "Wum", "lat": 6.3833, "lng": 10.0667},
             "Mezam": {"chef_lieu": "Bamenda", "lat": 5.9667, "lng": 10.1667},
             "Momo": {"chef_lieu": "Mbengwi", "lat": 6.1833, "lng": 9.7167},
-            "Ngo-Ketunjia": {"chef_lieu": "Ndop", "lat": 6.0167, "lng": 10.4333},
-            "Boyo": {"chef_lieu": "Fundong", "lat": 6.2333, "lng": 10.2833}
+            "Ngo-Ketunjia": {"chef_lieu": "Ndop", "lat": 6.0167, "lng": 10.4333}
         }
     },
     "Ouest": {
         "departments": {
-            "Haut-Nkam": {"chef_lieu": "Bangangté", "lat": 5.1500, "lng": 10.5167},
+            "Bamboutos": {"chef_lieu": "Mbouda", "lat": 5.6167, "lng": 10.2500},
+            "Haut-Nkam": {"chef_lieu": "Bafang", "lat": 5.1667, "lng": 10.1833},
+            "Hauts-Plateaux": {"chef_lieu": "Baham", "lat": 5.3167, "lng": 10.3167},
             "Koung-Khi": {"chef_lieu": "Bandjoun", "lat": 5.3667, "lng": 10.4000},
             "Menoua": {"chef_lieu": "Dschang", "lat": 5.4500, "lng": 10.0500},
             "Mifi": {"chef_lieu": "Bafoussam", "lat": 5.4667, "lng": 10.4167},
-            "Noun": {"chef_lieu": "Foumban", "lat": 5.7167, "lng": 10.9000},
-            "Bamboutos": {"chef_lieu": "Mbouda", "lat": 5.6167, "lng": 10.2500},
-            "Lebialem": {"chef_lieu": "Menji", "lat": 5.4167, "lng": 9.9500},
-            "Kupe-Manenguba": {"chef_lieu": "Bangem", "lat": 5.1167, "lng": 9.7833}
+            "Ndé": {"chef_lieu": "Bangangté", "lat": 5.1500, "lng": 10.5167},
+            "Noun": {"chef_lieu": "Foumban", "lat": 5.7167, "lng": 10.9000}
         }
     },
     "Sud": {
@@ -966,8 +967,8 @@ CAMEROON_ADMINISTRATIVE_STRUCTURE = {
     },
     "Sud-Ouest": {
         "departments": {
-            "Fako": {"chef_lieu": "Limbe", "lat": 4.0167, "lng": 9.2000},
-            "Kupe-Manenguba": {"chef_lieu": "Bangem", "lat": 5.1167, "lng": 9.7833},
+            "Fako": {"chef_lieu": "Limbé", "lat": 4.0167, "lng": 9.2000},
+            "Koupé-Manengouba": {"chef_lieu": "Bangem", "lat": 5.1167, "lng": 9.7833},
             "Lebialem": {"chef_lieu": "Menji", "lat": 5.4167, "lng": 9.9500},
             "Manyu": {"chef_lieu": "Mamfé", "lat": 5.7667, "lng": 9.3167},
             "Meme": {"chef_lieu": "Kumba", "lat": 4.6333, "lng": 9.4500},
