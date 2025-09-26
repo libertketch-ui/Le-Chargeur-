@@ -637,7 +637,7 @@ function Connect237App() {
               className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-red-500 data-[state=active]:text-white rounded-xl transition-all"
             >
               <Map className="w-4 h-4" />
-              <span className="hidden md:inline">Suivi GPS</span>
+              <span className="hidden md:inline">{language === "fr" ? "Suivi GPS" : "GPS Tracking"}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="tourism" 
