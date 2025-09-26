@@ -784,17 +784,19 @@ function Connect237App() {
               </CardHeader>
               <CardContent className="p-8 space-y-6">
                 
-                {/* 3-Level Hierarchical Route Selection */}
+                {/* Simplified 2-Level Route Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <Label className="text-lg font-bold text-green-700">🌍 Point de Départ</Label>
+                    <Label className="text-lg font-bold text-green-700">
+                      {language === "fr" ? "🌍 Point de Départ" : "🌍 Departure Point"}
+                    </Label>
                     
                     {/* Origin Region Selection */}
                     <div>
-                      <Label>1️⃣ Région de départ</Label>
+                      <Label>{language === "fr" ? "1️⃣ Région de départ" : "1️⃣ Departure region"}</Label>
                       <Select onValueChange={handleOriginRegionChange}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Choisissez la région de départ" />
+                          <SelectValue placeholder={language === "fr" ? "Choisissez la région de départ" : "Choose departure region"} />
                         </SelectTrigger>
                         <SelectContent>
                           {getAvailableRegions().map((region) => (
@@ -806,29 +808,9 @@ function Connect237App() {
                       </Select>
                     </div>
 
-                    {/* Origin Department Selection */}
+                    {/* Origin City Selection */}
                     <div>
-                      <Label>2️⃣ Département de départ</Label>
-                      <Select 
-                        onValueChange={handleOriginDepartmentChange}
-                        disabled={!selectedOriginRegion}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={selectedOriginRegion ? "Choisissez le département" : "Sélectionnez d'abord une région"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableOriginDepartments.map(([deptName, deptInfo]) => (
-                            <SelectItem key={deptName} value={deptName}>
-                              🏛️ {deptName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Origin Chef-lieu Selection */}
-                    <div>
-                      <Label>3️⃣ Chef-lieu de départ</Label>
+                      <Label>{language === "fr" ? "2️⃣ Ville de départ" : "2️⃣ Departure city"}</Label>
                       <Select 
                         onValueChange={(value) => {
                           setSearchForm({...searchForm, origin: value});
@@ -837,38 +819,44 @@ function Connect237App() {
                             setRoutePricing(pricing);
                           }
                         }}
-                        disabled={!selectedOriginDepartment}
+                        disabled={!selectedOriginRegion}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder={selectedOriginDepartment ? "Chef-lieu automatique" : "Choisissez d'abord un département"} />
+                          <SelectValue placeholder={selectedOriginRegion ? 
+                            (language === "fr" ? "Sélectionnez la ville" : "Select the city") : 
+                            (language === "fr" ? "Sélectionnez d'abord une région" : "First select a region")
+                          } />
                         </SelectTrigger>
                         <SelectContent>
                           {availableOriginCities.map((city) => (
                             <SelectItem key={city.name} value={city.name}>
                               <div className="flex items-center gap-2">
-                                🏛️ {city.name} (Chef-lieu {city.department})
+                                <MapPin className="w-4 h-4" />
+                                {city.name} ({city.type || "ville"})
+                                {city.current_weather && (
+                                  <span className="text-xs text-blue-600">
+                                    {city.current_weather.temperature}°C
+                                  </span>
+                                )}
                               </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      {selectedOriginDepartment && availableOriginCities.length > 0 && (
-                        <p className="text-xs text-green-600 mt-1">
-                          ✅ Chef-lieu: {availableOriginCities[0]?.name}
-                        </p>
-                      )}
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <Label className="text-lg font-bold text-red-700">🎯 Destination</Label>
+                    <Label className="text-lg font-bold text-red-700">
+                      {language === "fr" ? "🎯 Destination" : "🎯 Destination"}
+                    </Label>
                     
                     {/* Destination Region Selection */}
                     <div>
-                      <Label>1️⃣ Région d'arrivée</Label>
+                      <Label>{language === "fr" ? "1️⃣ Région d'arrivée" : "1️⃣ Arrival region"}</Label>
                       <Select onValueChange={handleDestinationRegionChange}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Choisissez la région d'arrivée" />
+                          <SelectValue placeholder={language === "fr" ? "Choisissez la région d'arrivée" : "Choose arrival region"} />
                         </SelectTrigger>
                         <SelectContent>
                           {getAvailableRegions().map((region) => (
@@ -880,29 +868,9 @@ function Connect237App() {
                       </Select>
                     </div>
 
-                    {/* Destination Department Selection */}
+                    {/* Destination City Selection */}
                     <div>
-                      <Label>2️⃣ Département d'arrivée</Label>
-                      <Select 
-                        onValueChange={handleDestinationDepartmentChange}
-                        disabled={!selectedDestinationRegion}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={selectedDestinationRegion ? "Choisissez le département" : "Sélectionnez d'abord une région"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableDestinationDepartments.map(([deptName, deptInfo]) => (
-                            <SelectItem key={deptName} value={deptName}>
-                              🏛️ {deptName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Destination Chef-lieu Selection */}
-                    <div>
-                      <Label>3️⃣ Chef-lieu d'arrivée</Label>
+                      <Label>{language === "fr" ? "2️⃣ Ville d'arrivée" : "2️⃣ Arrival city"}</Label>
                       <Select 
                         onValueChange={(value) => {
                           setSearchForm({...searchForm, destination: value});
@@ -911,26 +879,30 @@ function Connect237App() {
                             setRoutePricing(pricing);
                           }
                         }}
-                        disabled={!selectedDestinationDepartment}
+                        disabled={!selectedDestinationRegion}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder={selectedDestinationDepartment ? "Chef-lieu automatique" : "Choisissez d'abord un département"} />
+                          <SelectValue placeholder={selectedDestinationRegion ? 
+                            (language === "fr" ? "Sélectionnez la ville" : "Select the city") : 
+                            (language === "fr" ? "Sélectionnez d'abord une région" : "First select a region")
+                          } />
                         </SelectTrigger>
                         <SelectContent>
                           {availableDestinationCities.map((city) => (
                             <SelectItem key={city.name} value={city.name}>
                               <div className="flex items-center gap-2">
-                                🏛️ {city.name} (Chef-lieu {city.department})
+                                <MapPin className="w-4 h-4" />
+                                {city.name} ({city.type || "ville"})
+                                {city.current_weather && (
+                                  <span className="text-xs text-blue-600">
+                                    {city.current_weather.temperature}°C
+                                  </span>
+                                )}
                               </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      {selectedDestinationDepartment && availableDestinationCities.length > 0 && (
-                        <p className="text-xs text-green-600 mt-1">
-                          ✅ Chef-lieu: {availableDestinationCities[0]?.name}
-                        </p>
-                      )}
                     </div>
                   </div>
                 </div>
