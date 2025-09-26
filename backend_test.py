@@ -658,7 +658,16 @@ class Connect237APITester:
 
     def run_priority_tests(self):
         """Run high priority tests first"""
-        print("🚨 PRIORITY HIGH - Previously failing endpoints:")
+        print("🚨 PRIORITY HIGH - NEW ADMINISTRATIVE STRUCTURE & PAYMENT FEATURES:")
+        print("-" * 70)
+        
+        # NEW PRIORITY HIGH Tests - Administrative Structure & Payment Calculator
+        self.test_administrative_structure()
+        self.test_cities_by_region()
+        self.test_payment_calculator_new_features()
+        self.test_cities_region_integration()
+        
+        print("\n🚨 PRIORITY HIGH - Previously failing endpoints:")
         print("-" * 50)
         
         # Priority High Tests
