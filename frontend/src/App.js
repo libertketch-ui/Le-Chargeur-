@@ -1099,7 +1099,10 @@ function Connect237App() {
                     onChange={(e) => setSearchForm({...searchForm, additional_info: e.target.value})}
                     className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                     rows="3"
-                    placeholder="Ajoutez des informations spécifiques : besoins spéciaux, préférences de siège, bagages supplémentaires, etc."
+                    placeholder={language === "fr" ? 
+                      "Ajoutez des informations spécifiques : besoins spéciaux, préférences de siège, bagages supplémentaires, etc." :
+                      "Add specific information: special needs, seat preferences, extra luggage, etc."
+                    }
                   />
                 </div>
 
