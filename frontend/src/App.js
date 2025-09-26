@@ -997,7 +997,8 @@ function Connect237App() {
                         origin: "", destination: "", departure_date: "", departure_time: "",
                         passengers: 1, custom_passenger_count: null, service_class: "economy",
                         pickup_location: { address: "", coordinates: { lat: 0, lng: 0 } },
-                        dropoff_location: { address: "", coordinates: { lat: 0, lng: 0 } }
+                        dropoff_location: { address: "", coordinates: { lat: 0, lng: 0 } },
+                        additional_info: ""
                       });
                       setCalculator({ visible: false, base_price: 0, total_amount: 0, reservation_fee: 500, remaining_amount: 0 });
                     }}
