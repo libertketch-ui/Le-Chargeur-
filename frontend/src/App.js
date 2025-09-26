@@ -715,6 +715,60 @@ function Connect237App() {
                   </div>
                 </div>
 
+                {/* Agency Selection and Passenger Count */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      🏢 Agence de Transport
+                    </label>
+                    <select 
+                      value={selectedAgency}
+                      onChange={(e) => setSelectedAgency(e.target.value)}
+                      className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    >
+                      <option value="">Sélectionnez une agence (optionnel)</option>
+                      {agencies.map((agency, idx) => (
+                        <option key={idx} value={agency.name}>
+                          {agency.name} - {agency.region} ({agency.rating}⭐)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      👤 Nombre de passagers
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSearchForm(prev => ({
+                          ...prev,
+                          passengers: Math.max(1, prev.passengers - 1)
+                        }))}
+                      >
+                        <MinusCircle className="w-4 h-4" />
+                      </Button>
+                      <span className="text-lg font-bold text-green-600 min-w-[3rem] text-center">
+                        {searchForm.passengers}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSearchForm(prev => ({
+                          ...prev,
+                          passengers: Math.min(50, prev.passengers + 1)
+                        }))}
+                      >
+                        <PlusCircle className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Date and Time Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
