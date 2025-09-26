@@ -1022,7 +1022,9 @@ function Connect237App() {
                       onChange={(e) => setSelectedAgency(e.target.value)}
                       className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     >
-                      <option value="">Sélectionnez une agence (optionnel)</option>
+                      <option value="">
+                        {language === "fr" ? "Sélectionnez une agence (optionnel)" : "Select an agency (optional)"}
+                      </option>
                       {agencies.map((agency, idx) => (
                         <option key={idx} value={agency.name}>
                           {agency.name} - {agency.region} ({agency.rating}⭐)
