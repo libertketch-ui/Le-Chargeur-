@@ -355,6 +355,8 @@ function Connect237App() {
       const params = new URLSearchParams({
         base_price: "5000", // Mock base price
         passenger_count: searchForm.passengers.toString(),
+        package_value: courierForm.declared_value?.toString() || "0",
+        courier_services: courierForm.recipient_name ? "1" : "0",
         payment_type: paymentForm.reservation_only ? "reservation" : "full"
       });
 
@@ -363,10 +365,24 @@ function Connect237App() {
       }
 
       const response = await axios.get(`${API}/payment/calculator?${params}`);
+      
+      // Mise à jour pour utiliser les nouvelles données
       setCalculator({
         visible: true,
-        ...response.data
+        base_price_per_person: response.data.base_price_per_person,
+        passenger_count: response.data.passenger_count,
+        total_amount: response.data.total_amount,
+        reservation_fee: response.data.total_reservation_fee,
+        remaining_amount: response.data.remaining_amount,
+        package_tax: response.data.package_tax_13_percent || 0,
+        calculation_details: response.data.calculation_details
       });
+
+      // Toast pour montrer les nouveaux calculs
+      if (response.data.total_reservation_fee > 500) {
+        toast.success(`Nouvelle règle: ${response.data.passenger_count} voyageurs × 500 FCFA = ${response.data.total_reservation_fee} FCFA de réservation`);
+      }
+      
     } catch (error) {
       console.error("Error calculating payment:", error);
       toast.error("Erreur lors du calcul");
