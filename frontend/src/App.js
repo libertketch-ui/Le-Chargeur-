@@ -202,6 +202,17 @@ function Connect237App() {
     loadInitialData();
   }, []);
 
+  // Auto-rotation des images touristiques toutes les 15 secondes
+  useEffect(() => {
+    if (attractions.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentTourismSlide((prev) => (prev + 1) % attractions.length);
+      }, 15000); // 15 secondes
+
+      return () => clearInterval(interval);
+    }
+  }, [attractions]);
+
   const loadInitialData = async () => {
     try {
       await Promise.all([
