@@ -137,6 +137,7 @@ function Connect237App() {
   const [courierServices, setCourierServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false);
+  const [currentTourismSlide, setCurrentTourismSlide] = useState(0);
 
   // Enhanced search state
   const [searchForm, setSearchForm] = useState({
