@@ -1435,6 +1435,46 @@ function Connect237App() {
                   </Card>
                 </div>
 
+                <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+                  <CardContent className="p-6">
+                    <div className="text-center mb-4">
+                      <Building className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                      <h4 className="font-bold text-lg text-blue-800">Services Professionnels</h4>
+                      <p className="text-gray-600 text-sm">
+                        Rejoignez Connect237 en tant que transporteur ou agence
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <Card className="text-center p-3 border border-blue-200">
+                        <User className="w-6 h-6 text-green-600 mx-auto mb-2" />
+                        <div className="text-sm font-semibold">Client</div>
+                        <div className="text-xs text-gray-600">Voyageur régulier</div>
+                      </Card>
+                      
+                      <Card className="text-center p-3 border border-blue-200">
+                        <Building className="w-6 h-6 text-yellow-600 mx-auto mb-2" />
+                        <div className="text-sm font-semibold">Agence</div>
+                        <div className="text-xs text-gray-600">Entreprise de transport</div>
+                      </Card>
+                      
+                      <Card className="text-center p-3 border border-blue-200">
+                        <Truck className="w-6 h-6 text-red-600 mx-auto mb-2" />
+                        <div className="text-sm font-semibold">Transporteur</div>
+                        <div className="text-xs text-gray-600">Conducteur indépendant</div>
+                      </Card>
+                    </div>
+                    
+                    <Button 
+                      onClick={() => setShowRegistration(true)}
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Inscription Professionnelle
+                    </Button>
+                  </CardContent>
+                </Card>
+
                 <Card className="bg-gradient-to-r from-green-50 to-red-50 border-0">
                   <CardContent className="p-6 text-center">
                     <Connect237Logo size="small" />
