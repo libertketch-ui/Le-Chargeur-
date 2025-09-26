@@ -498,7 +498,7 @@ async def get_all_weather():
     for city in ENHANCED_CAMEROON_CITIES:
         if city["major"]:
             weather = generate_weather_data(city["name"], city["region"])
-            weather_data.append(weather)
+            weather_data.append(weather.dict())
     
     return {"weather_data": weather_data}
 
