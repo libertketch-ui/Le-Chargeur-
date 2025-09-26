@@ -2050,18 +2050,20 @@ async def get_policy_by_type(document_type: str):
 
 @api_router.get("/administrative-structure")
 async def get_administrative_structure():
-    """Get simplified administrative structure: Region → Cities (Chef-lieux)"""
-    return {"structure": CAMEROON_ADMINISTRATIVE_STRUCTURE}
+    """Obtenir la structure administrative simplifiée du Cameroun avec les chefs-lieux"""
+    return {"regions": CAMEROON_ADMINISTRATIVE_STRUCTURE}
 
 @api_router.get("/cities/{region}")
 async def get_cities_by_region(region: str):
-    """Get cities (chef-lieux) of a specific region"""
+    """Obtenir les villes/chefs-lieux d'une région spécifique"""
     if region not in CAMEROON_ADMINISTRATIVE_STRUCTURE:
-        raise HTTPException(status_code=404, detail="Region not found")
+        raise HTTPException(status_code=404, detail="Région non trouvée")
+    
+    region_data = CAMEROON_ADMINISTRATIVE_STRUCTURE[region]
     
     return {
         "region": region,
-        "cities": CAMEROON_ADMINISTRATIVE_STRUCTURE[region]["cities"]
+        "cities": region_data["cities"]
     }
 
 # Include router
