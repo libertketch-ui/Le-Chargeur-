@@ -792,65 +792,18 @@ function Connect237App() {
                   </div>
                 </div>
 
-                {/* Enhanced Passenger Count */}
+                {/* Additional Information */}
                 <div>
-                  <Label>Nombre de passagers</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                    <Select 
-                      value={searchForm.passengers.toString()}
-                      onValueChange={(value) => setSearchForm({...searchForm, passengers: parseInt(value)})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[1,2,3,4,5,6,7,8,9,10].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num} passager{num > 1 ? 's' : ''}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor="custom-count" className="text-sm">Nombre personnalisé:</Label>
-                      <div className="flex items-center gap-1">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setSearchForm({
-                            ...searchForm, 
-                            custom_passenger_count: Math.max(1, (searchForm.custom_passenger_count || 1) - 1)
-                          })}
-                        >
-                          <MinusCircle className="w-3 h-3" />
-                        </Button>
-                        <Input
-                          id="custom-count"
-                          type="number"
-                          min="1"
-                          max="50"
-                          value={searchForm.custom_passenger_count || ""}
-                          onChange={(e) => setSearchForm({
-                            ...searchForm, 
-                            custom_passenger_count: e.target.value ? parseInt(e.target.value) : null
-                          })}
-                          className="w-16 text-center"
-                          placeholder="0"
-                        />
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setSearchForm({
-                            ...searchForm, 
-                            custom_passenger_count: (searchForm.custom_passenger_count || 0) + 1
-                          })}
-                        >
-                          <PlusCircle className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    ℹ️ Informations additionnelles (optionnel)
+                  </label>
+                  <textarea
+                    value={searchForm.additional_info || ''}
+                    onChange={(e) => setSearchForm({...searchForm, additional_info: e.target.value})}
+                    className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                    rows="3"
+                    placeholder="Ajoutez des informations spécifiques : besoins spéciaux, préférences de siège, bagages supplémentaires, etc."
+                  />
                 </div>
 
                 {/* Pickup Location */}
