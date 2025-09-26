@@ -1199,27 +1199,42 @@ function Connect237App() {
                       </div>
                     )}
 
-                    {/* Paiement sur place en option secondaire */}
+                    {/* Paiement sur place Info */}
                     {paymentForm.type === "on_site" && (
                       <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
                         <CardContent className="p-4">
-                          <h4 className="font-semibold text-blue-700 mb-2">Instructions de paiement sur place</h4>
+                          <h4 className="font-semibold text-blue-700 mb-2">
+                            {language === "fr" ? "Instructions de paiement sur place" : "On-site payment instructions"}
+                          </h4>
                           <div className="space-y-2 text-sm">
                             <p className="flex items-center gap-2">
                               <CheckCircle className="w-4 h-4 text-green-600" />
-                              Réservation: {formatPrice(searchForm.passengers * 500)} FCFA (maintenant)
+                              {language === "fr" ? "Réservation" : "Reservation"}: {formatPrice(searchForm.passengers * 500)} FCFA 
+                              <Badge className="bg-red-100 text-red-700 text-xs">
+                                {language === "fr" ? "Non remboursable" : "Non-refundable"}
+                              </Badge>
                             </p>
                             <p className="flex items-center gap-2">
                               <Clock className="w-4 h-4 text-orange-600" />
-                              Solde: {formatPrice(searchForm.passengers * 4500)} FCFA (au départ)
+                              {language === "fr" ? "Solde à payer" : "Balance to pay"}: {formatPrice(searchForm.passengers * 4500)} FCFA 
+                              <span className="text-xs">
+                                ({language === "fr" ? "1h avant le départ" : "1h before departure"})
+                              </span>
                             </p>
+                            <div className="bg-yellow-50 border border-yellow-200 rounded p-2 mt-3">
+                              <p className="text-xs text-yellow-800 font-semibold">
+                                ⚠️ {language === "fr" ? "IMPORTANT: Règlement obligatoire 1 heure avant le départ" : "IMPORTANT: Payment required 1 hour before departure"}
+                              </p>
+                            </div>
                             <p className="text-xs text-gray-600">
-                              💳 Modes acceptés sur place: Espèces, Mobile Money MTN/Orange, Cartes bancaires
+                              💳 {language === "fr" ? "Modes acceptés sur place: Espèces, Mobile Money MTN/Orange" : "Accepted payment methods: Cash, MTN/Orange Mobile Money"}
                             </p>
                             <div className="mt-2 p-2 bg-blue-50 rounded text-xs">
-                              <div className="font-semibold text-blue-700">Détail du calcul:</div>
+                              <div className="font-semibold text-blue-700">
+                                {language === "fr" ? "Détail du calcul:" : "Calculation details:"}
+                              </div>
                               <div className="flex justify-between">
-                                <span>500 FCFA × {searchForm.passengers} passager(s):</span>
+                                <span>{language === "fr" ? "500 FCFA × " : "500 FCFA × "}{searchForm.passengers} {language === "fr" ? "passager(s):" : "passenger(s):"}</span>
                                 <span className="font-bold">{formatPrice(searchForm.passengers * 500)} FCFA</span>
                               </div>
                             </div>
