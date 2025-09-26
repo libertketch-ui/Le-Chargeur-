@@ -2053,15 +2053,15 @@ async def get_administrative_structure():
     """Get complete administrative structure: Region → Department → Chef-lieu"""
     return {"structure": CAMEROON_ADMINISTRATIVE_STRUCTURE}
 
-@api_router.get("/departments/{region}")
-async def get_departments_by_region(region: str):
-    """Get departments of a specific region"""
+@api_router.get("/cities/{region}")
+async def get_cities_by_region(region: str):
+    """Get cities (chef-lieux) of a specific region"""
     if region not in CAMEROON_ADMINISTRATIVE_STRUCTURE:
         raise HTTPException(status_code=404, detail="Region not found")
     
     return {
         "region": region,
-        "departments": CAMEROON_ADMINISTRATIVE_STRUCTURE[region]["departments"]
+        "cities": CAMEROON_ADMINISTRATIVE_STRUCTURE[region]["cities"]
     }
 
 # Include router
