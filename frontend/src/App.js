@@ -1136,6 +1136,28 @@ function Connect237App() {
                   </div>
                 </div>
 
+                {/* Carrier Selection */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    🚚 Transporteur de colis
+                  </label>
+                  <select 
+                    value={selectedCarrier}
+                    onChange={(e) => setSelectedCarrier(e.target.value)}
+                    className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  >
+                    <option value="">Sélectionnez un transporteur</option>
+                    {courierCarriers.map((carrier, idx) => (
+                      <option key={idx} value={carrier.name}>
+                        {carrier.name} - {carrier.vehicle_type} ({carrier.rating}⭐)
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Choisissez votre transporteur selon le type de véhicule et la zone de couverture
+                  </p>
+                </div>
+
                 {/* Addresses */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
