@@ -539,18 +539,48 @@ function Connect237App() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-yellow-50 to-red-50">
       <div className="container mx-auto p-4 max-w-7xl">
         
-        {/* Enhanced Header with Connect237 Branding */}
+        {/* Enhanced Header with Connect237 Branding and Language Selector */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-6">
-            <Connect237Logo size="large" />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex-1"></div>
+            <div className="flex items-center justify-center">
+              <Connect237Logo size="large" />
+            </div>
+            
+            {/* Language Selector */}
+            <div className="flex-1 flex justify-end">
+              <div className="flex items-center gap-3">
+                <div className="text-xs text-gray-600">
+                  {language === "fr" ? "Langue:" : "Language:"}
+                </div>
+                <div className="flex bg-gray-200 rounded-lg overflow-hidden">
+                  <button 
+                    onClick={() => setLanguage("fr")}
+                    className={`px-3 py-1 text-xs font-bold transition-all ${
+                      language === "fr" ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-gray-300'
+                    }`}
+                  >
+                    🇫🇷 FR
+                  </button>
+                  <button 
+                    onClick={() => setLanguage("en")}
+                    className={`px-3 py-1 text-xs font-bold transition-all ${
+                      language === "en" ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-gray-300'
+                    }`}
+                  >
+                    🇬🇧 EN
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Plateforme Intégrée de Transport du Cameroun
+              {language === "fr" ? "Plateforme Intégrée de Transport du Cameroun" : "Integrated Transport Platform of Cameroon"}
             </h2>
             <p className="text-gray-600 text-lg">
-              Transport • Courrier • Suivi GPS • Météo • Tourisme
+              {language === "fr" ? "Transport • Courrier • Suivi GPS • Météo • Tourisme" : "Transport • Courier • GPS Tracking • Weather • Tourism"}
             </p>
           </div>
 
