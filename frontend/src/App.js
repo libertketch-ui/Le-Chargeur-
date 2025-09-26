@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "./App.css";
 import axios from "axios";
+import RegistrationSystem from "./RegistrationSystem";
+import PaymentKeypad from "./PaymentKeypad";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Button } from "./components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
