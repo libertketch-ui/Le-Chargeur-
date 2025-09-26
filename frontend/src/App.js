@@ -1694,52 +1694,75 @@ function Connect237App() {
             </Card>
           </TabsContent>
 
-          {/* Profile Tab */}
+          {/* Profile Tab with Wallet */}
           <TabsContent value="profile" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  Mon Profil Connect237
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
-                    JD
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold">{user.name}</h3>
-                    <p className="text-gray-600">Membre depuis 2024</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge className="bg-green-100 text-green-800">
-                        Client vérifié
-                      </Badge>
+            {/* Profile Sub-navigation */}
+            <div className="flex gap-2 mb-6">
+              <Button 
+                variant={showWallet ? "outline" : "default"}
+                onClick={() => setShowWallet(false)}
+                className="flex items-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                Mon Profil
+              </Button>
+              <Button 
+                variant={showWallet ? "default" : "outline"}
+                onClick={() => setShowWallet(true)}
+                className="flex items-center gap-2"
+              >
+                <CreditCard className="w-4 h-4" />
+                Portefeuille
+              </Button>
+            </div>
+
+            {!showWallet ? (
+              /* Profile Content */
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="w-5 h-5" />
+                      Mon Profil Connect237
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                        JD
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold">{user.name}</h3>
+                        <p className="text-gray-600">Membre depuis 2024</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge className="bg-green-100 text-green-800">
+                            Client vérifié
+                          </Badge>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <Card className="text-center p-4 bg-green-50">
-                    <div className="text-2xl font-bold text-green-600">{bookings.length}</div>
-                    <div className="text-sm text-gray-600">Voyages</div>
-                  </Card>
-                  
-                  <Card className="text-center p-4 bg-yellow-50">
-                    <div className="text-2xl font-bold text-yellow-600">{courierServices.length}</div>
-                    <div className="text-sm text-gray-600">Colis envoyés</div>
-                  </Card>
-                  
-                  <Card className="text-center p-4 bg-red-50">
-                    <div className="text-2xl font-bold text-red-600">2,500</div>
-                    <div className="text-sm text-gray-600">Points fidélité</div>
-                  </Card>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <Card className="text-center p-4 bg-green-50">
+                        <div className="text-2xl font-bold text-green-600">{bookings.length}</div>
+                        <div className="text-sm text-gray-600">Voyages</div>
+                      </Card>
+                      
+                      <Card className="text-center p-4 bg-yellow-50">
+                        <div className="text-2xl font-bold text-yellow-600">{courierServices.length}</div>
+                        <div className="text-sm text-gray-600">Colis envoyés</div>
+                      </Card>
+                      
+                      <Card className="text-center p-4 bg-red-50">
+                        <div className="text-2xl font-bold text-red-600">2,500</div>
+                        <div className="text-sm text-gray-600">Points fidélité</div>
+                      </Card>
 
-                  <Card className="text-center p-4 bg-blue-50">
-                    <div className="text-2xl font-bold text-blue-600">4.8</div>
-                    <div className="text-sm text-gray-600">Note moyenne</div>
-                  </Card>
-                </div>
+                      <Card className="text-center p-4 bg-blue-50">
+                        <div className="text-2xl font-bold text-blue-600">4.8</div>
+                        <div className="text-sm text-gray-600">Note moyenne</div>
+                      </Card>
+                    </div>
 
                 <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
                   <CardContent className="p-6">
