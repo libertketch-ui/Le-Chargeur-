@@ -435,7 +435,47 @@ function Connect237App() {
     return new Intl.NumberFormat('fr-FR').format(price);
   };
 
-  const copyToClipboard = (text) => {
+  // Filter cities by region
+  const handleOriginRegionChange = (region) => {
+    setSelectedOriginRegion(region);
+    const regionCities = cities.filter(city => city.region === region);
+    setAvailableOriginCities(regionCities);
+    setSearchForm(prev => ({ ...prev, origin: "" })); // Reset city selection
+  };
+
+  const handleDestinationRegionChange = (region) => {
+    setSelectedDestinationRegion(region);
+    const regionCities = cities.filter(city => city.region === region);
+    setAvailableDestinationCities(regionCities);
+    setSearchForm(prev => ({ ...prev, destination: "" })); // Reset city selection
+  };
+
+  // Get available regions
+  const getAvailableRegions = () => {
+    const regions = [...new Set(cities.map(city => city.region))];
+    return regions.sort();
+  };
+
+  // Get route pricing for selected destination
+  const getRoutePricing = (origin, destination) => {
+    if (!origin || !destination) return [];
+    
+    const routeAgencies = agencies.filter(agency => {
+      const routeString = `${origin}-${destination}`;
+      const reverseRouteString = `${destination}-${origin}`;
+      return agency.routes_served.some(route => 
+        route.includes(origin) && route.includes(destination) ||
+        route === routeString || route === reverseRouteString
+      );
+    });
+
+    return routeAgencies.map(agency => ({
+      ...agency,
+      price: Math.floor(Math.random() * 3000) + 2000, // Random price between 2000-5000
+      departure_times: ["06:00", "09:00", "12:00", "15:00", "18:00"],
+      available_seats: Math.floor(Math.random() * 30) + 5
+    }));
+  };
     navigator.clipboard.writeText(text);
     toast.success("Copié dans le presse-papiers");
   };
