@@ -1092,39 +1092,49 @@ function Connect237App() {
                       </Card>
                     </div>
 
-                    {/* Mobile Money Provider Selection */}
-                    {paymentForm.type === "mobile_money" && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <Card 
-                          className={`cursor-pointer transition-all ${
-                            paymentForm.provider === "MTN" ? 'ring-2 ring-yellow-500 bg-yellow-50' : 'hover:shadow-md'
-                          }`}
-                          onClick={() => setPaymentForm({...paymentForm, provider: "MTN"})}
-                        >
-                          <CardContent className="p-4 text-center">
-                            <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                              <span className="text-white font-bold text-sm">MTN</span>
-                            </div>
-                            <h4 className="font-semibold text-yellow-700">MTN Mobile Money</h4>
-                            <p className="text-xs text-gray-600">Code USSD: *126#</p>
-                          </CardContent>
-                        </Card>
+                    {/* Wallet Payment Option */}
+                    {paymentForm.type === "account_credit" && (
+                      <Card className="bg-gradient-to-r from-green-50 to-yellow-50 border-2 border-green-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-green-700">Paiement par portefeuille</h4>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setActiveTab("profile");
+                                setShowWallet(true);
+                              }}
+                            >
+                              Voir portefeuille
+                            </Button>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-2">Solde disponible: <strong>12,500 FCFA</strong></p>
+                          <p className="text-xs text-green-600">✅ Solde suffisant pour cette réservation</p>
+                        </CardContent>
+                      </Card>
+                    )}
 
-                        <Card 
-                          className={`cursor-pointer transition-all ${
-                            paymentForm.provider === "ORANGE" ? 'ring-2 ring-orange-500 bg-orange-50' : 'hover:shadow-md'
-                          }`}
-                          onClick={() => setPaymentForm({...paymentForm, provider: "ORANGE"})}
-                        >
-                          <CardContent className="p-4 text-center">
-                            <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                              <span className="text-white font-bold text-xs">ORANGE</span>
-                            </div>
-                            <h4 className="font-semibold text-orange-700">Orange Money</h4>
-                            <p className="text-xs text-gray-600">Code USSD: #150#</p>
-                          </CardContent>
-                        </Card>
-                      </div>
+                    {/* On-site Payment Info */}
+                    {paymentForm.type === "on_site" && (
+                      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
+                        <CardContent className="p-4">
+                          <h4 className="font-semibold text-blue-700 mb-2">Instructions de paiement sur place</h4>
+                          <div className="space-y-2 text-sm">
+                            <p className="flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-green-600" />
+                              Réservation: {searchForm.passengers * 500} FCFA (maintenant)
+                            </p>
+                            <p className="flex items-center gap-2">
+                              <Clock className="w-4 h-4 text-orange-600" />
+                              Solde: {pricing.total_price - (searchForm.passengers * 500)} FCFA (au départ)
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              💳 Modes acceptés sur place: Espèces, Mobile Money MTN/Orange, Cartes bancaires
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
                     )}
 
                     {/* Account Credit and Voucher Options */}
