@@ -154,7 +154,8 @@ function Connect237App() {
     custom_passenger_count: null,
     service_class: "economy",
     pickup_location: { address: "", coordinates: { lat: 0, lng: 0 } },
-    dropoff_location: { address: "", coordinates: { lat: 0, lng: 0 } }
+    dropoff_location: { address: "", coordinates: { lat: 0, lng: 0 } },
+    additional_info: ""
   });
 
   // Enhanced payment state
