@@ -253,10 +253,41 @@ function Connect237App() {
 
   const loadCities = async () => {
     try {
-      const response = await axios.get(`${API}/cities/enhanced`);
-      setCities(response.data.cities);
+      // Charger la nouvelle structure administrative
+      const response = await axios.get(`${API}/administrative-structure`);
+      const administrativeData = response.data.regions;
+      
+      // Convertir la structure en format plat pour compatibilité
+      const allCities = [];
+      Object.keys(administrativeData).forEach(region => {
+        administrativeData[region].cities.forEach(city => {
+          allCities.push({
+            name: city.name,
+            region: region,
+            coordinates: {
+              lat: city.lat,
+              lng: city.lng
+            },
+            type: city.type,
+            // Ajouter des données météo factices pour la compatibilité
+            current_weather: {
+              temperature: Math.floor(Math.random() * 15) + 20 // 20-35°C
+            }
+          });
+        });
+      });
+      
+      setCities(allCities);
+      console.log(`Loaded ${allCities.length} cities from ${Object.keys(administrativeData).length} regions`);
     } catch (error) {
       console.error("Error loading cities:", error);
+      // Fallback vers l'ancienne API si la nouvelle échoue
+      try {
+        const response = await axios.get(`${API}/cities/enhanced`);
+        setCities(response.data.cities);
+      } catch (fallbackError) {
+        console.error("Fallback also failed:", fallbackError);
+      }
     }
   };
 
