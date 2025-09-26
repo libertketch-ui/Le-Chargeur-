@@ -1127,7 +1127,7 @@ function Connect237App() {
                             </p>
                             <p className="flex items-center gap-2">
                               <Clock className="w-4 h-4 text-orange-600" />
-                              Solde: {pricing.total_price - (searchForm.passengers * 500)} FCFA (au départ)
+                              Solde: {searchForm.passengers * 4500} FCFA (au départ)
                             </p>
                             <p className="text-xs text-gray-600">
                               💳 Modes acceptés sur place: Espèces, Mobile Money MTN/Orange, Cartes bancaires
