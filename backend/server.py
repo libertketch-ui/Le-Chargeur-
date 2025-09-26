@@ -85,7 +85,7 @@ class CourierService(BaseModel):
     delivery_instructions: str = ""
     tracking_number: str = Field(default_factory=lambda: f"C237{random.randint(100000, 999999)}")
     status: str = "pending"  # pending, collected, in_transit, delivered, failed
-    price: int
+    price: int = 0
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class GPSLocation(BaseModel):
