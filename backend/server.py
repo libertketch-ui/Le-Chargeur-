@@ -2050,7 +2050,7 @@ async def get_policy_by_type(document_type: str):
 
 @api_router.get("/administrative-structure")
 async def get_administrative_structure():
-    """Get complete administrative structure: Region → Department → Chef-lieu"""
+    """Get simplified administrative structure: Region → Cities (Chef-lieux)"""
     return {"structure": CAMEROON_ADMINISTRATIVE_STRUCTURE}
 
 @api_router.get("/cities/{region}")
