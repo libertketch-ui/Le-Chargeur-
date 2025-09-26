@@ -140,6 +140,31 @@ class EnhancedBooking(BaseModel):
     
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+# === ADDITIONAL MODELS FOR CONNECT237 FEATURES ===
+
+class UserRegistration(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_type: str  # "client", "agency", "transporter", "occasional_transporter"
+    personal_info: Dict[str, Any]  # Name, email, phone, address
+    documents: List[Dict[str, Any]] = []  # Uploaded documents
+    verification_status: str = "pending"  # pending, verified, rejected
+    admin_comments: str = ""
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    verified_at: Optional[datetime] = None
+
+class SmartSearchQuery(BaseModel):
+    query: str
+    filters: Dict[str, Any] = {}
+    user_preferences: Dict[str, Any] = {}
+
+class AdminDashboardStats(BaseModel):
+    total_users: int
+    pending_verifications: int
+    total_bookings: int
+    revenue_today: int
+    active_vehicles: int
+    courier_deliveries: int
+
 # === CAMEROON DATA ===
 
 # Major Transport Agencies in Cameroon
